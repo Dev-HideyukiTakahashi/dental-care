@@ -12,7 +12,7 @@ Este sistema de agendamento odontológico facilita a marcação de consultas, o 
 
 ## Backlog no notion:
 
-- https://grave-hyena-443.notion.site/Backlog-Java-Angular-19c3a302750380f8b279caa18a867a5f
+- https://grave-hyena-443.notion.site/Backlog-1ac3a30275038027a179fec482aff6f6
 
 ---
 
