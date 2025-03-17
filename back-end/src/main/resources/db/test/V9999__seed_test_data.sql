@@ -38,3 +38,11 @@ INSERT INTO tb_user_role (role_id, user_id) VALUES
     ((SELECT id FROM tb_role WHERE authority = 'ROLE_DENTIST' LIMIT 1), (SELECT id FROM tb_user WHERE name = 'Victor Dent')),
     ((SELECT id FROM tb_role WHERE authority = 'ROLE_DENTIST' LIMIT 1), (SELECT id FROM tb_user WHERE name = 'Henry Surge')),
     ((SELECT id FROM tb_role WHERE authority = 'ROLE_DENTIST' LIMIT 1), (SELECT id FROM tb_user WHERE name = 'Lucas Maverick'));
+
+-- Insert Notifications
+INSERT INTO tb_notification (message, sent_date, user_id) VALUES
+    ('Consulta agendada para amanhã às 10h.', '2025-03-18 09:00:00', 1),
+    ('Lembrete: Revisão odontológica semestral.', '2025-03-19 08:30:00', 2),
+    ('Pagamento da consulta confirmado.', '2025-03-17 15:45:00', 3),
+    ('Novo agendamento disponível para sua especialidade.', '2025-03-16 14:20:00', 1),
+    ('Seu dentista adicionou novas recomendações.', '2025-03-15 10:10:00', 2);
