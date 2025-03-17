@@ -1,18 +1,13 @@
 package br.com.dental_care.model;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,23 +15,21 @@ import lombok.Setter;
 
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
-@Entity(name = "tb_user")
-public class User {
+@Entity(name = "tb_notification")
+public class Notification {
 
-  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-  private String name;
-  private String email;
-  private String phone;
-  private String password;
+  
+  @Column(columnDefinition = "TEXT")
+  private String message;
 
-  @ManyToMany
-  @JoinTable(name = "tb_user_role", joinColumns = @JoinColumn(name = "user_id"), 
-                    inverseJoinColumns = @JoinColumn(name = "role_id"))
-  private final Set<Role> roles = new HashSet<>();
+  @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
+  private LocalDateTime sentDate;
 
-  @OneToMany(mappedBy = "user")
-  private final List<Notification> notifications = new ArrayList<>();
+  @ManyToOne
+  private User user;
 
   @Override
   public int hashCode() {
@@ -54,7 +47,7 @@ public class User {
       return false;
     if (getClass() != obj.getClass())
       return false;
-    User other = (User) obj;
+    Notification other = (Notification) obj;
     if (id == null) {
       if (other.id != null)
         return false;
