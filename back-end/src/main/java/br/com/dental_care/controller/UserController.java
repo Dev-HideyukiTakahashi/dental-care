@@ -2,6 +2,8 @@ package br.com.dental_care.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +26,13 @@ public class UserController {
   public ResponseEntity<UserDTO> findById(@PathVariable Long id){
     logger.info("Searching user with id: {}", id);
     UserDTO dto = userService.findById(id);
+    return ResponseEntity.ok(dto);
+  }
+
+  @GetMapping
+  public ResponseEntity<Page<UserDTO>> findAll(Pageable pageable){
+    logger.info("Searching all users");
+    Page<UserDTO> dto = userService.findAll(pageable);
     return ResponseEntity.ok(dto);
   }
   

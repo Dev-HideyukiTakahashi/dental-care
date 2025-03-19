@@ -5,7 +5,6 @@ import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,8 +23,8 @@ public class Dentist extends User {
   @OneToMany(mappedBy = "dentist")
   private final List<Rating> ratings = new ArrayList<>();
 
-  @OneToOne(mappedBy = "dentist")
-  private Schedule schedule;
+  @OneToMany(mappedBy = "dentist")
+  private List<Schedule> schedule = new ArrayList<>();
 
   @OneToMany(mappedBy = "dentist")
   private final List<Appointment> appointments = new ArrayList<>();

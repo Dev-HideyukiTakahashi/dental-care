@@ -2,6 +2,8 @@ package br.com.dental_care.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,5 +29,11 @@ public class UserService {
     
     logger.info("User found, id: {}", id);
     return UserMapper.toDTO(user);
+  }
+
+  @Transactional(readOnly = true)
+  public Page<UserDTO> findAll(Pageable pageable){
+    Page<User> page = userRepository.findAll(pageable);
+    return page.map(p -> UserMapper.toDTO(p));
   }
 }
