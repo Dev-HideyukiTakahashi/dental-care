@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
@@ -14,6 +15,9 @@ import lombok.Getter;
 public class UserDTO {
 
   private Long id;
+
+  @NotBlank(message = "Nome é um campo obrigatório.")
+  private String name;
 
   @Email(message = "Por favor, insira um e-mail válido.")
   private String email;
@@ -29,6 +33,10 @@ public class UserDTO {
   private String phone;
   
   private final List<RoleDTO> roles = new ArrayList<>();
+
+  public void addRole(RoleDTO role){
+    roles.add(role);
+  }
 
   @Override
   public int hashCode() {
