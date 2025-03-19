@@ -1,17 +1,16 @@
 package br.com.dental_care.model;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
+import br.com.dental_care.model.enums.Status;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,21 +18,26 @@ import lombok.Setter;
 
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
-@Entity
-@Table(name = "tb_schedule")
-public class Schedule {
+@Entity(name = "tb_appointment")
+public class Appointment {
   
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
-  private LocalDateTime unavailableTimeSlot;
+  private LocalDateTime date;
 
-  @OneToOne
+  @Enumerated(EnumType.STRING)
+  private Status status;
+
+  @ManyToOne
+  private Schedule schedule;
+
+  @ManyToOne
   private Dentist dentist;
 
-  @OneToMany(mappedBy = "schedule")
-  private final List<Appointment> appointments = new ArrayList<>();
+  @ManyToOne
+  private Patient patient;
   
 }

@@ -22,6 +22,9 @@ public class Patient extends User {
   @OneToMany(mappedBy = "patient")
   private final List<Rating> ratings = new ArrayList<>();
 
+  @OneToMany(mappedBy = "patient")
+  private final List<Appointment> appointments = new ArrayList<>();
+
   @Override
   public int hashCode() {
     final int prime = 31;
