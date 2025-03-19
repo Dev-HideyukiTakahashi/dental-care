@@ -56,3 +56,15 @@ INSERT INTO TB_RATING (SCORE, DATE, DENTIST_ID, ID, PATIENT_ID, COMMENT) VALUES
     (4, '2024-03-12T14:45:00', 5, 2, 3, 'Muito bom, mas poderia melhorar o tempo de espera.'),
     (3, '2024-03-15T09:15:00', 4, 3, 2, 'Atendimento razoável, esperava mais.'),
     (5, '2024-03-18T16:00:00', 5, 4, 3, 'Ótima experiência, super recomendo!');
+
+-- Insert Schedule dentist id 4
+INSERT INTO tb_schedule (dentist_id, unavailable_time_slot) VALUES
+    (4, '2025-03-21 09:00:00'),
+    (4, '2025-03-21 14:00:00');
+
+-- Insert Schedule dentist id 5
+INSERT INTO tb_schedule (dentist_id, unavailable_time_slot) VALUES
+    (5, '2025-03-22 10:00:00'),
+    (5, '2025-03-22 13:00:00'),
+    (5, '2025-03-22 15:00:00'),
+    (5, '2025-03-22 17:00:00');
