@@ -1,6 +1,10 @@
 package br.com.dental_care.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,6 +20,6 @@ public class Dentist extends User {
   private String speciality;
   private String registrationNumber;
 
-
-  
+  @OneToMany(mappedBy = "dentist")
+  private final List<Rating> ratings = new ArrayList<>();
 }
