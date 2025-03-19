@@ -49,3 +49,10 @@ INSERT INTO tb_notification (message, sent_date, user_id) VALUES
     ('Pagamento da consulta confirmado.', '2025-03-17 15:45:00', 3),
     ('Novo agendamento disponível para sua especialidade.', '2025-03-16 14:20:00', 1),
     ('Seu dentista adicionou novas recomendações.', '2025-03-15 10:10:00', 2);
+
+-- Insert Ratings
+INSERT INTO TB_RATING (SCORE, DATE, DENTIST_ID, ID, PATIENT_ID, COMMENT) VALUES
+    (5, '2024-03-10T10:30:00', 4, 1, 2, 'Excelente atendimento!'),
+    (4, '2024-03-12T14:45:00', 5, 2, 3, 'Muito bom, mas poderia melhorar o tempo de espera.'),
+    (3, '2024-03-15T09:15:00', 4, 3, 2, 'Atendimento razoável, esperava mais.'),
+    (5, '2024-03-18T16:00:00', 5, 4, 3, 'Ótima experiência, super recomendo!');
