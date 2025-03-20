@@ -1,4 +1,4 @@
-package br.com.dental_care.dto;
+package br.com.dental_care.exception.handler;
 
 import java.time.Instant;
 
