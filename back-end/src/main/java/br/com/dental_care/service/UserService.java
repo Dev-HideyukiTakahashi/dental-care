@@ -44,6 +44,7 @@ public class UserService {
   @Transactional
   public UserDTO save(UserDTO dto){
     User user = userRepository.save(UserMapper.toEntity(dto));
+    logger.info("New user has been created with id: {}", user.getId());
     return UserMapper.toDTO(user);
   }
 
@@ -53,6 +54,7 @@ public class UserService {
       User user = userRepository.getReferenceById(id);
       UserMapper.copyToEntity(user, dto);
       user = userRepository.save(user);
+      logger.info("User updated successfully, id: {}", user.getId());
       return UserMapper.toDTO(user);
     }catch(EntityNotFoundException e){
       throw new ResourceNotFoundException("Usuário não encontrado! Id: " + id);

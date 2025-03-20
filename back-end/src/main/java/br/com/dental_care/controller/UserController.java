@@ -46,6 +46,7 @@ public class UserController {
 
   @PostMapping
   public ResponseEntity<UserDTO> insert(@Valid @RequestBody UserDTO dto){
+    logger.info("Creating new user with email: {}", dto.getEmail());
     dto = userService.save(dto);
     URI uri = ServletUriComponentsBuilder
               .fromCurrentRequest()
@@ -57,6 +58,7 @@ public class UserController {
 
   @PutMapping(path= "/{id}")
   public ResponseEntity<UserDTO> update(@Valid @RequestBody UserDTO dto, @PathVariable Long id){
+    logger.info("Updating user with id: {}, email: {}", id, dto.getEmail());
     dto = userService.update(dto,id);
     return ResponseEntity.ok(dto);
   }
