@@ -24,7 +24,7 @@ public class Dentist extends User {
   private final List<Rating> ratings = new ArrayList<>();
 
   @OneToMany(mappedBy = "dentist")
-  private List<Schedule> schedule = new ArrayList<>();
+  private final List<Schedule> schedules = new ArrayList<>();
 
   @OneToMany(mappedBy = "dentist")
   private final List<Appointment> appointments = new ArrayList<>();
