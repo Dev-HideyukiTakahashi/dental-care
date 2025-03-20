@@ -32,7 +32,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserDTO findById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado! Id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found! ID: " + id));
 
         logger.info("User found, id: {}", id);
         return UserMapper.toDTO(user);
@@ -62,14 +62,14 @@ public class UserService {
             logger.info("User updated successfully, id: {}", user.getId());
             return UserMapper.toDTO(user);
         } catch (EntityNotFoundException e) {
-            throw new ResourceNotFoundException("Usuário não encontrado! Id: " + id);
+            throw new ResourceNotFoundException("User not found! ID: " + id);
         }
     }
 
     @Transactional(propagation = Propagation.SUPPORTS)
     public void deleteById(Long id) {
         if (!userRepository.existsById(id))
-            throw new ResourceNotFoundException("Usuário não encontrado! Id: " + id);
+            throw new ResourceNotFoundException("User not found! ID: " + id);
         try {
             userRepository.deleteById(id);
             logger.info("User deleted, id: {}", id);
@@ -91,7 +91,7 @@ public class UserService {
         for (RoleDTO role : dto.getRoles()) {
             if (!roleRepository.existsById(role.getId())){
                 logger.warn("Attempted to create a user with a non-existent role");
-                throw new ResourceNotFoundException("Role não existe, id: " + role.getId());
+                throw new ResourceNotFoundException("Role does not exist, id: " + role.getId());
             }
             user.getRoles().add(RoleMapper.toEntity(role));
         }
