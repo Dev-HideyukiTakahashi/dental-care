@@ -32,8 +32,4 @@ public class Schedule {
 
   @ManyToOne
   private Dentist dentist;
-
-  @OneToMany(mappedBy = "schedule")
-  private final List<Appointment> appointments = new ArrayList<>();
-  
 }

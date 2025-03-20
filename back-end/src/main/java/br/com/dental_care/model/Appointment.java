@@ -32,9 +32,6 @@ public class Appointment {
   private Status status;
 
   @ManyToOne
-  private Schedule schedule;
-
-  @ManyToOne
   private Dentist dentist;
 
   @ManyToOne

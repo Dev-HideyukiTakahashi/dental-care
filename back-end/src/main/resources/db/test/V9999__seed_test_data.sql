@@ -70,18 +70,18 @@ INSERT INTO tb_schedule (dentist_id, unavailable_time_slot) VALUES
     (5, '2025-03-22 17:00:00');
 
 -- Insert Appointment SCHEDULED
-INSERT INTO tb_appointment (date, dentist_id, patient_id, schedule_id, status) VALUES
-    ('2025-03-20 09:00:00', 4, 2, 1, 'SCHEDULED'),
-    ('2025-03-20 14:00:00', 4, 1, 1, 'SCHEDULED'),
-    ('2025-03-21 10:00:00', 5, 2, 2, 'SCHEDULED'),
-    ('2025-03-21 15:00:00', 5, 1, 2, 'SCHEDULED');
+INSERT INTO tb_appointment (date, dentist_id, patient_id, status) VALUES
+    ('2025-03-20 09:00:00', 4, 2, 'SCHEDULED'),
+    ('2025-03-20 14:00:00', 4, 1, 'SCHEDULED'),
+    ('2025-03-21 10:00:00', 5, 2, 'SCHEDULED'),
+    ('2025-03-21 15:00:00', 5, 1, 'SCHEDULED');
 
 -- Insert Appointment CANCELLED
-INSERT INTO tb_appointment (date, dentist_id, patient_id, schedule_id, status) VALUES
-    ('2025-03-22 10:00:00', 4, 2, 1, 'CANCELLED'),
-    ('2025-03-22 13:00:00', 5, 2, 2, 'CANCELLED');
+INSERT INTO tb_appointment (date, dentist_id, patient_id, status) VALUES
+    ('2025-03-22 10:00:00', 4, 2, 'CANCELLED'),
+    ('2025-03-22 13:00:00', 5, 2, 'CANCELLED');
 
 -- Insert Appointment COMPLETED
-INSERT INTO tb_appointment (date, dentist_id, patient_id, schedule_id, status) VALUES
-    ('2025-03-23 10:00:00', 4, 1, 1, 'COMPLETED'),
-    ('2025-03-23 13:00:00', 5, 1, 2, 'COMPLETED');
+INSERT INTO tb_appointment (date, dentist_id, patient_id, status) VALUES
+    ('2025-03-23 10:00:00', 4, 1, 'COMPLETED'),
+    ('2025-03-23 13:00:00', 5, 1, 'COMPLETED');
