@@ -1,5 +1,7 @@
 package br.com.dental_care.service;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -37,7 +39,7 @@ public class UserService {
 
   @Transactional(readOnly = true)
   public Page<UserDTO> findAll(Pageable pageable){
-    Page<User> page = userRepository.findAll(pageable);
+    Page<User> page = userRepository.searchAll(pageable);
     return page.map(p -> UserMapper.toDTO(p));
   }
 
@@ -72,6 +74,4 @@ public class UserService {
       throw new DatabaseException("Database error: Data integrity rules were violated.");
     }
   }
-  
-
 }
