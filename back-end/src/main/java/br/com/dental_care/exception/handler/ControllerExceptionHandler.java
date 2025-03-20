@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
+import br.com.dental_care.exception.DatabaseException;
 import br.com.dental_care.exception.ResourceNotFoundException;
 
 @ControllerAdvice
@@ -22,7 +23,7 @@ public class ControllerExceptionHandler {
               .timestamp(Instant.now())
               .status(HttpStatus.NOT_FOUND.value())
               .error(e.getMessage())
-              .message("Not found")
+              .message("Not found error")
               .path(request.getDescription(false))
               .build();
 
@@ -41,6 +42,21 @@ public class ControllerExceptionHandler {
     e.getFieldErrors().forEach(error -> customError.addError(error));
     
     return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(customError);
+  }
+
+  @ExceptionHandler(DatabaseException.class)
+  public ResponseEntity<CustomError> handleDatabase(DatabaseException e, WebRequest request){
+    
+    CustomError customError = CustomError
+              .builder()
+              .timestamp(Instant.now())
+              .status(HttpStatus.CONFLICT.value())
+              .error(e.getMessage())
+              .message("Conflict error")
+              .path(request.getDescription(false))
+              .build();
+
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(customError);
   }
   
 }
