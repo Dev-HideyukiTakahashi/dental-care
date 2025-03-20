@@ -1,5 +1,6 @@
 package br.com.dental_care.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -7,7 +8,10 @@ import lombok.Getter;
 @Builder
 public class RoleDTO {
 
+  @Schema(description = "Role ID", example = "2")
   private Long id;
+
+  @Schema(description = "Role authority", example = "ROLE_PATIENT")
   private String authority;
 
   @Override
