@@ -22,7 +22,7 @@ public class UserDTO {
   @Email(message = "Por favor, insira um e-mail válido.")
   private String email;
 
-  @Size(min = 6, max = 10, message = "A senha deve ter entre 6 e 10 caracteres.")
+  @Size(min = 6, max = 20, message = "A senha deve ter entre 6 e 20 caracteres.")
   @Pattern(regexp = ".*[A-Z].*", message = "A senha deve conter pelo menos uma letra maiúscula.")
   @Pattern(regexp = ".*[a-z].*", message = "A senha deve conter pelo menos uma letra minúscula.")
   @Pattern(regexp = ".*[0-9].*", message = "A senha deve conter pelo menos um número.")

@@ -9,9 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.dental_care.dto.UserDTO;
 import br.com.dental_care.exception.ResourceNotFoundException;
+import br.com.dental_care.mapper.RoleMapper;
 import br.com.dental_care.mapper.UserMapper;
 import br.com.dental_care.model.User;
 import br.com.dental_care.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -25,7 +27,7 @@ public class UserService {
   @Transactional(readOnly = true)
   public UserDTO findById(Long id){
     User user = userRepository.findById(id)
-                  .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
+                  .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado! Id: " + id));
     
     logger.info("User found, id: {}", id);
     return UserMapper.toDTO(user);
@@ -36,4 +38,24 @@ public class UserService {
     Page<User> page = userRepository.findAll(pageable);
     return page.map(p -> UserMapper.toDTO(p));
   }
+
+  @Transactional
+  public UserDTO save(UserDTO dto){
+    User user = userRepository.save(UserMapper.toEntity(dto));
+    return UserMapper.toDTO(user);
+  }
+
+  @Transactional
+  public UserDTO update(UserDTO dto, Long id){  
+    try{
+      User user = userRepository.getReferenceById(id);
+      UserMapper.copyToEntity(user, dto);
+      user = userRepository.save(user);
+      return UserMapper.toDTO(user);
+    }catch(EntityNotFoundException e){
+      throw new ResourceNotFoundException("Usuário não encontrado! Id: " + id);
+    }
+  }
+  
+
 }
