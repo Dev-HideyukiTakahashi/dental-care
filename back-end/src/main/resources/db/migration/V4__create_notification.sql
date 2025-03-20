@@ -4,5 +4,6 @@ create table tb_notification (
     user_id bigint,
     message TEXT,
     PRIMARY KEY (id),
-    FOREIGN KEY (user_id) REFERENCES tb_user
+    FOREIGN KEY (user_id) REFERENCES tb_user(id) ON DELETE CASCADE
+    
 )

@@ -2,14 +2,16 @@ package br.com.dental_care.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.dental_care.dto.UserDTO;
+import br.com.dental_care.exception.DatabaseException;
 import br.com.dental_care.exception.ResourceNotFoundException;
-import br.com.dental_care.mapper.RoleMapper;
 import br.com.dental_care.mapper.UserMapper;
 import br.com.dental_care.model.User;
 import br.com.dental_care.repository.UserRepository;
@@ -54,6 +56,18 @@ public class UserService {
       return UserMapper.toDTO(user);
     }catch(EntityNotFoundException e){
       throw new ResourceNotFoundException("Usuário não encontrado! Id: " + id);
+    }
+  }
+
+  @Transactional(propagation = Propagation.SUPPORTS)
+  public void deleteById(Long id){
+    if(!userRepository.existsById(id)) 
+      throw new ResourceNotFoundException("Usuário não encontrado! Id: " + id); 
+    try{
+      userRepository.deleteById(id);
+      logger.info("User deleted, id: {}", id);
+    }catch(DataIntegrityViolationException e){
+      throw new DatabaseException("Database error: Data integrity rules were violated.");
     }
   }
   
