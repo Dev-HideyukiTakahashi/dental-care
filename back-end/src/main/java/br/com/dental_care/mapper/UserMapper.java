@@ -29,16 +29,4 @@ public class UserMapper {
     user.getRoles().forEach(role -> dto.addRole(RoleMapper.toDTO(role)));
     return dto;
   }
-
-  public static void copyToEntity(User user, UserDTO dto) {
-    user.setName(dto.getName());
-    user.setPassword(dto.getPassword());
-    user.setEmail(dto.getEmail());
-    user.setPhone(dto.getPhone());
-    user.getRoles().clear();
-
-    dto.getRoles().forEach(role -> user.getRoles().add(RoleMapper.toEntity(role)));
-  }
-
-  
 }
