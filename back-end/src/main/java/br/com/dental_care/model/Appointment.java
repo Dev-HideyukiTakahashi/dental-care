@@ -31,6 +31,8 @@ public class Appointment {
   @Enumerated(EnumType.STRING)
   private Status status;
 
+  private String description;
+
   @ManyToOne
   private Dentist dentist;
 
