@@ -41,7 +41,7 @@ public class DentistService {
 
     @Transactional(readOnly = true)
     public Page<DentistMinDTO> findAll(Pageable pageable) {
-        Page<Dentist> page = dentistRepository.findAll(pageable);
+        Page<Dentist> page = dentistRepository.searchAll(pageable);
         return page.map(p -> DentistMapper.toMinDTO(p));
     }
 

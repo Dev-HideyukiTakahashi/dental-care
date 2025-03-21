@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface DentistRepository extends JpaRepository<Dentist, Long> {
 
-//    @Query(value = "SELECT obj FROM Dentist obj JOIN FETCH obj.roles",
-//            countQuery = "SELECT COUNT(obj) FROM Dentist obj JOIN obj.roles")
-//    Page<Dentist> searchAll(Pageable pageable);
+   @Query(value = "SELECT obj FROM Dentist obj JOIN FETCH obj.roles",
+           countQuery = "SELECT COUNT(obj) FROM Dentist obj JOIN obj.roles")
+   Page<Dentist> searchAll(Pageable pageable);
 }
