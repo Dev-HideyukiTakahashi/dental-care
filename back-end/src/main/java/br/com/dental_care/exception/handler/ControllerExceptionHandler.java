@@ -2,6 +2,7 @@ package br.com.dental_care.exception.handler;
 
 import java.time.Instant;
 
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -57,6 +58,21 @@ public class ControllerExceptionHandler {
               .build();
 
     return ResponseEntity.status(HttpStatus.CONFLICT).body(customError);
+  }
+
+  @ExceptionHandler(InvalidDataAccessApiUsageException.class)
+  public ResponseEntity<CustomError> handleInvalidDataAccessApiUsage(InvalidDataAccessApiUsageException e,
+                                                                                WebRequest request){
+    CustomError customError = CustomError
+              .builder()
+              .timestamp(Instant.now())
+              .status(HttpStatus.BAD_REQUEST.value())
+              .error(e.getMessage())
+              .message("Bad request")
+              .path(request.getDescription(false))
+              .build();
+
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(customError);
   }
   
 }
