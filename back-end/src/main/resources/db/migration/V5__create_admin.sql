@@ -1,4 +1,5 @@
-create table tb_admin (
-    id bigint not null,
-    primary key (id)
-)
+CREATE TABLE tb_admin (
+    id BIGINT NOT NULL,
+    PRIMARY KEY (id),
+    CONSTRAINT fk_admin_user FOREIGN KEY (id) REFERENCES tb_user
+);

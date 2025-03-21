@@ -1,6 +1,7 @@
-create table tb_dentist (
-    id bigint not null,
-    registration_number varchar(255),
-    speciality varchar(255),
-    primary key (id)
-)
+CREATE TABLE tb_dentist (
+    id BIGINT NOT NULL,
+    registration_number VARCHAR(255),
+    speciality VARCHAR(255),
+    PRIMARY KEY (id),
+    CONSTRAINT fk_dentist_user FOREIGN KEY (id) REFERENCES tb_user
+);

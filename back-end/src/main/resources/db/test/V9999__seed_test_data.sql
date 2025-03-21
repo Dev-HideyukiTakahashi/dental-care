@@ -81,16 +81,16 @@ VALUES (5, '2025-03-22 10:00:00'),
 -- Insert Appointment SCHEDULED
 INSERT INTO tb_appointment (date, dentist_id, patient_id, status, description)
 VALUES ('2025-03-20 09:00:00', 4, 2, 'SCHEDULED', 'Consulta de rotina e limpeza dental'),
-       ('2025-03-20 14:00:00', 4, 1, 'SCHEDULED', 'Consulta para obturação de cárie'),
+       ('2025-03-20 14:00:00', 4, 3, 'SCHEDULED', 'Consulta para obturação de cárie'),
        ('2025-03-21 10:00:00', 5, 2, 'SCHEDULED', 'Consulta para avaliação de aparelho ortodôntico'),
-       ('2025-03-21 15:00:00', 5, 1, 'SCHEDULED', 'Sessão de clareamento dental');
+       ('2025-03-21 15:00:00', 5, 3, 'SCHEDULED', 'Sessão de clareamento dental');
 
 -- Insert Appointment CANCELLED
 INSERT INTO tb_appointment (date, dentist_id, patient_id, status, description)
 VALUES ('2025-03-22 10:00:00', 4, 2, 'CANCELLED', 'Tratamento de canal (cancelado pelo paciente)'),
-       ('2025-03-22 13:00:00', 5, 2, 'CANCELLED', 'Extração de dente do siso (cancelada por motivos de saúde)');
+       ('2025-03-22 13:00:00', 5, 3, 'CANCELLED', 'Extração de dente do siso (cancelada por motivos de saúde)');
 
 -- Insert Appointment COMPLETED
 INSERT INTO tb_appointment (date, dentist_id, patient_id, status, description)
-VALUES ('2025-03-23 10:00:00', 4, 1, 'COMPLETED', 'Procedimento de limpeza profunda concluído com sucesso'),
-       ('2025-03-23 13:00:00', 5, 1, 'COMPLETED', 'Consulta odontológica de rotina e aplicação de flúor concluída');
+VALUES ('2025-03-23 10:00:00', 4, 3, 'COMPLETED', 'Procedimento de limpeza profunda concluído com sucesso'),
+       ('2025-03-23 13:00:00', 5, 2, 'COMPLETED', 'Consulta odontológica de rotina e aplicação de flúor concluída');
