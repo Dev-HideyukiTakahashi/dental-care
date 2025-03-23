@@ -18,20 +18,20 @@ public class DentistMapper {
                 .build();
 
         //        entity.getRatings().forEach(rating -> dto.addRating(rating));
-        //        entity.getSchedules().forEach(schedule -> dto.addSchedule(schedule));
+        entity.getSchedules().forEach(schedule ->
+                dto.addSchedule(ScheduleMapper.toDTO(schedule)));
         entity.getRoles().forEach(role -> dto.addRole(RoleMapper.toDTO(role)));
         return dto;
     }
 
     public static DentistMinDTO toMinDTO(Dentist entity) {
+
         DentistMinDTO dto = DentistMinDTO.builder()
                 .id(entity.getId())
                 .name(entity.getName())
                 .speciality(entity.getSpeciality())
+                .registrationNumber(entity.getRegistrationNumber())
                 .build();
-
-        //        entity.getRatings().forEach(rating -> dto.addRating(rating));
-        //        entity.getSchedules().forEach(schedule -> dto.addSchedule(schedule));
         return dto;
     }
 }

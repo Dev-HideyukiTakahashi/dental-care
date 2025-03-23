@@ -16,17 +16,28 @@ public class PatientMapper {
                 .medicalHistory(entity.getMedicalHistory())
                 .build();
 
-//        entity.getAppointments().forEach(appointment -> AppointmentMapper.toDTO(appointment));
+        entity.getAppointments().forEach(appointment ->
+                dto.addAppointment(AppointmentMapper.toMinDTO(appointment)));
         entity.getRoles().forEach(role -> dto.addRole(RoleMapper.toDTO(role)));
         return dto;
     }
 
     public static PatientMinDTO toMinDTO(Patient entity) {
-        PatientMinDTO dto = PatientMinDTO.builder()
+
+        return PatientMinDTO.builder()
                 .id(entity.getId())
                 .name(entity.getName())
+                .phone(entity.getPhone())
                 .medicalHistory(entity.getMedicalHistory())
                 .build();
-        return dto;
+    }
+
+    public static Patient minToEntity(PatientMinDTO patientMinDTO) {
+
+        Patient entity = new Patient();
+        entity.setId(patientMinDTO.getId());
+        entity.setName(patientMinDTO.getName());
+        entity.setMedicalHistory(patientMinDTO.getMedicalHistory());
+        return entity;
     }
 }
