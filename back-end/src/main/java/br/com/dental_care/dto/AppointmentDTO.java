@@ -1,8 +1,7 @@
 package br.com.dental_care.dto;
 
-import br.com.dental_care.model.Dentist;
-import br.com.dental_care.model.Patient;
 import br.com.dental_care.model.enums.Status;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -27,9 +26,10 @@ public class AppointmentDTO {
   private String description;
 
   @NotBlank(message = "Dentist is required.")
-  private Dentist dentist;
+  @JsonProperty("dentist")
+  private DentistMinDTO dentistMinDTO;
 
   @NotBlank(message = "Patient is required.")
-  private Patient patient;
-  
+  @JsonProperty("patient")
+  private PatientMinDTO patientMinDTO;
 }

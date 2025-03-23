@@ -1,5 +1,6 @@
 package br.com.dental_care.dto;
 
+import br.com.dental_care.model.Appointment;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -44,14 +45,12 @@ public class PatientDTO {
     @Schema(description = "Roles assigned to the patient")
     private final List<RoleDTO> roles = new ArrayList<>();
 
+    @Schema(description = "Appointment scheduled for the patient")
+    private final List<AppointmentMinDTO> appointments = new ArrayList<>();
 
-    //    @Schema(description = "Appointment scheduled for the patient")
-    //    private final List<Appointment> appointments = new ArrayList<>();
-
-    //    public void addRating(Appointment appointment) {
-    //        appointments.add(appointment);
-    //    }
-    //
+    public void addAppointment(AppointmentMinDTO appointment) {
+        appointments.add(appointment);
+    }
 
     public void addRole(RoleDTO role) {
         roles.add(role);
