@@ -68,15 +68,16 @@ VALUES (5, '2024-03-10T10:30:00', 4, 1, 2, 'Excelente atendimento!'),
 
 -- Insert Schedule dentist id 4
 INSERT INTO tb_schedule (dentist_id, unavailable_time_slot)
-VALUES (4, '2025-03-21 09:00:00'),
-       (4, '2025-03-21 14:00:00');
+VALUES (4, '2025-12-21 09:00:00'),
+       (4, '2025-12-21 10:00:00'),
+       (4, '2025-12-21 11:00:00');
 
 -- Insert Schedule dentist id 5
 INSERT INTO tb_schedule (dentist_id, unavailable_time_slot)
-VALUES (5, '2025-03-22 10:00:00'),
-       (5, '2025-03-22 13:00:00'),
-       (5, '2025-03-22 15:00:00'),
-       (5, '2025-03-22 17:00:00');
+VALUES (5, '2025-12-22 10:00:00'),
+       (5, '2025-12-22 11:00:00'),
+       (5, '2025-12-23 15:00:00'),
+       (5, '2025-12-25 17:00:00');
 
 -- Insert Appointment SCHEDULED
 INSERT INTO tb_appointment (date, dentist_id, patient_id, status, description)

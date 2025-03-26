@@ -2,9 +2,11 @@ package br.com.dental_care.exception.handler;
 
 import java.time.Instant;
 
+import br.com.dental_care.exception.ScheduleConflictException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,7 +26,7 @@ public class ControllerExceptionHandler {
               .timestamp(Instant.now())
               .status(HttpStatus.NOT_FOUND.value())
               .error(e.getMessage())
-              .message("Not found error")
+              .message("Not Found Error")
               .path(request.getDescription(false))
               .build();
 
@@ -38,7 +40,7 @@ public class ControllerExceptionHandler {
                       Instant.now(), 
                       HttpStatus.UNPROCESSABLE_ENTITY.value(), 
                       e.getDetailMessageCode(), 
-                      "Validation error in fields", 
+                      "Validation Error in Fields",
                       request.getDescription(false));
     e.getFieldErrors().forEach(error -> customError.addError(error));
     
@@ -53,7 +55,7 @@ public class ControllerExceptionHandler {
               .timestamp(Instant.now())
               .status(HttpStatus.CONFLICT.value())
               .error(e.getMessage())
-              .message("Conflict error")
+              .message("Conflict Error")
               .path(request.getDescription(false))
               .build();
 
@@ -68,11 +70,41 @@ public class ControllerExceptionHandler {
               .timestamp(Instant.now())
               .status(HttpStatus.BAD_REQUEST.value())
               .error(e.getMessage())
-              .message("Bad request")
+              .message("Bad Request")
               .path(request.getDescription(false))
               .build();
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(customError);
+  }
+
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  public ResponseEntity<CustomError> handleHttpMessageNotReadable(HttpMessageNotReadableException e,
+                                                                     WebRequest request){
+    CustomError customError = CustomError
+            .builder()
+            .timestamp(Instant.now())
+            .status(HttpStatus.BAD_REQUEST.value())
+            .error(e.getMessage())
+            .message("Bad Request")
+            .path(request.getDescription(false))
+            .build();
+
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(customError);
+  }
+
+  @ExceptionHandler(ScheduleConflictException.class)
+  public ResponseEntity<CustomError> handleHttpMessageNotReadable(ScheduleConflictException e,
+                                                                  WebRequest request){
+    CustomError customError = CustomError
+            .builder()
+            .timestamp(Instant.now())
+            .status(HttpStatus.CONFLICT.value())
+            .error(e.getMessage())
+            .message("Conflict in data of schedule")
+            .path(request.getDescription(false))
+            .build();
+
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(customError);
   }
   
 }

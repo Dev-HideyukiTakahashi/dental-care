@@ -3,6 +3,8 @@ package br.com.dental_care.mapper;
 import br.com.dental_care.dto.AppointmentDTO;
 import br.com.dental_care.dto.AppointmentMinDTO;
 import br.com.dental_care.model.Appointment;
+import br.com.dental_care.model.Dentist;
+import br.com.dental_care.model.Patient;
 
 public class AppointmentMapper {
 
@@ -29,15 +31,15 @@ public class AppointmentMapper {
                 .build();
     }
 
-    public static Appointment toEntity(AppointmentDTO dto) {
+    public static Appointment toEntity(AppointmentDTO dto, Dentist dentist, Patient patient) {
 
         Appointment entity = new Appointment();
         entity.setId(dto.getId());
         entity.setDate(dto.getDate());
         entity.setStatus(dto.getStatus());
         entity.setDescription(dto.getDescription());
-        //         entity.setDentist(DentistMapper.minToEntity(dto.getDentistMinDTO()));
-        //         entity.setPatient(PatientMapper.minToEntity(dto.getPatientMinDTO()));
+        entity.setDentist(dentist);
+        entity.setPatient(patient);
         return entity;
     }
 }

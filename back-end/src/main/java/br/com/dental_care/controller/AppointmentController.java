@@ -20,10 +20,11 @@ import java.net.URI;
 public class AppointmentController {
 
     private final AppointmentService appointmentService;
-    private final Logger logger = LoggerFactory.getLogger(DentistController.class);
+    private final Logger logger = LoggerFactory.getLogger(AppointmentController.class);
 
     @PostMapping
     public ResponseEntity<AppointmentDTO> createAppointment(@Valid @RequestBody AppointmentDTO dto){
+        logger.info("Creating new appointment");
         dto = appointmentService.createAppointment(dto);
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()

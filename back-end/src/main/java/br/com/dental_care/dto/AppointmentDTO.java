@@ -25,11 +25,9 @@ public class AppointmentDTO {
   @NotBlank(message = "Description is required.")
   private String description;
 
-  @NotBlank(message = "Dentist is required.")
   @JsonProperty("dentist")
   private DentistMinDTO dentistMinDTO;
 
-  @NotBlank(message = "Patient is required.")
   @JsonProperty("patient")
   private PatientMinDTO patientMinDTO;
 }
