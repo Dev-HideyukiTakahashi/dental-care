@@ -52,7 +52,6 @@ Este sistema de agendamento odontológico facilita a marcação de consultas, o 
 
 - **GitHub** para versionamento e colaboração.
 - **GitHub Actions** para integração contínua e deploy automatizado.
-- **Docker** Para criar ambientes isolados e garantir que a aplicação seja executada de forma consistente em qualquer máquina ou ambiente, facilitando o deploy e a escalabilidade.
 - **Trello** para gestão de projeto.
 
 ## Como Rodar o Projeto
