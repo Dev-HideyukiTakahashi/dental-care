@@ -8,6 +8,7 @@ import br.com.dental_care.model.Appointment;
 import br.com.dental_care.model.Dentist;
 import br.com.dental_care.model.Patient;
 import br.com.dental_care.model.Schedule;
+import br.com.dental_care.model.enums.Status;
 import br.com.dental_care.repository.AppointmentRepository;
 import br.com.dental_care.repository.DentistRepository;
 import br.com.dental_care.repository.PatientRepository;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -39,7 +41,9 @@ public class AppointmentService {
         if (isDentistAvailable) {
             Appointment appointment = AppointmentMapper.toEntity(dto, dentist, patient);
             appointment = appointmentRepository.save(appointment);
-            createSchedule(appointment);
+            Schedule schedule = createSchedule(appointment);
+            dentist.getSchedules().add(schedule);
+            logger.info("Schedule successfully added to the dentist's schedule list.");
             logger.info("Appointment created, id: {}", appointment.getId());
             return AppointmentMapper.toDTO(appointment);
         }
@@ -82,11 +86,13 @@ public class AppointmentService {
         return true;
     }
 
-    private void createSchedule(Appointment appointment) {
+    private Schedule createSchedule(Appointment appointment) {
         Schedule schedule = new Schedule();
         schedule.setDentist(appointment.getDentist());
         schedule.setUnavailableTimeSlot(appointment.getDate());
         scheduleRepository.save(schedule);
+        logger.info("Schedule created, id: {}", schedule.getId());
+        return schedule;
     }
 
     @Transactional(readOnly = true)
@@ -98,4 +104,36 @@ public class AppointmentService {
     }
 
 
+    @Transactional
+    public AppointmentDTO cancelAppointment(Long id) {
+        Appointment appointment = validateAppointment(id);
+        appointment.setStatus(Status.CANCELED);
+        deleteSchedule(appointment);
+        logger.info("Appointment canceled, id: {}", appointment.getId());
+        return AppointmentMapper.toDTO(appointment);
+    }
+
+    private void deleteSchedule(Appointment appointment) {
+        logger.info("Initiating schedule deletion process.");
+        List<Schedule> dentistSchedules = appointment.getDentist().getSchedules();
+        for (Schedule schedule : dentistSchedules) {
+            if (schedule.getUnavailableTimeSlot().isEqual(appointment.getDate())) {
+                scheduleRepository.deleteById(schedule.getId());
+                logger.info("Schedule deleted, id: {}", schedule.getId());
+                break;
+            }
+        }
+    }
+
+    private Appointment validateAppointment(Long id) {
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found! Id: " + id));
+
+        if (appointment.getStatus().getValue().equals("Canceled") ||
+            appointment.getStatus().getValue().equals("Completed"))
+            throw new ScheduleConflictException(
+                    "Appointments that have already been cancelled or completed cannot be canceled.");
+
+        return appointment;
+    }
 }

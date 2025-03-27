@@ -1,4 +1,4 @@
-CREATE TYPE appointment_status AS ENUM ('CANCELLED','COMPLETED','SCHEDULED');
+CREATE TYPE appointment_status AS ENUM ('CANCELED','COMPLETED','SCHEDULED');
 
 create table tb_appointment (
     date TIMESTAMP WITHOUT TIME ZONE,

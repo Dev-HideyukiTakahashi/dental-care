@@ -100,7 +100,7 @@ public class ControllerExceptionHandler {
             .timestamp(Instant.now())
             .status(HttpStatus.CONFLICT.value())
             .error(e.getMessage())
-            .message("Conflict in data of schedule")
+            .message("Schedule data conflict")
             .path(request.getRequestURI())
             .build();
 

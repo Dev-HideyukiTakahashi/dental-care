@@ -3,7 +3,7 @@ package br.com.dental_care.model.enums;
 public enum Status {
 
   SCHEDULED("Scheduled"), 
-  CANCELLED("Cancelled"), 
+  CANCELED("Canceled"),
   COMPLETED("Completed");
 
   private final String value;

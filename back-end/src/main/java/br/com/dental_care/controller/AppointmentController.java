@@ -49,7 +49,7 @@ public class AppointmentController {
                             schema = @Schema(implementation = CustomError.class)))
     })
     @PostMapping
-    public ResponseEntity<AppointmentDTO> createAppointment(@Valid @RequestBody AppointmentDTO dto){
+    public ResponseEntity<AppointmentDTO> createAppointment(@Valid @RequestBody AppointmentDTO dto) {
         logger.info("Creating new appointment");
         dto = appointmentService.createAppointment(dto);
         URI uri = ServletUriComponentsBuilder
@@ -80,9 +80,16 @@ public class AppointmentController {
                             schema = @Schema(implementation = CustomError.class)))
     })
     @GetMapping(path = "/{id}")
-    public ResponseEntity<AppointmentDTO> findById(@PathVariable  Long id){
+    public ResponseEntity<AppointmentDTO> findById(@PathVariable Long id) {
         logger.info("Searching appointment with id: {}", id);
         AppointmentDTO dto = appointmentService.findById(id);
+        return ResponseEntity.ok(dto);
+    }
+
+    @PutMapping(path = "/{id}")
+    public ResponseEntity<AppointmentDTO> cancelAppointment(@PathVariable Long id){
+        logger.info("Starting the cancellation process for appointment id: {}", id);
+        AppointmentDTO dto = appointmentService.cancelAppointment(id);
         return ResponseEntity.ok(dto);
     }
 }
