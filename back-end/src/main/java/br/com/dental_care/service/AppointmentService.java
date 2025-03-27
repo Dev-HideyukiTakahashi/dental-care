@@ -72,7 +72,7 @@ public class AppointmentService {
                 throw new ScheduleConflictException("An appointment already " +
                                                     "exists for this time slot.");
 
-            /**
+            /*
              Checks if the desired time falls within the 1-hour window
              before or after an existing appointment's time.
              If the time is within this window, a ScheduleConflictException is thrown
