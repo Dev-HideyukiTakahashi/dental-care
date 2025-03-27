@@ -44,6 +44,9 @@ public class AppointmentController {
             @ApiResponse(responseCode = "404", description = "Dentist or Patient not found",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CustomError.class))),
+            @ApiResponse(responseCode = "409", description = "Schedule data conflict",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CustomError.class))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CustomError.class)))
@@ -75,6 +78,9 @@ public class AppointmentController {
             @ApiResponse(responseCode = "404", description = "Appointment not found",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CustomError.class))),
+            @ApiResponse(responseCode = "409", description = "Schedule data conflict",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CustomError.class))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CustomError.class)))
@@ -86,6 +92,29 @@ public class AppointmentController {
         return ResponseEntity.ok(dto);
     }
 
+    @Operation(summary = "Cancel an appointment",
+            description = "Cancel an existing appointment and remove it from the dentist's schedule",
+            tags = "Appointment")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Appointment successfully canceled.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = AppointmentDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Bad Request",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CustomError.class))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CustomError.class))),
+            @ApiResponse(responseCode = "404", description = "Dentist or Patient not found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CustomError.class))),
+            @ApiResponse(responseCode = "409", description = "Schedule data conflict",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CustomError.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CustomError.class)))
+    })
     @PutMapping(path = "/{id}/cancel")
     public ResponseEntity<AppointmentDTO> cancelAppointment(@PathVariable Long id) {
         logger.info("Starting the cancellation process for appointment id: {}", id);
@@ -93,6 +122,28 @@ public class AppointmentController {
         return ResponseEntity.ok(dto);
     }
 
+    @Operation(summary = "Updated an appointment",
+            description = "Update the date/time of an existing appointment in the dentist's schedule." +
+                          " The new date must be within 1 hour before or after the currently " +
+                          "scheduled time.",
+            tags = "Appointment")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Appointment successfully updated.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = AppointmentDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Bad Request",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CustomError.class))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CustomError.class))),
+            @ApiResponse(responseCode = "404", description = "Dentist or Patient not found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CustomError.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CustomError.class)))
+    })
     @PutMapping(path = "/{id}")
     public ResponseEntity<AppointmentDTO> updateAppointmentDateTime(
             @PathVariable Long id,
