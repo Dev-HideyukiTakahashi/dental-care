@@ -17,12 +17,11 @@ public class ScheduleDTO {
     @Schema(description = "Time slots that are unavailable for scheduling")
     private LocalDateTime unavailableTimeSlot;
 
-    @Schema(description = "The start date and time of the dentist's absence",
-            example = "2025-12-14T10:00:00")
+    @Schema(description = "Start date and time of the dentist's absence period.",
+            example = "2025-12-20T09:00:00")
     private LocalDateTime absenceStart;
 
-    @Schema(description = "The end date and time of the dentist's absence",
-            example = "2025-12-14T12:00:00")
+    @Schema(description = "End date and time of the dentist's absence period.",
+            example = "2025-12-20T12:00:00")
     private LocalDateTime absenceEnd;
-
 }

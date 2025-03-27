@@ -11,6 +11,8 @@ public class ScheduleMapper {
         return ScheduleDTO.builder()
                 .id(entity.getId())
                 .unavailableTimeSlot(entity.getUnavailableTimeSlot())
+                .absenceStart(entity.getAbsenceStart())
+                .absenceEnd(entity.getAbsenceEnd())
                 .build();
     }
 
