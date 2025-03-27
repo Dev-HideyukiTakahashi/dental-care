@@ -1,6 +1,6 @@
 package br.com.dental_care.dto;
 
-import br.com.dental_care.model.enums.Status;
+import br.com.dental_care.model.enums.AppointmentStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.FutureOrPresent;
@@ -24,7 +24,7 @@ public class AppointmentDTO {
   private LocalDateTime date;
 
   @Schema(description = "Status of appointment", example = "SCHEDULED")
-  private Status status;
+  private AppointmentStatus status;
 
   @NotBlank(message = "Description is required.")
   @Schema(description = "Description of appointment", example = "Routine check-up with cleaning")

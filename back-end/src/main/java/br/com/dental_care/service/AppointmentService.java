@@ -8,7 +8,7 @@ import br.com.dental_care.model.Appointment;
 import br.com.dental_care.model.Dentist;
 import br.com.dental_care.model.Patient;
 import br.com.dental_care.model.Schedule;
-import br.com.dental_care.model.enums.Status;
+import br.com.dental_care.model.enums.AppointmentStatus;
 import br.com.dental_care.repository.AppointmentRepository;
 import br.com.dental_care.repository.DentistRepository;
 import br.com.dental_care.repository.PatientRepository;
@@ -69,15 +69,8 @@ public class AppointmentService {
 
             boolean existingAppointment = schedule.getUnavailableTimeSlot().equals(date);
             if (existingAppointment)
-                throw new ScheduleConflictException("An appointment already " +
-                                                    "exists for this time slot.");
+                throw new ScheduleConflictException("An appointment already exists for this time slot.");
 
-            /*
-             Checks if the desired time falls within the 1-hour window
-             before or after an existing appointment's time.
-             If the time is within this window, a ScheduleConflictException is thrown
-             indicating a scheduling conflict.me falls within the conflicting time slot
-             */
             LocalDateTime minusOneHour = schedule.getUnavailableTimeSlot().minusHours(1);
             LocalDateTime plusOneHour = schedule.getUnavailableTimeSlot().plusHours(1);
             if (date.isAfter(minusOneHour) && date.isBefore(plusOneHour))
@@ -107,7 +100,7 @@ public class AppointmentService {
     @Transactional
     public AppointmentDTO cancelAppointment(Long id) {
         Appointment appointment = validateAppointment(id);
-        appointment.setStatus(Status.CANCELED);
+        appointment.setStatus(AppointmentStatus.CANCELED);
         deleteSchedule(appointment);
         logger.info("Appointment canceled, id: {}", appointment.getId());
         return AppointmentMapper.toDTO(appointment);
@@ -129,11 +122,27 @@ public class AppointmentService {
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Appointment not found! Id: " + id));
 
-        if (appointment.getStatus().getValue().equals("Canceled") ||
-            appointment.getStatus().getValue().equals("Completed"))
+        if (appointment.getStatus() == AppointmentStatus.CANCELED ||
+            appointment.getStatus() == AppointmentStatus.COMPLETED )
             throw new ScheduleConflictException(
                     "Appointments that have already been cancelled or completed cannot be canceled.");
 
         return appointment;
+    }
+
+    @Transactional
+    public AppointmentDTO updateAppointmentDateTime(Long id) {
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found! Id: " + id));
+
+        Dentist dentist = validateDentist(appointment.getDentist().getId());
+        boolean isDentistAvailable = checkDentistAvailability(dentist, appointment.getDate());
+
+        if (isDentistAvailable && appointment.getDate().isAfter(LocalDateTime.now())) {
+            deleteSchedule(appointment);
+            createSchedule(appointment);
+            logger.info("Appointment date/time updated, id: {}", appointment.getId());
+        }
+        return AppointmentMapper.toDTO(appointment);
     }
 }

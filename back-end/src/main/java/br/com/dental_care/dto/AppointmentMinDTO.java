@@ -1,6 +1,6 @@
 package br.com.dental_care.dto;
 
-import br.com.dental_care.model.enums.Status;
+import br.com.dental_care.model.enums.AppointmentStatus;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -12,7 +12,7 @@ public class AppointmentMinDTO {
 
   private Long id;
   private LocalDateTime date;
-  private Status status;
+  private AppointmentStatus status;
   private String description;
   private String dentist;
 }

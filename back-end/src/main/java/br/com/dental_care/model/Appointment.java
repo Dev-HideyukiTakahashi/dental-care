@@ -2,7 +2,7 @@ package br.com.dental_care.model;
 
 import java.time.LocalDateTime;
 
-import br.com.dental_care.model.enums.Status;
+import br.com.dental_care.model.enums.AppointmentStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -29,7 +29,7 @@ public class Appointment {
   private LocalDateTime date;
 
   @Enumerated(EnumType.STRING)
-  private Status status;
+  private AppointmentStatus status;
 
   private String description;
 
