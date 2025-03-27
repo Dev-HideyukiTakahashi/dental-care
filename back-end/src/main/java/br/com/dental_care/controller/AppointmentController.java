@@ -96,7 +96,7 @@ public class AppointmentController {
     @PutMapping(path = "/{id}")
     public ResponseEntity<AppointmentDTO> updateAppointmentDateTime(
             @PathVariable Long id,
-            @RequestBody AppointmentDTO dto) {
+            @Valid @RequestBody AppointmentDTO dto) {
         logger.info("Starting update date/time process for appointment id: {}", id);
         dto = appointmentService.updateAppointmentDateTime(id, dto);
         return ResponseEntity.ok(dto);
