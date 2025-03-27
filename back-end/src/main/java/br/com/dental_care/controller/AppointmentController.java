@@ -86,10 +86,19 @@ public class AppointmentController {
         return ResponseEntity.ok(dto);
     }
 
-    @PutMapping(path = "/{id}")
-    public ResponseEntity<AppointmentDTO> cancelAppointment(@PathVariable Long id){
+    @PutMapping(path = "/{id}/cancel")
+    public ResponseEntity<AppointmentDTO> cancelAppointment(@PathVariable Long id) {
         logger.info("Starting the cancellation process for appointment id: {}", id);
         AppointmentDTO dto = appointmentService.cancelAppointment(id);
+        return ResponseEntity.ok(dto);
+    }
+
+    @PutMapping(path = "/{id}")
+    public ResponseEntity<AppointmentDTO> updateAppointmentDateTime(
+            @PathVariable Long id,
+            @RequestBody AppointmentDTO dto) {
+        logger.info("Starting update date/time process for appointment id: {}", id);
+        dto = appointmentService.updateAppointmentDateTime(id, dto);
         return ResponseEntity.ok(dto);
     }
 }

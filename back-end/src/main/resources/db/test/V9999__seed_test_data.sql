@@ -73,16 +73,14 @@ VALUES (4, '2025-12-20 09:00:00'),
        (4, '2025-12-23 10:00:00');
 
 -- Insert Schedule dentist id 5
-INSERT INTO tb_schedule (dentist_id, unavailable_time_slot)
-VALUES (5, '2025-12-21 10:00:00'),
-       (5, '2025-12-21 15:00:00'),
-       (5, '2025-03-23 13:00:00');
+INSERT INTO tb_schedule (dentist_id, unavailable_time_slot) VALUES
+       (5, '2025-12-21 15:00:00');
 
 -- Insert Appointment SCHEDULED
 INSERT INTO tb_appointment (date, dentist_id, patient_id, status, description)
 VALUES ('2025-12-20 09:00:00', 4, 2, 'SCHEDULED', 'Consulta de rotina e limpeza dental'),
        ('2025-12-20 14:00:00', 4, 3, 'SCHEDULED', 'Consulta para obturação de cárie'),
-       ('2025-12-21 10:00:00', 5, 2, 'SCHEDULED', 'Consulta para avaliação de aparelho ortodôntico'),
+       ('2025-12-21 10:00:00', 4, 2, 'SCHEDULED', 'Consulta para avaliação de aparelho ortodôntico'),
        ('2025-12-21 15:00:00', 5, 3, 'SCHEDULED', 'Sessão de clareamento dental');
 
 -- Insert Appointment CANCELLED

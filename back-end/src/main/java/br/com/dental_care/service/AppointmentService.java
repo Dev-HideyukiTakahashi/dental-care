@@ -123,23 +123,23 @@ public class AppointmentService {
                 .orElseThrow(() -> new ResourceNotFoundException("Appointment not found! Id: " + id));
 
         if (appointment.getStatus() == AppointmentStatus.CANCELED ||
-            appointment.getStatus() == AppointmentStatus.COMPLETED )
-            throw new ScheduleConflictException(
-                    "Appointments that have already been cancelled or completed cannot be canceled.");
+            appointment.getStatus() == AppointmentStatus.COMPLETED)
+            throw new ScheduleConflictException("The appointment has already been completed or canceled.");
 
         return appointment;
     }
 
     @Transactional
-    public AppointmentDTO updateAppointmentDateTime(Long id) {
-        Appointment appointment = appointmentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found! Id: " + id));
+    public AppointmentDTO updateAppointmentDateTime(Long id, AppointmentDTO dto) {
+        Appointment appointment = validateAppointment(id);
 
+        validatePatient(appointment.getPatient().getId());
         Dentist dentist = validateDentist(appointment.getDentist().getId());
-        boolean isDentistAvailable = checkDentistAvailability(dentist, appointment.getDate());
+        boolean isDentistAvailable = checkDentistAvailability(dentist, dto.getDate());
 
         if (isDentistAvailable && appointment.getDate().isAfter(LocalDateTime.now())) {
             deleteSchedule(appointment);
+            appointment.setDate(dto.getDate());
             createSchedule(appointment);
             logger.info("Appointment date/time updated, id: {}", appointment.getId());
         }
