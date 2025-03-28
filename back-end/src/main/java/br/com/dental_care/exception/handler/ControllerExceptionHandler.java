@@ -1,6 +1,7 @@
 package br.com.dental_care.exception.handler;
 
 import br.com.dental_care.exception.DatabaseException;
+import br.com.dental_care.exception.InvalidDateRangeException;
 import br.com.dental_care.exception.ResourceNotFoundException;
 import br.com.dental_care.exception.ScheduleConflictException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,93 +18,108 @@ import java.time.Instant;
 @ControllerAdvice
 public class ControllerExceptionHandler {
 
-  @ExceptionHandler(ResourceNotFoundException.class)
-  public ResponseEntity<CustomError> handleNotFound(ResourceNotFoundException e, HttpServletRequest request){
-    
-    CustomError customError = CustomError
-              .builder()
-              .timestamp(Instant.now())
-              .status(HttpStatus.NOT_FOUND.value())
-              .error(e.getMessage())
-              .message("Not Found Error")
-              .path(request.getRequestURI())
-              .build();
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<CustomError> handleNotFound(ResourceNotFoundException e, HttpServletRequest request) {
 
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(customError);
-  }
+        CustomError customError = CustomError
+                .builder()
+                .timestamp(Instant.now())
+                .status(HttpStatus.NOT_FOUND.value())
+                .error(e.getMessage())
+                .message("Not Found Error")
+                .path(request.getRequestURI())
+                .build();
 
-  @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<ValidationError> handleValidation(MethodArgumentNotValidException e,
-                                                          HttpServletRequest request){
-    ValidationError customError = new ValidationError(
-                      Instant.now(), 
-                      HttpStatus.UNPROCESSABLE_ENTITY.value(), 
-                      e.getDetailMessageCode(), 
-                      "Validation Error in Fields",
-                      request.getRequestURI());
-    e.getFieldErrors().forEach(error -> customError.addError(error));
-    
-    return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(customError);
-  }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(customError);
+    }
 
-  @ExceptionHandler(DatabaseException.class)
-  public ResponseEntity<CustomError> handleDatabase(DatabaseException e, HttpServletRequest request){
-    
-    CustomError customError = CustomError
-              .builder()
-              .timestamp(Instant.now())
-              .status(HttpStatus.CONFLICT.value())
-              .error(e.getMessage())
-              .message("Conflict Error")
-              .path(request.getRequestURI())
-              .build();
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ValidationError> handleValidation(MethodArgumentNotValidException e,
+                                                            HttpServletRequest request) {
+        ValidationError customError = new ValidationError(
+                Instant.now(),
+                HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                e.getDetailMessageCode(),
+                "Validation Error in Fields",
+                request.getRequestURI());
+        e.getFieldErrors().forEach(error -> customError.addError(error));
 
-    return ResponseEntity.status(HttpStatus.CONFLICT).body(customError);
-  }
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(customError);
+    }
 
-  @ExceptionHandler(InvalidDataAccessApiUsageException.class)
-  public ResponseEntity<CustomError> handleInvalidDataAccessApiUsage(InvalidDataAccessApiUsageException e,
-                                                                     HttpServletRequest request){
-    CustomError customError = CustomError
-              .builder()
-              .timestamp(Instant.now())
-              .status(HttpStatus.BAD_REQUEST.value())
-              .error(e.getMessage())
-              .message("Bad Request")
-              .path(request.getRequestURI())
-              .build();
+    @ExceptionHandler(DatabaseException.class)
+    public ResponseEntity<CustomError> handleDatabase(DatabaseException e, HttpServletRequest request) {
 
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(customError);
-  }
+        CustomError customError = CustomError
+                .builder()
+                .timestamp(Instant.now())
+                .status(HttpStatus.CONFLICT.value())
+                .error(e.getMessage())
+                .message("Conflict Error")
+                .path(request.getRequestURI())
+                .build();
 
-  @ExceptionHandler(HttpMessageNotReadableException.class)
-  public ResponseEntity<CustomError> handleHttpMessageNotReadable(HttpMessageNotReadableException e,
-                                                                  HttpServletRequest request){
-    CustomError customError = CustomError
-            .builder()
-            .timestamp(Instant.now())
-            .status(HttpStatus.BAD_REQUEST.value())
-            .error(e.getMessage())
-            .message("Bad Request")
-            .path(request.getRequestURI())
-            .build();
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(customError);
+    }
 
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(customError);
-  }
+    @ExceptionHandler(InvalidDataAccessApiUsageException.class)
+    public ResponseEntity<CustomError> handleInvalidDataAccessApiUsage(InvalidDataAccessApiUsageException e,
+                                                                       HttpServletRequest request) {
+        CustomError customError = CustomError
+                .builder()
+                .timestamp(Instant.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error(e.getMessage())
+                .message("Bad Request")
+                .path(request.getRequestURI())
+                .build();
 
-  @ExceptionHandler(ScheduleConflictException.class)
-  public ResponseEntity<CustomError> handleHttpMessageNotReadable(ScheduleConflictException e,
-                                                                  HttpServletRequest request){
-    CustomError customError = CustomError
-            .builder()
-            .timestamp(Instant.now())
-            .status(HttpStatus.CONFLICT.value())
-            .error(e.getMessage())
-            .message("Schedule data conflict")
-            .path(request.getRequestURI())
-            .build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(customError);
+    }
 
-    return ResponseEntity.status(HttpStatus.CONFLICT).body(customError);
-  }
-  
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<CustomError> handleHttpMessageNotReadable(HttpMessageNotReadableException e,
+                                                                    HttpServletRequest request) {
+        CustomError customError = CustomError
+                .builder()
+                .timestamp(Instant.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error(e.getMessage())
+                .message("Bad Request")
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(customError);
+    }
+
+    @ExceptionHandler(ScheduleConflictException.class)
+    public ResponseEntity<CustomError> handleHttpMessageNotReadable(ScheduleConflictException e,
+                                                                    HttpServletRequest request) {
+        CustomError customError = CustomError
+                .builder()
+                .timestamp(Instant.now())
+                .status(HttpStatus.CONFLICT.value())
+                .error(e.getMessage())
+                .message("Schedule data conflict")
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(customError);
+    }
+
+    @ExceptionHandler(InvalidDateRangeException.class)
+    public ResponseEntity<CustomError> handleHttpMessageNotReadable(InvalidDateRangeException e,
+                                                                    HttpServletRequest request) {
+        CustomError customError = CustomError
+                .builder()
+                .timestamp(Instant.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error(e.getMessage())
+                .message("Invalid date range")
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(customError);
+    }
+
 }
