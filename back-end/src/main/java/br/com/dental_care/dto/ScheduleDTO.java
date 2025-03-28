@@ -14,7 +14,7 @@ public class ScheduleDTO {
             Schema.AccessMode.READ_ONLY)
     private Long id;
 
-    @Schema(description = "Time slots that are unavailable for scheduling")
+    @Schema(description = "Time slots that are unavailable for scheduling", example = "null")
     private LocalDateTime unavailableTimeSlot;
 
     @Schema(description = "Start date and time of the dentist's absence period.",
