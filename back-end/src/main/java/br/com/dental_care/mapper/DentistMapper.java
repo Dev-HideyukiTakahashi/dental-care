@@ -15,9 +15,9 @@ public class DentistMapper {
                 .phone(entity.getPhone())
                 .speciality(entity.getSpeciality())
                 .registrationNumber(entity.getRegistrationNumber())
+                .score(entity.getScore())
                 .build();
 
-        //        entity.getRatings().forEach(rating -> dto.addRating(rating));
         entity.getSchedules().forEach(schedule ->
                 dto.addSchedule(ScheduleMapper.toDTO(schedule)));
         entity.getRoles().forEach(role -> dto.addRole(RoleMapper.toDTO(role)));

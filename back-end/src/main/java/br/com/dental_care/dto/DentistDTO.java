@@ -26,6 +26,10 @@ public class DentistDTO {
     @NotBlank(message = "Registration number is required.")
     private String registrationNumber;
 
+    @Schema(description = "Score avarage of dentist rating", example = "8")
+    private Integer score;
+
+
     @Schema(description = "Name of the dentist", example = "John Doe")
     @NotBlank(message = "Name is required.")
     private String name;
@@ -49,9 +53,9 @@ public class DentistDTO {
     @Schema(description = "Roles assigned to the dentist")
     private final List<RoleDTO> roles = new ArrayList<>();
 
-//    @Schema(description = "Ratings assigned to the dentist")
-//    private final List<RatingDTO> ratings = new ArrayList<>();
-//
+    @Schema(description = "Ratings assigned to the dentist")
+    private final List<RatingMinDTO> ratings = new ArrayList<>();
+
     @Schema(description = "Schedules assigned to the dentist")
     private final List<ScheduleDTO> schedules = new ArrayList<>();
 
@@ -59,10 +63,6 @@ public class DentistDTO {
         roles.add(role);
     }
 
-//    public void addRating(RatingDTO rating) {
-//        ratings.add(rating);
-//    }
-//
     public void addSchedule(ScheduleDTO schedule) {
         schedules.add(schedule);
     }
