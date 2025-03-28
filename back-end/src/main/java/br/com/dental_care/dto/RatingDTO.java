@@ -1,5 +1,6 @@
 package br.com.dental_care.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -22,10 +23,11 @@ public class RatingDTO {
   private String comment;
 
   @Schema(description = "Date and time when the rating was recorded", example = "2025-12-27T15:30:00")
+  @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
   private LocalDateTime date;
 
   @Schema(description = "Indicates if the appointment has already been rated", example = "false")
-  private boolean hasBeenRated;
+  private boolean isRated;
 
   @Schema(description = "Identifier of the patient who made the rating", example = "2")
   private Long patientId;
@@ -33,7 +35,7 @@ public class RatingDTO {
   @Schema(description = "Identifier of the dentist being rated", example = "4")
   private Long dentistId;
 
-  @Schema(description = "Identifier of the appointment associated with the rating", example = "7")
+  @Schema(description = "Identifier of the appointment associated with the rating", example = "11")
   private Long appointmentId;
 
   @Override
