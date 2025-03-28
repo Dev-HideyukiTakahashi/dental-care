@@ -1,18 +1,13 @@
 package br.com.dental_care.model;
 
-import java.time.LocalDateTime;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter @Setter
@@ -28,9 +23,10 @@ public class Rating {
   private String comment;
 
   @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
+  @CreationTimestamp
   private LocalDateTime date;
 
-  private boolean hasBeenRated;
+  private boolean isRated;
 
   @ManyToOne()
   private Patient patient;
