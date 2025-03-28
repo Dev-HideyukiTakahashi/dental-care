@@ -31,6 +31,7 @@ public class DentistMapper {
                 .name(entity.getName())
                 .speciality(entity.getSpeciality())
                 .registrationNumber(entity.getRegistrationNumber())
+                .score(entity.getScore())
                 .build();
         return dto;
     }
