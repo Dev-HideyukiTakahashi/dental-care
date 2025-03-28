@@ -20,4 +20,6 @@ public class DentistMinDTO {
 
     @Schema(description = "Dentist's registration number", example = "DR12345", accessMode = Schema.AccessMode.READ_ONLY)
     private String registrationNumber;
+
+    private Integer score;
 }
