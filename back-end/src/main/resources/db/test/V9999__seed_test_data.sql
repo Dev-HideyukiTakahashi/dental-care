@@ -90,8 +90,8 @@ VALUES ('2025-02-23 10:00:00', 4, 2, 'COMPLETED', 'Procedimento de limpeza profu
        ('2025-02-15 09:00:00', 5, 3, 'COMPLETED', 'Avaliação inicial e planejamento de tratamento');
 
 -- Insert Ratings
-INSERT INTO TB_RATING (SCORE, DATE, DENTIST_ID, PATIENT_ID, APPOINTMENT_ID, COMMENT)
-VALUES (10, '2024-03-10T10:30:00', 4, 2, 7, 'Excelente atendimento!'),
-       (7, '2024-03-12T14:45:00', 4, 2, 8, 'Muito bom, mas poderia melhorar o tempo de espera.'),
-       (5, '2024-03-15T09:15:00', 5, 3, 9, 'Atendimento razoável, esperava mais.'),
-       (8, '2024-03-18T16:00:00', 5, 3, 10, 'Ótima experiência, super recomendo!');
+INSERT INTO TB_RATING (SCORE, DATE, IS_RATED, DENTIST_ID, PATIENT_ID, APPOINTMENT_ID, COMMENT)
+VALUES (10, '2024-03-10T10:30:00', true, 4, 2, 7, 'Excelente atendimento!'),
+       (7, '2024-03-12T14:45:00', true, 4, 2, 8, 'Muito bom, mas poderia melhorar o tempo de espera.'),
+       (5, '2024-03-15T09:15:00', true, 5, 3, 9, 'Atendimento razoável, esperava mais.'),
+       (8, '2024-03-18T16:00:00', true, 5, 3, 10, 'Ótima experiência, super recomendo!');
