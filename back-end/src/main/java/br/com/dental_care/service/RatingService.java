@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -40,10 +41,11 @@ public class RatingService {
         Rating rating = RatingMapper.toEntity(dto, dentist, patient, appointment);
         rating = ratingRepository.save(rating);
 
+        updateAverageRating(dentist, rating);
+
         logger.info("Rating successfully created for dentist with ID: {}", dto.getDentistId());
         return RatingMapper.toDTO(rating);
     }
-
 
     private void validateAlreadyRated(RatingDTO dto) {
         Optional<Rating> rating = ratingRepository.findByAppointment_Id(dto.getAppointmentId());
@@ -82,4 +84,15 @@ public class RatingService {
 
         return patientRepository.getReferenceById(patientId);
     }
+
+    private void updateAverageRating(Dentist dentist, Rating newRating) {
+        dentist.getRatings().add(newRating);
+        double sum = 0;
+        for (Rating rating : dentist.getRatings()) {
+            sum += rating.getScore();
+        }
+        int average = (int) Math.ceil(sum / dentist.getRatings().size());
+        dentist.setScore(average);
+    }
+
 }
