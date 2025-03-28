@@ -28,4 +28,12 @@ public class ScheduleController {
 
         return ResponseEntity.ok(dto);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> removeDentistAbsence(@PathVariable Long id) {
+        logger.info("Deleting absence schedule for dentist with id: {}", id);
+        scheduleService.removeDentistAbsence(id);
+
+        return ResponseEntity.noContent().build();
+    }
 }

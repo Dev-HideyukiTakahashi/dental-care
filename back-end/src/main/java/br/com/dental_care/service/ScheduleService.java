@@ -92,7 +92,7 @@ public class ScheduleService {
         //Check if the appointment start time falls within the dentist's absence period
         boolean isOverlappingWithExistingAppointment =
                 (appointmentStart.isAfter(absenceStart) || appointmentStart.isEqual(absenceStart)) &&
-                (appointmentStart.isBefore(absenceEnd)  || appointmentStart.isEqual(absenceEnd));
+                (appointmentStart.isBefore(absenceEnd) || appointmentStart.isEqual(absenceEnd));
 
         // Checks if the dentist's absence start time falls within the period of an existing appointment.
         boolean isDuringAppointmentPeriod =
@@ -100,7 +100,6 @@ public class ScheduleService {
 
         return isOverlappingWithExistingAppointment || isDuringAppointmentPeriod;
     }
-
 
     private Schedule createAbsenceSchedule(Dentist dentist, AbsenceRequestDTO dto) {
         Schedule schedule = new Schedule();
@@ -111,4 +110,30 @@ public class ScheduleService {
     }
 
 
+    @Transactional
+    public void removeDentistAbsence(Long id) {
+        Schedule schedule = scheduleRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Schedule not found! ID: " + id));
+
+        validateDentistAbsence(schedule);
+        validateAbsenceEndNotInPast(schedule);
+
+        scheduleRepository.deleteById(id);
+
+        logger.info("Successfully deleted schedule ID: {}", id);
+    }
+
+    private void validateDentistAbsence(Schedule schedule) {
+        if (schedule.getUnavailableTimeSlot() != null)
+            throw new ScheduleConflictException("Dentist is not absent during this period.");
+    }
+
+    private void validateAbsenceEndNotInPast(Schedule schedule) {
+        if (schedule.getAbsenceEnd().isBefore(LocalDateTime.now()))
+            throw new InvalidDateRangeException("Cannot remove an absence period that has already ended.");
+    }
+
+    private void validateDentistOwnership(Schedule schedule){
+        // TODO
+    }
 }
