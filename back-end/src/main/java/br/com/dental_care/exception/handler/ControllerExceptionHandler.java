@@ -1,9 +1,6 @@
 package br.com.dental_care.exception.handler;
 
-import br.com.dental_care.exception.DatabaseException;
-import br.com.dental_care.exception.InvalidDateRangeException;
-import br.com.dental_care.exception.ResourceNotFoundException;
-import br.com.dental_care.exception.ScheduleConflictException;
+import br.com.dental_care.exception.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpStatus;
@@ -93,7 +90,7 @@ public class ControllerExceptionHandler {
     }
 
     @ExceptionHandler(ScheduleConflictException.class)
-    public ResponseEntity<CustomError> handleHttpMessageNotReadable(ScheduleConflictException e,
+    public ResponseEntity<CustomError> handleScheduleConflict(ScheduleConflictException e,
                                                                     HttpServletRequest request) {
         CustomError customError = CustomError
                 .builder()
@@ -108,7 +105,7 @@ public class ControllerExceptionHandler {
     }
 
     @ExceptionHandler(InvalidDateRangeException.class)
-    public ResponseEntity<CustomError> handleHttpMessageNotReadable(InvalidDateRangeException e,
+    public ResponseEntity<CustomError> handleDateRange(InvalidDateRangeException e,
                                                                     HttpServletRequest request) {
         CustomError customError = CustomError
                 .builder()
@@ -120,6 +117,21 @@ public class ControllerExceptionHandler {
                 .build();
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(customError);
+    }
+
+    @ExceptionHandler(InvalidRatingDataException.class)
+    public ResponseEntity<CustomError> handleInvalidRatingData(InvalidRatingDataException e,
+                                                                    HttpServletRequest request) {
+        CustomError customError = CustomError
+                .builder()
+                .timestamp(Instant.now())
+                .status(HttpStatus.UNPROCESSABLE_ENTITY.value())
+                .error(e.getMessage())
+                .message("Invalid rating data")
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(customError);
     }
 
 }
