@@ -19,6 +19,7 @@ public class Dentist extends User {
 
   private String speciality;
   private String registrationNumber;
+  private Integer score;
 
   @OneToMany(mappedBy = "dentist")
   private final List<Rating> ratings = new ArrayList<>();

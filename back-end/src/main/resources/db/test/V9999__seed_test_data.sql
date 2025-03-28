@@ -29,9 +29,9 @@ VALUES (2, 'Limpeza dentária'),
        (3, 'Tratamento de canal');
 
 -- Dentist
-INSERT INTO tb_dentist (id, registration_number, speciality)
-VALUES (4, 'DR12345', 'Ortodontia'),
-       (5, 'DR23456', 'Periodontia');
+INSERT INTO tb_dentist (id, registration_number, speciality, score)
+VALUES (4, 'DR12345', 'Ortodontia', 9),
+       (5, 'DR23456', 'Periodontia', 7);
 
 -- Association User - Role
 -- Admin (ROLE_ADMIN)
@@ -59,12 +59,6 @@ VALUES ('Consulta agendada para amanhã às 10h.', '2025-03-18 09:00:00', 1),
        ('Novo agendamento disponível para sua especialidade.', '2025-03-16 14:20:00', 1),
        ('Seu dentista adicionou novas recomendações.', '2025-03-15 10:10:00', 2);
 
--- Insert Ratings
-INSERT INTO TB_RATING (SCORE, DATE, DENTIST_ID, ID, PATIENT_ID, COMMENT)
-VALUES (5, '2024-03-10T10:30:00', 4, 1, 2, 'Excelente atendimento!'),
-       (4, '2024-03-12T14:45:00', 5, 2, 3, 'Muito bom, mas poderia melhorar o tempo de espera.'),
-       (3, '2024-03-15T09:15:00', 4, 3, 2, 'Atendimento razoável, esperava mais.'),
-       (5, '2024-03-18T16:00:00', 5, 4, 3, 'Ótima experiência, super recomendo!');
 
 -- Insert Schedule dentist id 4
 INSERT INTO tb_schedule (dentist_id, unavailable_time_slot)
@@ -73,8 +67,8 @@ VALUES (4, '2025-12-20 09:00:00'),
        (4, '2025-12-23 10:00:00');
 
 -- Insert Schedule dentist id 5
-INSERT INTO tb_schedule (dentist_id, unavailable_time_slot) VALUES
-       (5, '2025-12-21 15:00:00');
+INSERT INTO tb_schedule (dentist_id, unavailable_time_slot)
+VALUES (5, '2025-12-21 15:00:00');
 
 -- Insert Appointment SCHEDULED
 INSERT INTO tb_appointment (date, dentist_id, patient_id, status, description)
@@ -90,5 +84,14 @@ VALUES ('2025-12-22 10:00:00', 4, 2, 'CANCELED', 'Tratamento de canal (cancelado
 
 -- Insert Appointment COMPLETED
 INSERT INTO tb_appointment (date, dentist_id, patient_id, status, description)
-VALUES ('2025-12-23 10:00:00', 4, 3, 'COMPLETED', 'Procedimento de limpeza profunda concluído com sucesso'),
-       ('2025-03-23 13:00:00', 5, 2, 'COMPLETED', 'Consulta odontológica de rotina e aplicação de flúor concluída');
+VALUES ('2025-02-23 10:00:00', 4, 2, 'COMPLETED', 'Procedimento de limpeza profunda concluído com sucesso'),
+       ('2025-02-23 13:00:00', 4, 2, 'COMPLETED', 'Consulta odontológica de rotina e aplicação de flúor concluída'),
+       ('2025-02-10 14:30:00', 5, 3, 'COMPLETED', 'Consulta odontológica de rotina'),
+       ('2025-02-15 09:00:00', 5, 3, 'COMPLETED', 'Avaliação inicial e planejamento de tratamento');
+
+-- Insert Ratings
+INSERT INTO TB_RATING (SCORE, DATE, DENTIST_ID, PATIENT_ID, APPOINTMENT_ID, COMMENT)
+VALUES (10, '2024-03-10T10:30:00', 4, 2, 7, 'Excelente atendimento!'),
+       (7, '2024-03-12T14:45:00', 4, 2, 8, 'Muito bom, mas poderia melhorar o tempo de espera.'),
+       (5, '2024-03-15T09:15:00', 5, 3, 9, 'Atendimento razoável, esperava mais.'),
+       (8, '2024-03-18T16:00:00', 5, 3, 10, 'Ótima experiência, super recomendo!');

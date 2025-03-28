@@ -30,11 +30,16 @@ public class Rating {
   @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
   private LocalDateTime date;
 
+  private boolean hasBeenRated;
+
   @ManyToOne()
   private Patient patient;
 
   @ManyToOne()
   private Dentist dentist;
+
+  @ManyToOne()
+  private Appointment appointment;
 
   @Override
   public int hashCode() {
