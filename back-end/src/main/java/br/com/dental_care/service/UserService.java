@@ -6,7 +6,9 @@ import br.com.dental_care.exception.DatabaseException;
 import br.com.dental_care.exception.ResourceNotFoundException;
 import br.com.dental_care.mapper.RoleMapper;
 import br.com.dental_care.mapper.UserMapper;
+import br.com.dental_care.model.Role;
 import br.com.dental_care.model.User;
+import br.com.dental_care.projection.UserDetailsProjection;
 import br.com.dental_care.repository.RoleRepository;
 import br.com.dental_care.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -16,13 +18,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -95,5 +102,19 @@ public class UserService {
             }
             user.getRoles().add(RoleMapper.toEntity(role));
         }
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        List<UserDetailsProjection> list = userRepository.searchUserAndRolesByEmail(username);
+        if (list.isEmpty())
+            throw new UsernameNotFoundException("User not found!");
+
+        User user = new User();
+        user.setEmail(username);
+        user.setPassword(list.get(0).getPassword());
+        list.forEach(role -> user.addRole(new Role(role.getRoleId(), role.getAuthority())));
+
+        return user;
     }
 }
