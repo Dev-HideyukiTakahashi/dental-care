@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -41,7 +42,10 @@ public class DentistController {
             @ApiResponse(responseCode = "400", description = "Bad Request",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CustomError.class))),
-            @ApiResponse(responseCode = "403", description = "Unauthorized",
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CustomError.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CustomError.class))),
             @ApiResponse(responseCode = "404", description = "Dentist not found",
@@ -52,6 +56,7 @@ public class DentistController {
                             schema = @Schema(implementation = CustomError.class)))
     })
     @GetMapping(path = "/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PATIENT')")
     public ResponseEntity<DentistDTO> findById(@PathVariable Long id) {
         logger.info("Searching dentist with id: {}", id);
         DentistDTO dto = dentistService.findById(id);
@@ -66,7 +71,10 @@ public class DentistController {
             @ApiResponse(responseCode = "400", description = "Bad Request",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CustomError.class))),
-            @ApiResponse(responseCode = "403", description = "Unauthorized",
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CustomError.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CustomError.class))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error",
@@ -74,6 +82,7 @@ public class DentistController {
                             schema = @Schema(implementation = CustomError.class)))
     })
     @GetMapping
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PATIENT')")
     public ResponseEntity<Page<DentistMinDTO>> findAll(
              @RequestParam(defaultValue = "0")
              @Parameter(description = "Page number", example = "0") int page,
@@ -96,7 +105,10 @@ public class DentistController {
             @ApiResponse(responseCode = "400", description = "Bad Request",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CustomError.class))),
-            @ApiResponse(responseCode = "403", description = "Unauthorized",
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CustomError.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CustomError.class))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error",
@@ -104,6 +116,7 @@ public class DentistController {
                             schema = @Schema(implementation = CustomError.class)))
     })
     @PostMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<DentistDTO> insert(@Valid @RequestBody DentistDTO dto) {
         logger.info("Creating new dentist with email: {}", dto.getEmail());
         dto = dentistService.save(dto);
@@ -123,7 +136,10 @@ public class DentistController {
             @ApiResponse(responseCode = "400", description = "Bad Request",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CustomError.class))),
-            @ApiResponse(responseCode = "403", description = "Unauthorized",
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CustomError.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CustomError.class))),
             @ApiResponse(responseCode = "404", description = "Dentist not found",
@@ -134,6 +150,7 @@ public class DentistController {
                             schema = @Schema(implementation = CustomError.class)))
     })
     @PutMapping(path = "/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<DentistDTO> update(@Valid @RequestBody DentistDTO dto, @PathVariable Long id) {
         logger.info("Updating dentist with id: {}, email: {}", id, dto.getEmail());
         dto = dentistService.update(dto, id);
@@ -145,7 +162,10 @@ public class DentistController {
             @ApiResponse(responseCode = "204", description = "Dentist deleted successfully",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Void.class))),
-            @ApiResponse(responseCode = "403", description = "Unauthorized",
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CustomError.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CustomError.class))),
             @ApiResponse(responseCode = "404", description = "Dentist not found",
@@ -156,6 +176,7 @@ public class DentistController {
                             schema = @Schema(implementation = CustomError.class)))
     })
     @DeleteMapping(path = "/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         logger.info("Deleting dentist with id: {}", id);
         dentistService.deleteById(id);
