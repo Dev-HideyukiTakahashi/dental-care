@@ -8,6 +8,7 @@ import br.com.dental_care.exception.ScheduleConflictException;
 import br.com.dental_care.mapper.ScheduleMapper;
 import br.com.dental_care.model.Dentist;
 import br.com.dental_care.model.Schedule;
+import br.com.dental_care.model.User;
 import br.com.dental_care.repository.DentistRepository;
 import br.com.dental_care.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,11 +26,13 @@ public class ScheduleService {
     private final Logger logger = LoggerFactory.getLogger(ScheduleService.class);
     private final ScheduleRepository scheduleRepository;
     private final DentistRepository dentistRepository;
+    private final UserService userService;
 
     @Transactional
     public AbsenceDTO createDentistAbsence(Long dentistId, AbsenceRequestDTO dto) {
         Dentist dentist = getDentistById(dentistId);
 
+        validateDentistOwnership(dentistId);
         validateAbsenceDates(dto);
         validateAbsencePeriodNotConflict(dentist, dto);
         validateNoAppointmentsDuringAbsence(dentist, dto);
@@ -40,6 +43,12 @@ public class ScheduleService {
 
         logger.info("Dentist absence scheduled successfully with id: {}", scheduleAbsence.getId());
         return ScheduleMapper.toAbsenceDTO(scheduleAbsence);
+    }
+
+    private void validateDentistOwnership(Long dentistId){
+        User user = userService.authenticated();
+        if(!user.getId().equals(dentistId))
+            throw new ScheduleConflictException("You are not allowed to create an absence for another dentist.");
     }
 
     private Dentist getDentistById(Long dentistId) {
@@ -131,9 +140,5 @@ public class ScheduleService {
     private void validateAbsenceEndNotInPast(Schedule schedule) {
         if (schedule.getAbsenceEnd().isBefore(LocalDateTime.now()))
             throw new InvalidDateRangeException("Cannot remove an absence period that has already ended.");
-    }
-
-    private void validateDentistOwnership(Schedule schedule){
-        // TODO
     }
 }
