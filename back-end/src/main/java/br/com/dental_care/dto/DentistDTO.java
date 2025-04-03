@@ -54,7 +54,7 @@ public class DentistDTO {
     private final List<RoleDTO> roles = new ArrayList<>();
 
     @Schema(description = "Ratings assigned to the dentist")
-    private final List<RatingMinDTO> ratings = new ArrayList<>();
+    private final List<RatingDTO> ratings = new ArrayList<>();
 
     @Schema(description = "Schedules assigned to the dentist")
     private final List<ScheduleDTO> schedules = new ArrayList<>();
@@ -65,5 +65,9 @@ public class DentistDTO {
 
     public void addSchedule(ScheduleDTO schedule) {
         schedules.add(schedule);
+    }
+
+    public void addRating(RatingDTO rating) {
+        ratings.add(rating);
     }
 }

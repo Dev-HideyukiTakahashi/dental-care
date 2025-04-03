@@ -20,6 +20,8 @@ public class DentistMapper {
 
         entity.getSchedules().forEach(schedule ->
                 dto.addSchedule(ScheduleMapper.toDTO(schedule)));
+        entity.getRatings().forEach(rating ->
+                dto.addRating(RatingMapper.toDTO(rating)));
         entity.getRoles().forEach(role -> dto.addRole(RoleMapper.toDTO(role)));
         return dto;
     }
