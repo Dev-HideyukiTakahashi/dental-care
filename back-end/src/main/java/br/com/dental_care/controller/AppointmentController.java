@@ -162,7 +162,7 @@ public class AppointmentController {
                             schema = @Schema(implementation = CustomError.class)))
     })
     @PutMapping(path = "/{id}/complete")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PATIENT')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<AppointmentDTO> completeAppointment(@PathVariable Long id) {
         logger.info("Starting the completion process for appointment id: {}", id);
         AppointmentDTO dto = appointmentService.completeAppointment(id);
