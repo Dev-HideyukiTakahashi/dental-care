@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -41,7 +42,10 @@ public class ScheduleController {
             @ApiResponse(responseCode = "400", description = "Bad Request",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CustomError.class))),
-            @ApiResponse(responseCode = "403", description = "Unauthorized",
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CustomError.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CustomError.class))),
             @ApiResponse(responseCode = "404", description = "Dentist not found",
@@ -55,6 +59,7 @@ public class ScheduleController {
                             schema = @Schema(implementation = CustomError.class)))
     })
     @PostMapping("/absences/dentist/{id}")
+    @PreAuthorize("hasRole('ROLE_DENTIST')")
     public ResponseEntity<AbsenceDTO> createDentistAbsence
             (@PathVariable Long id, @Valid @RequestBody AbsenceRequestDTO request) {
         logger.info("Creating a new absence schedule for dentist with id: {}", id);
@@ -73,7 +78,10 @@ public class ScheduleController {
             @ApiResponse(responseCode = "400", description = "Bad Request",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CustomError.class))),
-            @ApiResponse(responseCode = "403", description = "Unauthorized",
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CustomError.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CustomError.class))),
             @ApiResponse(responseCode = "404", description = "Schedule not found",
@@ -87,6 +95,7 @@ public class ScheduleController {
                             schema = @Schema(implementation = CustomError.class)))
     })
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_DENTIST')")
     public ResponseEntity<Void> removeDentistAbsence(@PathVariable Long id) {
         logger.info("Deleting absence schedule for dentist with id: {}", id);
         scheduleService.removeDentistAbsence(id);
