@@ -1,9 +1,6 @@
 package br.com.dental_care.model;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -20,12 +17,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
 @Entity(name = "tb_user")
-public class User {
+public class User implements UserDetails {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -41,6 +40,28 @@ public class User {
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   private final List<Notification> notifications = new ArrayList<>();
+
+  public void addRole(Role role){
+    roles.add(role);
+  }
+
+  public boolean hasRole(String roleName) {
+    for (Role r : roles) {
+      if (roleName.equals(r.getAuthority()))
+        return true;
+    }
+    return false;
+  }
+
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    return roles;
+  }
+
+  @Override
+  public String getUsername() {
+    return email;
+  }
 
   @Override
   public int hashCode() {
