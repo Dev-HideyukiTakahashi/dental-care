@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -38,7 +39,10 @@ public class AppointmentController {
             @ApiResponse(responseCode = "400", description = "Bad Request",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CustomError.class))),
-            @ApiResponse(responseCode = "403", description = "Unauthorized",
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CustomError.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CustomError.class))),
             @ApiResponse(responseCode = "404", description = "Dentist or Patient not found",
@@ -52,6 +56,7 @@ public class AppointmentController {
                             schema = @Schema(implementation = CustomError.class)))
     })
     @PostMapping
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PATIENT')")
     public ResponseEntity<AppointmentDTO> createAppointment(@Valid @RequestBody AppointmentDTO dto) {
         logger.info("Creating new appointment");
         dto = appointmentService.createAppointment(dto);
@@ -72,7 +77,10 @@ public class AppointmentController {
             @ApiResponse(responseCode = "400", description = "Bad Request",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CustomError.class))),
-            @ApiResponse(responseCode = "403", description = "Unauthorized",
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CustomError.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CustomError.class))),
             @ApiResponse(responseCode = "404", description = "Appointment not found",
@@ -86,6 +94,7 @@ public class AppointmentController {
                             schema = @Schema(implementation = CustomError.class)))
     })
     @GetMapping(path = "/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PATIENT')")
     public ResponseEntity<AppointmentDTO> findById(@PathVariable Long id) {
         logger.info("Searching appointment with id: {}", id);
         AppointmentDTO dto = appointmentService.findById(id);
@@ -102,7 +111,10 @@ public class AppointmentController {
             @ApiResponse(responseCode = "400", description = "Bad Request",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CustomError.class))),
-            @ApiResponse(responseCode = "403", description = "Unauthorized",
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CustomError.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CustomError.class))),
             @ApiResponse(responseCode = "404", description = "Dentist or Patient not found",
@@ -116,6 +128,7 @@ public class AppointmentController {
                             schema = @Schema(implementation = CustomError.class)))
     })
     @PutMapping(path = "/{id}/cancel")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PATIENT')")
     public ResponseEntity<AppointmentDTO> cancelAppointment(@PathVariable Long id) {
         logger.info("Starting the cancellation process for appointment id: {}", id);
         AppointmentDTO dto = appointmentService.cancelAppointment(id);
@@ -132,7 +145,10 @@ public class AppointmentController {
             @ApiResponse(responseCode = "400", description = "Bad Request",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CustomError.class))),
-            @ApiResponse(responseCode = "403", description = "Unauthorized",
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CustomError.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CustomError.class))),
             @ApiResponse(responseCode = "404", description = "Appointment not found",
@@ -146,6 +162,7 @@ public class AppointmentController {
                             schema = @Schema(implementation = CustomError.class)))
     })
     @PutMapping(path = "/{id}/complete")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PATIENT')")
     public ResponseEntity<AppointmentDTO> completeAppointment(@PathVariable Long id) {
         logger.info("Starting the completion process for appointment id: {}", id);
         AppointmentDTO dto = appointmentService.completeAppointment(id);
@@ -164,7 +181,10 @@ public class AppointmentController {
             @ApiResponse(responseCode = "400", description = "Bad Request",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CustomError.class))),
-            @ApiResponse(responseCode = "403", description = "Unauthorized",
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CustomError.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CustomError.class))),
             @ApiResponse(responseCode = "404", description = "Dentist or Patient not found",
@@ -175,6 +195,7 @@ public class AppointmentController {
                             schema = @Schema(implementation = CustomError.class)))
     })
     @PutMapping(path = "/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PATIENT')")
     public ResponseEntity<AppointmentDTO> updateAppointmentDateTime(
             @PathVariable Long id,
             @Valid @RequestBody AppointmentDTO dto) {
