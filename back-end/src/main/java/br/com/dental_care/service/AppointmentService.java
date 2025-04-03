@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -37,6 +38,7 @@ public class AppointmentService {
         Dentist dentist = validateDentist(dto.getDentistMinDTO().getId());
         Patient patient = validatePatient(dto.getPatientMinDTO().getId());
         boolean isDentistAvailable = checkDentistAvailability(dentist, dto.getDate());
+        validateWorkingHours(dto.getDate());
 
         if (isDentistAvailable) {
             Appointment appointment = AppointmentMapper.toEntity(dto, dentist, patient);
@@ -62,6 +64,15 @@ public class AppointmentService {
             throw new ResourceNotFoundException("Patient not found! ID: " + id);
         }
         return patientRepository.getReferenceById(id);
+    }
+
+    private void validateWorkingHours(LocalDateTime dateTime){
+        LocalTime time = dateTime.toLocalTime();
+        final LocalTime startTime = LocalTime.of(8, 0);
+        final LocalTime endTime = LocalTime.of(19, 0);
+
+        if(time.isBefore(startTime) || time.isAfter(endTime))
+            throw new ScheduleConflictException("Appointment time is outside of working hours.");
     }
 
     private boolean checkDentistAvailability(Dentist dentist, LocalDateTime date) {
@@ -145,4 +156,5 @@ public class AppointmentService {
         }
         return AppointmentMapper.toDTO(appointment);
     }
+
 }
