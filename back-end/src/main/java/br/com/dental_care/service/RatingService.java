@@ -3,11 +3,9 @@ package br.com.dental_care.service;
 import br.com.dental_care.dto.RatingDTO;
 import br.com.dental_care.exception.InvalidRatingDataException;
 import br.com.dental_care.exception.ResourceNotFoundException;
+import br.com.dental_care.exception.ScheduleConflictException;
 import br.com.dental_care.mapper.RatingMapper;
-import br.com.dental_care.model.Appointment;
-import br.com.dental_care.model.Dentist;
-import br.com.dental_care.model.Patient;
-import br.com.dental_care.model.Rating;
+import br.com.dental_care.model.*;
 import br.com.dental_care.model.enums.AppointmentStatus;
 import br.com.dental_care.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +26,7 @@ public class RatingService {
     private final PatientRepository patientRepository;
     private final DentistRepository dentistRepository;
     private final RatingRepository ratingRepository;
+    private final UserService userService;
 
 
     @Transactional
@@ -76,11 +75,13 @@ public class RatingService {
     }
 
     private Patient validatePatient(Long patientId) {
-        if (!patientRepository.existsById(patientId)) {
+        if (!patientRepository.existsById(patientId))
             throw new ResourceNotFoundException("Patient not found! ID: " + patientId);
-        }
 
-        // TODO: VALIDATE PATIENT LOGGED IN CONTEXT
+        User user = userService.authenticated();
+
+        if(!user.getId().equals(patientId))
+            throw new InvalidRatingDataException("You can only submit a rating for your own appointment.");
 
         return patientRepository.getReferenceById(patientId);
     }
@@ -94,5 +95,4 @@ public class RatingService {
         int average = (int) Math.ceil(sum / dentist.getRatings().size());
         dentist.setScore(average);
     }
-
 }
