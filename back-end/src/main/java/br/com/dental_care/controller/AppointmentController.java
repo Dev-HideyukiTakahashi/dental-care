@@ -122,6 +122,36 @@ public class AppointmentController {
         return ResponseEntity.ok(dto);
     }
 
+    @Operation(summary = "Complete an appointment",
+            description = "Mark an existing appointment as completed.",
+            tags = "Appointment")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Appointment successfully completed.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = AppointmentDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Bad Request",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CustomError.class))),
+            @ApiResponse(responseCode = "403", description = "Unauthorized",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CustomError.class))),
+            @ApiResponse(responseCode = "404", description = "Appointment not found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CustomError.class))),
+            @ApiResponse(responseCode = "409", description = "Appointment cannot be completed due to a conflict",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CustomError.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CustomError.class)))
+    })
+    @PutMapping(path = "/{id}/complete")
+    public ResponseEntity<AppointmentDTO> completeAppointment(@PathVariable Long id) {
+        logger.info("Starting the completion process for appointment id: {}", id);
+        AppointmentDTO dto = appointmentService.completeAppointment(id);
+        return ResponseEntity.ok(dto);
+    }
+
     @Operation(summary = "Updated an appointment",
             description = "Update the date/time of an existing appointment in the dentist's schedule." +
                           " The new date must be within 1 hour before or after the currently " +

@@ -157,4 +157,11 @@ public class AppointmentService {
         return AppointmentMapper.toDTO(appointment);
     }
 
+    @Transactional
+    public AppointmentDTO completeAppointment(Long id) {
+        Appointment appointment = validateAppointment(id);
+        appointment.setStatus(AppointmentStatus.COMPLETED);
+        logger.info("Appointment completed, id: {}", appointment.getId());
+        return AppointmentMapper.toDTO(appointment);
+    }
 }
