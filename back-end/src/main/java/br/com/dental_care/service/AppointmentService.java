@@ -32,15 +32,17 @@ public class AppointmentService {
     private final PatientRepository patientRepository;
     private final DentistRepository dentistRepository;
     private final ScheduleRepository scheduleRepository;
+    private final AuthService authService;
 
     @Transactional
     public AppointmentDTO createAppointment(AppointmentDTO dto) {
         Dentist dentist = validateDentist(dto.getDentistMinDTO().getId());
         Patient patient = validatePatient(dto.getPatientMinDTO().getId());
+        authService.validateSelfOrAdmin(patient.getId());
         boolean isDentistAvailable = checkDentistAvailability(dentist, dto.getDate());
         validateWorkingHours(dto.getDate());
 
-        if (isDentistAvailable) {
+        if(isDentistAvailable) {
             Appointment appointment = AppointmentMapper.toEntity(dto, dentist, patient);
             appointment = appointmentRepository.save(appointment);
             Schedule schedule = createSchedule(appointment);
@@ -53,20 +55,20 @@ public class AppointmentService {
     }
 
     private Dentist validateDentist(Long id) {
-        if (!dentistRepository.existsById(id)) {
+        if(!dentistRepository.existsById(id)) {
             throw new ResourceNotFoundException("Dentist not found! ID: " + id);
         }
         return dentistRepository.getReferenceById(id);
     }
 
     private Patient validatePatient(Long id) {
-        if (!patientRepository.existsById(id)) {
+        if(!patientRepository.existsById(id)) {
             throw new ResourceNotFoundException("Patient not found! ID: " + id);
         }
         return patientRepository.getReferenceById(id);
     }
 
-    private void validateWorkingHours(LocalDateTime dateTime){
+    private void validateWorkingHours(LocalDateTime dateTime) {
         LocalTime time = dateTime.toLocalTime();
         final LocalTime startTime = LocalTime.of(8, 0);
         final LocalTime endTime = LocalTime.of(19, 0);
@@ -76,15 +78,15 @@ public class AppointmentService {
     }
 
     private boolean checkDentistAvailability(Dentist dentist, LocalDateTime date) {
-        for (Schedule schedule : dentist.getSchedules()) {
+        for(Schedule schedule : dentist.getSchedules()) {
 
             boolean existingAppointment = schedule.getUnavailableTimeSlot().equals(date);
-            if (existingAppointment)
+            if(existingAppointment)
                 throw new ScheduleConflictException("An appointment already exists for this time slot.");
 
             LocalDateTime minusOneHour = schedule.getUnavailableTimeSlot().minusHours(1);
             LocalDateTime plusOneHour = schedule.getUnavailableTimeSlot().plusHours(1);
-            if (date.isAfter(minusOneHour) && date.isBefore(plusOneHour))
+            if(date.isAfter(minusOneHour) && date.isBefore(plusOneHour))
                 throw new ScheduleConflictException("The time falls within another appointment slot.");
         }
         return true;
@@ -103,10 +105,10 @@ public class AppointmentService {
     public AppointmentDTO findById(Long id) {
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Appointment not found! ID: " + id));
+        authService.validateSelfOrAdmin(appointment.getPatient().getId());
         logger.info("Appointment found, id: {}", id);
         return AppointmentMapper.toDTO(appointment);
     }
-
 
     @Transactional
     public AppointmentDTO cancelAppointment(Long id) {
@@ -120,8 +122,8 @@ public class AppointmentService {
     private void deleteSchedule(Appointment appointment) {
         logger.info("Initiating schedule deletion process.");
         List<Schedule> dentistSchedules = appointment.getDentist().getSchedules();
-        for (Schedule schedule : dentistSchedules) {
-            if (schedule.getUnavailableTimeSlot().isEqual(appointment.getDate())) {
+        for(Schedule schedule : dentistSchedules) {
+            if(schedule.getUnavailableTimeSlot().isEqual(appointment.getDate())) {
                 scheduleRepository.deleteById(schedule.getId());
                 logger.info("Schedule deleted, id: {}", schedule.getId());
                 break;
@@ -133,8 +135,8 @@ public class AppointmentService {
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Appointment not found! Id: " + id));
 
-        if (appointment.getStatus() == AppointmentStatus.CANCELED ||
-            appointment.getStatus() == AppointmentStatus.COMPLETED)
+        if(appointment.getStatus() == AppointmentStatus.CANCELED ||
+           appointment.getStatus() == AppointmentStatus.COMPLETED)
             throw new ScheduleConflictException("The appointment has already been completed or canceled.");
 
         return appointment;
@@ -148,7 +150,7 @@ public class AppointmentService {
         Dentist dentist = validateDentist(appointment.getDentist().getId());
         boolean isDentistAvailable = checkDentistAvailability(dentist, dto.getDate());
 
-        if (isDentistAvailable && appointment.getDate().isAfter(LocalDateTime.now())) {
+        if(isDentistAvailable && appointment.getDate().isAfter(LocalDateTime.now())) {
             deleteSchedule(appointment);
             appointment.setDate(dto.getDate());
             createSchedule(appointment);

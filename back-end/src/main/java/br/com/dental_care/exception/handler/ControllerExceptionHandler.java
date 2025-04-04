@@ -91,7 +91,7 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(ScheduleConflictException.class)
     public ResponseEntity<CustomError> handleScheduleConflict(ScheduleConflictException e,
-                                                                    HttpServletRequest request) {
+                                                              HttpServletRequest request) {
         CustomError customError = CustomError
                 .builder()
                 .timestamp(Instant.now())
@@ -106,7 +106,7 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(InvalidDateRangeException.class)
     public ResponseEntity<CustomError> handleDateRange(InvalidDateRangeException e,
-                                                                    HttpServletRequest request) {
+                                                       HttpServletRequest request) {
         CustomError customError = CustomError
                 .builder()
                 .timestamp(Instant.now())
@@ -121,7 +121,7 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(InvalidRatingDataException.class)
     public ResponseEntity<CustomError> handleInvalidRatingData(InvalidRatingDataException e,
-                                                                    HttpServletRequest request) {
+                                                               HttpServletRequest request) {
         CustomError customError = CustomError
                 .builder()
                 .timestamp(Instant.now())
@@ -136,7 +136,7 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<CustomError> handleAccessDeniedException(AccessDeniedException e,
-                                                               HttpServletRequest request) {
+                                                                   HttpServletRequest request) {
         CustomError customError = CustomError
                 .builder()
                 .timestamp(Instant.now())
@@ -162,5 +162,20 @@ public class ControllerExceptionHandler {
                 .build();
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(customError);
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<CustomError> handleForbiddenException(ForbiddenException e,
+                                                                HttpServletRequest request) {
+        CustomError customError = CustomError
+                .builder()
+                .timestamp(Instant.now())
+                .status(HttpStatus.FORBIDDEN.value())
+                .error(e.getMessage())
+                .message("Forbidden Access")
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(customError);
     }
 }
