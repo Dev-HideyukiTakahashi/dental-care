@@ -1,10 +1,16 @@
 package br.com.dental_care.service;
 
+import br.com.dental_care.dto.PatientDTO;
+import br.com.dental_care.exception.AccessDeniedException;
+import br.com.dental_care.mapper.PatientMapper;
 import br.com.dental_care.model.Role;
 import br.com.dental_care.model.User;
 import br.com.dental_care.projection.UserDetailsProjection;
+import br.com.dental_care.repository.PatientRepository;
 import br.com.dental_care.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +18,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,11 +27,13 @@ import java.util.List;
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
+    private final PatientRepository patientRepository;
+    private final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         List<UserDetailsProjection> list = userRepository.searchUserAndRolesByEmail(username);
-        if (list.isEmpty())
+        if(list.isEmpty())
             throw new UsernameNotFoundException("User not found!");
 
         User user = new User();
@@ -42,8 +51,23 @@ public class UserService implements UserDetailsService {
             String username = jwtPrincipal.getClaim("username");
 
             return userRepository.findByEmail(username).get();
-        } catch (Exception e) {
+        } catch(Exception e) {
             throw new UsernameNotFoundException("Email not found");
         }
+    }
+
+    @Transactional(readOnly = true)
+    public PatientDTO getLoggedUser() {
+        User user = authenticated();
+
+        boolean isPatient = user.getAuthorities()
+                .stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_PATIENT"));
+
+//        if(!isPatient)
+//            throw new AccessDeniedException("Access denied: User is not a patient.");
+
+        logger.info("Patient details retrieved successfully. ID: {}", user.getId());
+        return PatientMapper.toDTO(patientRepository.getReferenceById(user.getId()));
     }
 }

@@ -134,4 +134,19 @@ public class ControllerExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(customError);
     }
 
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<CustomError> handleAccessDeniedException(AccessDeniedException e,
+                                                               HttpServletRequest request) {
+        CustomError customError = CustomError
+                .builder()
+                .timestamp(Instant.now())
+                .status(HttpStatus.FORBIDDEN.value())
+                .error(e.getMessage())
+                .message("Access Denied")
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(customError);
+    }
+
 }
