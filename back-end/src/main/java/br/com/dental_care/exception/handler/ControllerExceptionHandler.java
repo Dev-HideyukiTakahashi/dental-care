@@ -149,4 +149,18 @@ public class ControllerExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(customError);
     }
 
+    @ExceptionHandler(RegistrationDataException.class)
+    public ResponseEntity<CustomError> handleEmailAlreadyRegisteredException(RegistrationDataException e,
+                                                                             HttpServletRequest request) {
+        CustomError customError = CustomError
+                .builder()
+                .timestamp(Instant.now())
+                .status(HttpStatus.CONFLICT.value())
+                .error(e.getMessage())
+                .message("Invalid registration data provided.")
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(customError);
+    }
 }
