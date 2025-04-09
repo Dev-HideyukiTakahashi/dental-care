@@ -178,4 +178,19 @@ public class ControllerExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(customError);
     }
+
+    @ExceptionHandler(EmailException.class)
+    public ResponseEntity<CustomError> handleEmailException(EmailException e,
+                                                                HttpServletRequest request) {
+        CustomError customError = CustomError
+                .builder()
+                .timestamp(Instant.now())
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .error(e.getMessage())
+                .message("Mail error")
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(customError);
+    }
 }
