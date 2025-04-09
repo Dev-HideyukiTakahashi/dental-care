@@ -46,16 +46,46 @@ public class EmailService {
                     appointment.getDate().toLocalDate().format(dateFormatter),
                     appointment.getDate().toLocalTime()
             );
-
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(emailFrom);
-            message.setTo(to);
-            message.setSubject(subject);
-            message.setText(body);
-            emailSender.send(message);
+            emailSender.send(buildEmailMessage(to, subject, body));
             logger.info("Email sent successfully.");
         } catch(MailException e) {
             throw new EmailException("Appointment created, email delivery failed.");
         }
+    }
+
+    public void sendAppointmentReminder(Appointment appointment) {
+        try {
+            String to = appointment.getPatient().getEmail();
+            String subject = "Lembrete: sua consulta é amanhã!";
+
+            String body = String.format(
+                    "Olá %s,\n\n" +
+                    "Estamos passando para lembrar que você tem uma consulta agendada para amanhã. ️\n\n" +
+                    "🦷 Dentista: %s\n" +
+                    "📅 Data: %s\n" +
+                    "⏰ Horário: %s\n\n" +
+                    "Por favor, chegue com 30 minutos de antecedência para garantir um bom atendimento.\n\n" +
+                    "Estamos ansiosos para te receber!\n\n" +
+                    "Atenciosamente,\n" +
+                    "Equipe Dental Care.",
+                    appointment.getPatient().getName(),
+                    appointment.getDentist().getName(),
+                    appointment.getDate().toLocalDate().format(dateFormatter),
+                    appointment.getDate().toLocalTime()
+            );
+            emailSender.send(buildEmailMessage(to, subject, body));
+            logger.info("Reminder email sent successfully to the patient.");
+        } catch(MailException e) {
+            throw new EmailException("Failed to send reminder email to the patient.");
+        }
+    }
+
+    private SimpleMailMessage buildEmailMessage(String to, String subject, String body) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(emailFrom);
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(body);
+        return message;
     }
 }

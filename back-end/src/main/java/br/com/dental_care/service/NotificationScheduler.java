@@ -16,7 +16,7 @@ import java.util.List;
 public class NotificationScheduler {
 
     private final AppointmentRepository appointmentRepository;
-    private final NotificationService notificationService;
+    private final EmailService emailService;
     private final Logger logger = LoggerFactory.getLogger(NotificationScheduler.class);
 
     @Scheduled(cron = "0 0 8 * * *")
@@ -35,6 +35,7 @@ public class NotificationScheduler {
             return;
         }
 
-        appointments.forEach(notificationService::sendReminder);
+        appointments.forEach(emailService::sendAppointmentReminder);
+        logger.info("Total reminder emails successfully sent: {}", appointments.size());
     }
 }
