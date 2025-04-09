@@ -2,6 +2,7 @@
 
 Este sistema de agendamento odontológico facilita a marcação de consultas, o gerenciamento de agendas de dentistas e a interação entre pacientes e profissionais. Pacientes podem agendar, cancelar e avaliar consultas, enquanto dentistas gerenciam suas agendas. Administradores controlam usuários e acessam relatórios.
 
+EM CONSTRUÇÃO
 ---
 
 ## Documentação no notion:
@@ -74,9 +75,17 @@ git clone https://github.com/Dev-HideyukiTakahashi/dental-care.git
 - pasta back-end
 - pelo terminal `cd back-end`
 
-3. Certifique-se de que o PostgreSQL esteja instalado e configurado, depois crie o banco de dados `dental_care`.
+3. Certifique-se de que o PostgreSQL esteja corretamente instalado e em execução na sua máquina ou em um container (como Docker). Em seguida, crie o banco de dados com o nome dental_care.
 
-4. Rode o projeto pelo terminal:
+4. Configuração de envio de e-mails
+Para que o sistema possa enviar e-mails (como confirmações de agendamento), defina as seguintes variáveis de ambiente no seu sistema, IDE ou no terminal:
+
+```bash
+EMAIL_USERNAME=seuemail@gmail.com
+EMAIL_PASSWORD=sua-senha-de-app
+```
+
+5. Rode o projeto pelo terminal:
 
 ```bash
 mvn spring-boot:run
