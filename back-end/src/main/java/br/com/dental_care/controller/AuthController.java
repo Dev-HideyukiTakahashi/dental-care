@@ -1,5 +1,6 @@
 package br.com.dental_care.controller;
 
+import br.com.dental_care.dto.EmailDTO;
 import br.com.dental_care.dto.PatientDTO;
 import br.com.dental_care.service.AuthService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,5 +29,12 @@ public class AuthController {
         logger.info("Initiating patient registration process");
         dto = authService.registerPatient(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
+    }
+
+    @PostMapping("/recover-token")
+    public ResponseEntity<Void> createRecoverToken(@Valid @RequestBody EmailDTO body) {
+        logger.info("Starting token generation process for password recovery");
+        authService.createRecoverToken(body);
+        return ResponseEntity.noContent().build();
     }
 }

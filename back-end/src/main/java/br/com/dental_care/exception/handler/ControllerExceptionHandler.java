@@ -1,6 +1,7 @@
 package br.com.dental_care.exception.handler;
 
 import br.com.dental_care.exception.*;
+import jakarta.mail.AuthenticationFailedException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpStatus;
@@ -181,7 +182,7 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(EmailException.class)
     public ResponseEntity<CustomError> handleEmailException(EmailException e,
-                                                                HttpServletRequest request) {
+                                                            HttpServletRequest request) {
         CustomError customError = CustomError
                 .builder()
                 .timestamp(Instant.now())
@@ -192,5 +193,20 @@ public class ControllerExceptionHandler {
                 .build();
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(customError);
+    }
+
+    @ExceptionHandler(AuthenticationFailedException.class)
+    public ResponseEntity<CustomError> handleAuthenticationFailedException(AuthenticationFailedException e,
+                                                                           HttpServletRequest request) {
+        CustomError customError = CustomError
+                .builder()
+                .timestamp(Instant.now())
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .error(e.getMessage())
+                .message("Internal email error")
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(customError);
     }
 }
