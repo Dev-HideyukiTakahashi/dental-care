@@ -116,7 +116,7 @@ public class PatientController {
                             schema = @Schema(implementation = CustomError.class)))
     })
     @PostMapping
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PATIENT')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<PatientDTO> insert(@Valid @RequestBody PatientDTO dto) {
         logger.info("Creating new patient with email: {}", dto.getEmail());
         dto = patientService.save(dto);

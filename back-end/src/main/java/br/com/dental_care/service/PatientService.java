@@ -8,8 +8,10 @@ import br.com.dental_care.exception.ResourceNotFoundException;
 import br.com.dental_care.mapper.PatientMapper;
 import br.com.dental_care.mapper.RoleMapper;
 import br.com.dental_care.model.Patient;
+import br.com.dental_care.model.User;
 import br.com.dental_care.repository.PatientRepository;
 import br.com.dental_care.repository.RoleRepository;
+import br.com.dental_care.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -17,9 +19,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,8 +32,10 @@ public class PatientService {
 
     private final PatientRepository patientRepository;
     private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthService authService;
     private final Logger logger = LoggerFactory.getLogger(PatientService.class);
-
+    private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
     public PatientDTO findById(Long id) {
@@ -48,6 +55,9 @@ public class PatientService {
     @Transactional
     public PatientDTO save(PatientDTO dto) {
         Patient patient = new Patient();
+        userRepository.findByEmail(dto.getEmail()).ifPresent(user -> {
+            throw new DatabaseException("Email already exists.");
+        });
         copyToEntity(patient, dto);
         patient = patientRepository.save(patient);
         logger.info("New patient has been created with id: {}", patient.getId());
@@ -58,30 +68,34 @@ public class PatientService {
     public PatientDTO update(PatientDTO dto, Long id) {
         try {
             Patient patient = patientRepository.getReferenceById(id);
+            validateEmail(dto, patient.getId());
+            authService.validateSelfOrAdmin(patient.getId());
             copyToEntity(patient, dto);
             patient = patientRepository.save(patient);
             logger.info("Patient updated successfully, id: {}", patient.getId());
             return PatientMapper.toDTO(patient);
-        } catch (EntityNotFoundException e) {
+        } catch(EntityNotFoundException e) {
             throw new ResourceNotFoundException("Patient not found! ID: " + id);
+        } catch(DataIntegrityViolationException e) {
+            throw new DatabaseException("Email already exists.");
         }
     }
 
     @Transactional(propagation = Propagation.SUPPORTS)
     public void deleteById(Long id) {
-        if (!patientRepository.existsById(id))
+        if(!patientRepository.existsById(id))
             throw new ResourceNotFoundException("Patient not found! ID: " + id);
         try {
             patientRepository.deleteById(id);
             logger.info("Patient deleted, id: {}", id);
-        } catch (DataIntegrityViolationException e) {
+        } catch(DataIntegrityViolationException e) {
             throw new DatabaseException("Database error: Data integrity rules were violated.");
         }
     }
 
     public void copyToEntity(Patient patient, PatientDTO dto) {
         patient.setName(dto.getName());
-        patient.setPassword(dto.getPassword());
+        patient.setPassword(passwordEncoder.encode(dto.getPassword()));
         patient.setEmail(dto.getEmail());
         patient.setPhone(dto.getPhone());
         patient.setMedicalHistory(dto.getMedicalHistory());
@@ -89,9 +103,15 @@ public class PatientService {
         checkRoles(patient, dto);
     }
 
+    private void validateEmail(PatientDTO dto, Long patientId) {
+        Optional<User> existingUser = userRepository.findByEmail(dto.getEmail());
+        if(existingUser.isPresent() && !existingUser.get().getId().equals(patientId))
+            throw new DatabaseException("Email already exists.");
+    }
+
     private void checkRoles(Patient patient, PatientDTO dto) {
-        for (RoleDTO role : dto.getRoles()) {
-            if (!roleRepository.existsById(role.getId())){
+        for(RoleDTO role : dto.getRoles()) {
+            if(!roleRepository.existsById(role.getId())) {
                 logger.warn("Attempted to create a patient with a non-existent role");
                 throw new ResourceNotFoundException("Role does not exist, id: " + role.getId());
             }
