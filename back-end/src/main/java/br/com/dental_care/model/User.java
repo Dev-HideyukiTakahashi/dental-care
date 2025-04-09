@@ -38,9 +38,6 @@ public class User implements UserDetails {
                     inverseJoinColumns = @JoinColumn(name = "role_id"))
   private final Set<Role> roles = new HashSet<>();
 
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-  private final List<Notification> notifications = new ArrayList<>();
-
   public void addRole(Role role){
     roles.add(role);
   }
