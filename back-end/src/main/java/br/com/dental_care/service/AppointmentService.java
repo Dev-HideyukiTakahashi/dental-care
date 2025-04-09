@@ -33,6 +33,7 @@ public class AppointmentService {
     private final DentistRepository dentistRepository;
     private final ScheduleRepository scheduleRepository;
     private final AuthService authService;
+    private final EmailService emailService;
 
     @Transactional
     public AppointmentDTO createAppointment(AppointmentDTO dto) {
@@ -49,6 +50,7 @@ public class AppointmentService {
             dentist.getSchedules().add(schedule);
             logger.info("Schedule successfully added to the dentist's schedule list.");
             logger.info("Appointment created, id: {}", appointment.getId());
+            notifyAppointmentConfirmation(patient, appointment);
             return AppointmentMapper.toDTO(appointment);
         }
         return null;
@@ -99,6 +101,11 @@ public class AppointmentService {
         scheduleRepository.save(schedule);
         logger.info("Schedule created, id: {}", schedule.getId());
         return schedule;
+    }
+
+    private void notifyAppointmentConfirmation(Patient patient, Appointment appointment) {
+        logger.info("Sending appointment confirmation email to patient: {}", patient.getEmail());
+        emailService.sendAppointmentConfirmationEmail(patient, appointment);
     }
 
     @Transactional(readOnly = true)
