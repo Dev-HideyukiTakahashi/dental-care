@@ -19,5 +19,15 @@
       "name": "cors.origins",
       "type": "java.lang.String",
       "description": "Description for cors.origins."
+    },
+    {
+      "name": "email.password-recover.token.minutes",
+      "type": "java.lang.String",
+      "description": "Description for email.password-recover.token.minutes."
+    },
+    {
+      "name": "email.password-recover.uri",
+      "type": "java.lang.String",
+      "description": "Description for email.password-recover.uri."
     }
   ] }
