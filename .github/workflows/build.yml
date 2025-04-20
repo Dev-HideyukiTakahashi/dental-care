@@ -34,4 +34,4 @@ jobs:
         working-directory: back-end
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Dev-HideyukiTakahashi_dental-care
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Dev-HideyukiTakahashi_dental-care -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml

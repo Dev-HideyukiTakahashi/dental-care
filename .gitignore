@@ -1,0 +1,68 @@
+# Ignore
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDEs e editor
+.idea/
+*.iml
+.vscode/
+*.sw?
+
+# env
+.env
+.env.*
+
+# Angular directories
+/frontend/dist/
+/frontend/.angular/cache/
+/frontend/node_modules/
+
+# Spring directories
+/backend/target/
+/backend/.mvn/
+/backend/mvnw
+/backend/mvnw.cmd
+
+# dependency
+/backend/node_modules/
+**/node_modules/
+
+# temp
+*.class
+*.jar
+*.war
+*.ear
+
+# cache
+/.turbo
+/pnpm-lock.yaml
+package-lock.json
+yarn.lock
+*.tgz
+
+# sonar
+/.scannerwork/
+/.sonar/
+
+# coverage
+/coverage/
+/backend/coverage/
+
+# build
+.gradle/
+/build/
+
+# linunx
+*~
+
+# JetBrains
+/.idea/
+/*.ipr
+/*.iws
+/*.bak
