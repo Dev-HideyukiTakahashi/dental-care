@@ -36,7 +36,10 @@ Este sistema de agendamento odontológico facilita a marcação de consultas, o 
 - **Spring JPA e PostgreSQL:** Utilizados para persistência de dados.
 - **JWT e OAuth2:** Implementação para autenticação segura, garantindo que os usuários possam se autenticar de forma eficaz.
 - **Flyway:** Ferramenta para gerenciamento de migrações do banco de dados.
-- **Swagger:** Para documentação da API, facilitando o consumo da API por desenvolvedores.
+- **Swagger (OpenAPI):**
+Documentação da API em YAML para evitar poluição nos controllers, mantendo o código limpo e modular.
+- **Scheduler:**
+Implementação de um scheduler para enviar notificações automáticas aos pacientes 1 dia antes do compromisso.
 - **Spring Mail:** Para envio de notificações por e-mail, como lembretes de consultas e confirmações.
 - **Spring Validation:** Utilizado para realizar validações de dados em requisições, garantindo a integridade e a precisão das informações enviadas pelos usuários.
 
