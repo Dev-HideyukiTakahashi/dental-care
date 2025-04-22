@@ -12,11 +12,11 @@ import java.time.LocalDateTime;
 @Builder
 public class AbsenceRequestDTO {
 
-    @Schema(description = "The start date and time of the dentist's absence",
-            example = "2025-12-14T10:00:00")
 
     @NotNull(message = "The start date and time are required.")
     @FutureOrPresent(message = "The start date and time cannot be in the past.")
+    @Schema(description = "The start date and time of the dentist's absence",
+            example = "2025-12-14T10:00:00")
     private LocalDateTime absenceStart;
 
     @NotNull(message = "The end date and time are required.")
