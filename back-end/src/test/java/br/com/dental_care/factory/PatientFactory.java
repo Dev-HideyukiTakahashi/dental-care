@@ -1,0 +1,48 @@
+package br.com.dental_care.factory;
+
+import br.com.dental_care.dto.PatientDTO;
+import br.com.dental_care.dto.PatientMinDTO;
+import br.com.dental_care.model.Patient;
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
+public class PatientFactory {
+
+    public PatientDTO createValidPatientDTO() {
+        PatientDTO dto = PatientDTO.builder()
+                .id(1L)
+                .name("John Doe")
+                .email("john.doe@example.com")
+                .password("#Password123")
+                .phone("(11) 99710-2376")
+                .medicalHistory("No known allergies")
+                .build();
+        dto.addRole(RoleFactory.createPatientRoleDTO());
+        dto.addAppointment(AppointmentFactory.createValidAppointmentMinDTO());
+
+        return dto;
+    }
+
+    public PatientMinDTO createValidPatientMinDTO() {
+        return PatientMinDTO.builder()
+                .id(1L)
+                .name("Jane Smith")
+                .medicalHistory("No known allergies, previous surgeries: appendectomy")
+                .phone("(11) 95555-6789")
+                .build();
+    }
+
+    public Patient createValidPatient() {
+        Patient patient = new Patient();
+        patient.setId(1L);
+        patient.setName("John Doe");
+        patient.setEmail("john.doe@example.com");
+        patient.setPassword("#Password123");
+        patient.setPhone("(11) 99710-2376");
+        patient.setMedicalHistory("No known allergies");
+
+        patient.addRole(RoleFactory.createPatientRole());
+
+        return patient;
+    }
+}
