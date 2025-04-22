@@ -13,7 +13,7 @@ public class AppointmentFactory {
     public AppointmentMinDTO createValidAppointmentMinDTO() {
         return AppointmentMinDTO.builder()
                 .id(100L)
-                .date(LocalDateTime.of(2025, 4, 25, 10, 0))
+                .date(LocalDateTime.parse("2027-04-25T10:00"))
                 .status(AppointmentStatus.SCHEDULED)
                 .description("Routine check-up")
                 .dentist("Dr. Marcos Silva")
@@ -23,7 +23,7 @@ public class AppointmentFactory {
     public Appointment createValidAppointment() {
         Appointment appointment = new Appointment();
         appointment.setId(1L);
-        appointment.setDate(LocalDateTime.now().plusDays(1));
+        appointment.setDate(LocalDateTime.parse("2027-04-25T10:00"));
         appointment.setStatus(AppointmentStatus.SCHEDULED);
         appointment.setDescription("Routine check-up");
 
