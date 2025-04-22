@@ -45,9 +45,9 @@ public class ScheduleService {
         return ScheduleMapper.toAbsenceDTO(scheduleAbsence);
     }
 
-    private void validateDentistOwnership(Long dentistId){
+    private void validateDentistOwnership(Long dentistId) {
         User user = userService.authenticated();
-        if(!user.getId().equals(dentistId))
+        if (!user.getId().equals(dentistId))
             throw new ScheduleConflictException("You are not allowed to create an absence for another dentist.");
     }
 
@@ -66,6 +66,18 @@ public class ScheduleService {
             throw new ScheduleConflictException("Dentist already absent in this period.");
     }
 
+    /**
+     * Checks if the given dentist is already marked as absent during the specified period.
+     * This method iterates through all schedules associated with the dentist. If a schedule contains
+     * an absence period that overlaps with the provided start and end times, a {@link ScheduleConflictException}
+     * is thrown.
+     *
+     * @param dentist the dentist to check for overlapping absence
+     * @param start   the start date and time of the requested absence
+     * @param end     the end date and time of the requested absence
+     * @return false always, since the method throws an exception in case of conflict
+     * @throws ScheduleConflictException if the dentist is already absent during the given time range
+     */
     private boolean isDentistAlreadyAbsent(Dentist dentist, LocalDateTime start, LocalDateTime end) {
         for (Schedule schedule : dentist.getSchedules()) {
             if (schedule.getAbsenceStart() == null) continue;
@@ -82,32 +94,51 @@ public class ScheduleService {
                     ("The dentist cannot be on leave during this period, as there is already an appointment scheduled.");
     }
 
+    /**
+     * Checks if the dentist has any scheduled appointments that overlap with the requested absence period.
+     * Each appointment is represented by an {@code unavailableTimeSlot} and assumed to last 1 hour.
+     *
+     * @param dentist      the dentist whose schedule is being checked
+     * @param absenceStart the start date and time of the absence period
+     * @param absenceEnd   the end date and time of the absence period
+     * @return {@code true} if any appointment overlaps with the absence period, otherwise {@code false}
+     */
     private boolean hasAppointmentsDuringAbsence(Dentist dentist, LocalDateTime absenceStart, LocalDateTime absenceEnd) {
         for (Schedule schedule : dentist.getSchedules()) {
-            if (schedule.getUnavailableTimeSlot() != null) {
-                LocalDateTime appointmentStartTime = schedule.getUnavailableTimeSlot();
-                LocalDateTime appointmentEndTime = appointmentStartTime.plusHours(1);
+            LocalDateTime appointmentStart = schedule.getUnavailableTimeSlot();
 
-                if (isOverlapping(appointmentStartTime, appointmentEndTime, absenceStart, absenceEnd))
+            if (appointmentStart != null) {
+                LocalDateTime appointmentEnd = appointmentStart.plusHours(1);
+
+                if (isOverlapping(appointmentStart, appointmentEnd, absenceStart, absenceEnd))
                     return true;
             }
         }
         return false;
     }
 
+    /**
+     * Determines if an appointment period and an absence period overlap.
+     *
+     * @param appointmentStart the start time of the appointment
+     * @param appointmentEnd   the end time of the appointment
+     * @param absenceStart     the start time of the absence
+     * @param absenceEnd       the end time of the absence
+     * @return {@code true} if the periods overlap, otherwise {@code false}
+     */
     private boolean isOverlapping(LocalDateTime appointmentStart, LocalDateTime appointmentEnd,
                                   LocalDateTime absenceStart, LocalDateTime absenceEnd) {
 
         //Check if the appointment start time falls within the dentist's absence period
         boolean isOverlappingWithExistingAppointment =
                 (appointmentStart.isAfter(absenceStart) || appointmentStart.isEqual(absenceStart)) &&
-                (appointmentStart.isBefore(absenceEnd) || appointmentStart.isEqual(absenceEnd));
+                        (appointmentStart.isBefore(absenceEnd) || appointmentStart.isEqual(absenceEnd));
 
         // Checks if the dentist's absence start time falls within the period of an existing appointment.
-        boolean isDuringAppointmentPeriod =
+        boolean absenceStartsDuringAppointment =
                 absenceStart.isAfter(appointmentStart) && absenceStart.isBefore(appointmentEnd);
 
-        return isOverlappingWithExistingAppointment || isDuringAppointmentPeriod;
+        return isOverlappingWithExistingAppointment || absenceStartsDuringAppointment;
     }
 
     private Schedule createAbsenceSchedule(Dentist dentist, AbsenceRequestDTO dto) {
