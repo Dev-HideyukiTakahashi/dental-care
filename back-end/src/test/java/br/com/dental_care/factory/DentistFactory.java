@@ -20,10 +20,6 @@ public class DentistFactory {
         dentist.setScore(8);
 
         dentist.addRole(RoleFactory.createDentistRole());
-        dentist.getRatings().add(RatingFactory.createValidRating());
-        dentist.getAppointments().add(AppointmentFactory.createValidAppointment());;
-        dentist.getSchedules().add(ScheduleFactory.createValidSchedule());
-
         return dentist;
     }
 
