@@ -38,7 +38,7 @@ Este sistema de agendamento odontológico facilita a marcação de consultas, o 
 - **Flyway:** Ferramenta para gerenciamento de migrações do banco de dados.
 - **Swagger (OpenAPI):**
 Documentação da API em YAML para evitar poluição nos controllers, mantendo o código limpo e modular.
-- **Scheduler:**
+- **Spring Scheduler:**
 Implementação de um scheduler para enviar notificações automáticas aos pacientes 1 dia antes do compromisso.
 - **Spring Mail:** Para envio de notificações por e-mail, como lembretes de consultas e confirmações.
 - **Spring Validation:** Utilizado para realizar validações de dados em requisições, garantindo a integridade e a precisão das informações enviadas pelos usuários.
