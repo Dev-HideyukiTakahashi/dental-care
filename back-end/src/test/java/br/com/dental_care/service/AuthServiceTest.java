@@ -78,7 +78,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    void registerPatient_ShouldRegister_WhenEmailIsValid() {
+    void registerPatient_Should_register_When_emailIsValid() {
 
         when(userRepository.findByEmail(patientDTO.getEmail())).thenReturn(Optional.empty());
         when(passwordEncoder.encode(patientDTO.getPassword())).thenReturn("encodedPwd");
@@ -91,7 +91,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    void registerPatient_ShouldThrowException_WhenEmailExists() {
+    void registerPatient_Should_throwException_When_emailExists() {
 
         when(userRepository.findByEmail(patientDTO.getEmail())).thenReturn(Optional.of(user));
 
@@ -103,7 +103,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    void createRecoverToken_ShouldSendEmail_WhenEmailExists() {
+    void createRecoverToken_Should_sendEmail_When_emailExists() {
 
         when(userRepository.findByEmail(emailDTO.getEmail())).thenReturn(Optional.of(user));
 
@@ -114,7 +114,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    void createRecoverToken_ShouldThrowException_WhenEmailNotFound() {
+    void createRecoverToken_Should_throwException_When_emailNotFound() {
 
         when(userRepository.findByEmail(emailDTO.getEmail())).thenReturn(Optional.empty());
 
@@ -126,7 +126,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    void validateSelfOrAdmin_ShouldThrowException_WhenUserIsNotAdminOrOwner() {
+    void validateSelfOrAdmin_Should_throwException_When_userIsNotAdminOrOwner() {
 
         loggedUser.setId(999L);
 
@@ -139,7 +139,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    void validateSelfOrAdmin_ShouldPass_WhenUserIsAdmin() {
+    void validateSelfOrAdmin_Should_pass_When_userIsAdmin() {
 
         loggedUser.getRoles().add(RoleFactory.createAdminRole());
 
@@ -151,7 +151,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    void validateSelfOrAdmin_ShouldPass_WhenUserIsSelf() {
+    void validateSelfOrAdmin_Should_pass_When_userIsSelf() {
 
         loggedUser.setId(5L);
         loggedUser.getRoles().add(new Role(2L, "ROLE_PATIENT"));

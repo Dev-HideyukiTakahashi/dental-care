@@ -1,5 +1,6 @@
 package br.com.dental_care.factory;
 
+import br.com.dental_care.dto.AppointmentDTO;
 import br.com.dental_care.dto.AppointmentMinDTO;
 import br.com.dental_care.model.Appointment;
 import br.com.dental_care.model.enums.AppointmentStatus;
@@ -17,6 +18,17 @@ public class AppointmentFactory {
                 .status(AppointmentStatus.SCHEDULED)
                 .description("Routine check-up")
                 .dentist("Dr. Marcos Silva")
+                .build();
+    }
+
+    public AppointmentDTO createValidAppointmentDTO() {
+        return AppointmentDTO.builder()
+                .id(1L)
+                .date(LocalDateTime.parse("2027-04-25T10:00"))
+                .status(AppointmentStatus.SCHEDULED)
+                .description("Routine check-up")
+                .dentistMinDTO(DentistFactory.createValidDentistMinDTO())
+                .patientMinDTO(PatientFactory.createValidPatientMinDTO())
                 .build();
     }
 

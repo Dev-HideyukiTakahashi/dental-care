@@ -21,7 +21,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 import java.util.Optional;
@@ -42,9 +41,6 @@ public class PatientServiceTest {
     private RoleRepository roleRepository;
 
     @Mock
-    private PasswordEncoder passwordEncoder;
-
-    @Mock
     private AuthService authService;
 
     @Mock
@@ -52,7 +48,6 @@ public class PatientServiceTest {
 
     private PatientDTO patientDTO;
     private Patient patient;
-    private PatientMinDTO patientMinDTO;
     private Long validId;
     private Long dependentId;
     private Long invalidId;
@@ -64,7 +59,6 @@ public class PatientServiceTest {
     void setUp() {
         patientDTO = PatientFactory.createValidPatientDTO();
         patient = PatientFactory.createValidPatient();
-        patientMinDTO = PatientFactory.createValidPatientMinDTO();
         validId = 1L;
         dependentId = 2L;
         invalidId = 999L;
@@ -74,7 +68,7 @@ public class PatientServiceTest {
     }
 
     @Test
-    void findById_Should_returnPatientDTO_WhenIdExists() {
+    void findById_Should_returnPatientDTO_When_IdExists() {
 
         // Arrange
         when(patientRepository.findById(validId)).thenReturn(Optional.of(patient));
@@ -93,7 +87,7 @@ public class PatientServiceTest {
     }
 
     @Test
-    void findById_Should_throwResourceNotFoundException_WhenIdDoesNotExist() {
+    void findById_Should_throwResourceNotFoundException_When_IdDoesNotExist() {
 
         when(patientRepository.findById(invalidId)).thenReturn(Optional.empty());
 

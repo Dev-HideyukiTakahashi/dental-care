@@ -37,7 +37,7 @@ public class EmailServiceTest {
     }
 
     @Test
-    void sendAppointmentConfirmationEmail_ShouldSendEmailSuccessfully() {
+    void sendAppointmentConfirmationEmail_Should_sendEmailSuccessfully() {
 
         Patient patient = new Patient();
         patient.setName("João");
@@ -57,7 +57,7 @@ public class EmailServiceTest {
     }
 
     @Test
-    void sendAppointmentReminder_ShouldThrowEmailException_WhenMailFails() {
+    void sendAppointmentReminder_Should_throwEmailException_When_MailFails() {
 
         Appointment appointment = mock(Appointment.class);
         Patient patient = mock(Patient.class);
@@ -80,7 +80,7 @@ public class EmailServiceTest {
     }
 
     @Test
-    void sendPasswordResetTokenEmail_ShouldSendEmailWithCorrectToken() {
+    void sendPasswordResetTokenEmail_Should_sendEmailWithCorrectToken() {
 
         emailService.sendPasswordResetTokenEmail("user@example.com", "abc123");
 
