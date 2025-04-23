@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -35,4 +36,9 @@ public class AppointmentDTO {
 
   @JsonProperty("patient")
   private PatientMinDTO patientMinDTO;
+
+  @Setter
+  @Schema(description = "Status message regarding the appointment email notification",
+          example = "Appointment confirmation email sent successfully.")
+  private String message;
 }

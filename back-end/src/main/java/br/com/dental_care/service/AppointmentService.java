@@ -16,6 +16,7 @@ import br.com.dental_care.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,10 +49,19 @@ public class AppointmentService {
             appointment = appointmentRepository.save(appointment);
             Schedule schedule = createSchedule(appointment);
             dentist.getSchedules().add(schedule);
+            dto = AppointmentMapper.toDTO(appointment);
+
             logger.info("Schedule successfully added to the dentist's schedule list.");
             logger.info("Appointment created, id: {}", appointment.getId());
-            notifyAppointmentConfirmation(patient, appointment);
-            return AppointmentMapper.toDTO(appointment);
+
+            try {
+                notifyAppointmentConfirmation(patient, appointment);
+                dto.setMessage("Appointment confirmation email sent successfully.");
+            } catch (MailException e) {
+                logger.warn("Appointment saved, but failed to send confirmation email: {}", e.getMessage());
+                dto.setMessage("Appointment saved, but confirmation email could not be sent.");
+            }
+            return dto;
         }
         return null;
     }

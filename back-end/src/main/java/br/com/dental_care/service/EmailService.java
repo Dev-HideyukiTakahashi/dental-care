@@ -29,8 +29,7 @@ public class EmailService {
     private final JavaMailSender emailSender;
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    public void sendAppointmentConfirmationEmail(Patient patient, Appointment appointment) {
-        try {
+    public void sendAppointmentConfirmationEmail(Patient patient, Appointment appointment) throws MailException {
             String to = patient.getEmail();
             String subject = "Consulta marcada com sucesso!";
 
@@ -51,9 +50,6 @@ public class EmailService {
             );
             emailSender.send(buildEmailMessage(to, subject, body));
             logger.info("Email sent successfully.");
-        } catch(MailException e) {
-            throw new EmailException("Appointment created, email delivery failed.");
-        }
     }
 
     public void sendAppointmentReminder(Appointment appointment) {
