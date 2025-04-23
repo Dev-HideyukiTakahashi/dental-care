@@ -13,7 +13,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Getter
-@Builder
+@Builder(toBuilder = true)
 public class AppointmentDTO {
 
   @Schema(description = "ID of the dentist", example = "2", accessMode = Schema.AccessMode.READ_ONLY)

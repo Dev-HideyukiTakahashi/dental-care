@@ -32,6 +32,29 @@ public class AppointmentFactory {
                 .build();
     }
 
+    public AppointmentDTO createUpdatedAppointmentDTO() {
+        return AppointmentDTO.builder()
+                .id(1L)
+                .date(LocalDateTime.parse("2025-05-11T10:00:00"))
+                .dentistMinDTO(DentistFactory.createValidDentistMinDTO())
+                .patientMinDTO(PatientFactory.createValidPatientMinDTO())
+                .build();
+    }
+
+    public AppointmentDTO createValidAppointmentDTOWithInvalidDentist() {
+        return createValidAppointmentDTO()
+                .toBuilder()
+                .dentistMinDTO(DentistFactory.createInvalidDentistMinDTO())
+                .build();
+    }
+
+    public AppointmentDTO createValidAppointmentDTOWithInvalidPatient() {
+        return createValidAppointmentDTO()
+                .toBuilder()
+                .patientMinDTO(PatientFactory.createInvalidPatientMinDTO())
+                .build();
+    }
+
     public Appointment createValidAppointment() {
         Appointment appointment = new Appointment();
         appointment.setId(1L);

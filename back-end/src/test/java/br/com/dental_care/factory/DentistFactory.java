@@ -50,4 +50,10 @@ public class DentistFactory {
                 .score(8)
                 .build();
     }
+
+    public DentistMinDTO createInvalidDentistMinDTO() {
+        return DentistMinDTO.builder()
+                .id(999L)
+                .build();
+    }
 }

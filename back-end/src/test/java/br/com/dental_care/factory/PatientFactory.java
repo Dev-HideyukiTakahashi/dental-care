@@ -26,9 +26,9 @@ public class PatientFactory {
     public PatientMinDTO createValidPatientMinDTO() {
         return PatientMinDTO.builder()
                 .id(1L)
-                .name("Jane Smith")
-                .medicalHistory("No known allergies, previous surgeries: appendectomy")
-                .phone("(11) 95555-6789")
+                .name("John Doe")
+                .medicalHistory("No known allergies")
+                .phone("(11) 99710-2376")
                 .build();
     }
 
@@ -44,5 +44,12 @@ public class PatientFactory {
         patient.addRole(RoleFactory.createPatientRole());
 
         return patient;
+    }
+
+    public static PatientMinDTO createInvalidPatientMinDTO() {
+        return createValidPatientMinDTO()
+                .toBuilder()
+                .id(999L)
+                .build();
     }
 }

@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@Builder
+@Builder(toBuilder = true)
 public class PatientMinDTO {
 
     @Schema(description = "ID of the patient", example = "2")
