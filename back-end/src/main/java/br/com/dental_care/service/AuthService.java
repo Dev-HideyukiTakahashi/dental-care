@@ -52,7 +52,7 @@ public class AuthService {
 
     @Transactional
     public void createRecoverToken(EmailDTO body) {
-        User user = userRepository.findByEmail(body.getEmail()).orElseThrow(() ->
+        userRepository.findByEmail(body.getEmail()).orElseThrow(() ->
                 new ResourceNotFoundException("Email not found."));
 
         PasswordRecover entity = buildPasswordRecover(body);
