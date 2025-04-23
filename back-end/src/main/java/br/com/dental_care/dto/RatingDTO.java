@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Getter
-@Builder
+@Builder(toBuilder = true)
 public class RatingDTO {
 
   @Schema(description = "Unique identifier of the rating", example = "1",

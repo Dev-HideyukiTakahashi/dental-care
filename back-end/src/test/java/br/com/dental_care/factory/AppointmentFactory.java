@@ -12,7 +12,7 @@ public class AppointmentFactory {
 
     public AppointmentMinDTO createValidAppointmentMinDTO() {
         return AppointmentMinDTO.builder()
-                .id(100L)
+                .id(1L)
                 .date(LocalDateTime.parse("2027-04-25T10:00"))
                 .status(AppointmentStatus.SCHEDULED)
                 .description("Routine check-up")

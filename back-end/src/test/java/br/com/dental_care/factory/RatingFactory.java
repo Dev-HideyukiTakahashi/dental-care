@@ -26,6 +26,20 @@ public class RatingFactory {
                 .build();
     }
 
+    public static RatingDTO createValidRatingWithInvalidDentistDTO() {
+        return createValidRatingDTO()
+                .toBuilder()
+                .dentistId(999L)
+                .build();
+    }
+
+    public static RatingDTO createValidRatingWithInvalidPatientDTO() {
+        return createValidRatingDTO()
+                .toBuilder()
+                .patientId(999L)
+                .build();
+    }
+
     public static RatingMinDTO createValidRatingMinDTO() {
         return RatingMinDTO.builder()
                 .id(1L)
@@ -44,7 +58,7 @@ public class RatingFactory {
         rating.setScore(8);
         rating.setComment("Great service, highly recommend!");
         rating.setDate(LocalDateTime.of(2025, 12, 27, 15, 30, 0, 0));
-        rating.setRated(true);
+        rating.setRated(false);
         rating.setPatient(patient);
         rating.setDentist(dentist);
         rating.setAppointment(appointment);
