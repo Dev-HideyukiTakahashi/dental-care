@@ -21,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 import java.util.Optional;
@@ -39,6 +40,9 @@ public class PatientServiceTest {
 
     @Mock
     private RoleRepository roleRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @Mock
     private AuthService authService;
@@ -121,6 +125,7 @@ public class PatientServiceTest {
 
         when(userRepository.findByEmail(validEmail)).thenReturn(Optional.empty());
         when(patientRepository.save(any(Patient.class))).thenReturn(patient);
+        when(passwordEncoder.encode(patientDTO.getPassword())).thenReturn("encodedPassword");
         when(roleRepository.existsById(2L)).thenReturn(true);
 
         patientDTO = patientService.save(patientDTO);
@@ -160,6 +165,7 @@ public class PatientServiceTest {
         when(patientRepository.getReferenceById(validId)).thenReturn(patient);
         when(userRepository.findByEmail(validEmail)).thenReturn(Optional.empty());
         when(patientRepository.save(any(Patient.class))).thenReturn(patient);
+        when(passwordEncoder.encode(patientDTO.getPassword())).thenReturn("encodedPassword");
         when(roleRepository.existsById(2L)).thenReturn(true);
         doNothing().when(authService).validateSelfOrAdmin(validId);
 
@@ -254,11 +260,14 @@ public class PatientServiceTest {
     @Test
     void copyToEntity_Should_copyAllFieldsCorrectly_When_validDtoProvided() {
 
+        when(passwordEncoder.encode("#Password123")).thenReturn("encodedPassword");
+
         PatientDTO dto = PatientDTO.builder()
                 .name("John Doe")
                 .email("john@example.com")
                 .phone("123456789")
                 .medicalHistory("None")
+                .password("#Password123")
                 .build();
 
         Patient entity = new Patient();
