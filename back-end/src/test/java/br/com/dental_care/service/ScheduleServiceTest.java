@@ -179,21 +179,66 @@ public class ScheduleServiceTest {
 
     @Test
     void removeDentistAbsence_Should_DeleteAbsence_When_ValidIdProvided() {
-        // TODO
+
+        schedule.setUnavailableTimeSlot(null);
+        schedule.setAbsenceEnd(LocalDateTime.now().plusDays(5));
+
+        when(scheduleRepository.findById(validId)).thenReturn(Optional.of(schedule));
+        doNothing().when(scheduleRepository).deleteById(validId);
+
+        scheduleService.removeDentistAbsence(validId);
+
+        assertNull(schedule.getUnavailableTimeSlot());
+        verify(scheduleRepository, times(1)).findById(validId);
+        verify(scheduleRepository, times(1)).deleteById(validId);
     }
 
     @Test
     void removeDentistAbsence_Should_ThrowException_When_ScheduleNotFound() {
-        // TODO
+
+        when(scheduleRepository.findById(invalidId)).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(ResourceNotFoundException.class, () -> {
+            scheduleService.removeDentistAbsence(invalidId);
+        });
+
+        assertEquals("Schedule not found! ID: " + invalidId, exception.getMessage());
+        verify(scheduleRepository, times(1)).findById(invalidId);
+        verify(scheduleRepository, never()).deleteById(invalidId);
     }
 
     @Test
     void removeDentistAbsence_Should_ThrowException_When_ScheduleIsNotAbsence() {
-        // TODO
+
+        schedule.setUnavailableTimeSlot(LocalDateTime.parse("2027-12-20T10:00:00"));
+
+        when(scheduleRepository.findById(validId)).thenReturn(Optional.of(schedule));
+
+        Exception exception = assertThrows(ScheduleConflictException.class, () -> {
+            scheduleService.removeDentistAbsence(validId);
+        });
+
+        assertEquals("Dentist is not absent during this period.", exception.getMessage());
+        assertNotNull(schedule.getUnavailableTimeSlot());
+        verify(scheduleRepository, times(1)).findById(validId);
+        verify(scheduleRepository, never()).deleteById(validId);
     }
 
     @Test
     void removeDentistAbsence_Should_ThrowException_When_AbsenceEndIsInPast() {
-        // TODO
+
+        schedule.setAbsenceEnd(LocalDateTime.now().minusDays(5));
+        schedule.setUnavailableTimeSlot(null);
+
+        when(scheduleRepository.findById(validId)).thenReturn(Optional.of(schedule));
+
+        Exception exception = assertThrows(InvalidDateRangeException.class, () -> {
+            scheduleService.removeDentistAbsence(validId);
+        });
+
+        assertEquals("Cannot remove an absence period that has already ended.", exception.getMessage());
+        assertTrue(schedule.getAbsenceEnd().isBefore(LocalDateTime.now()));
+        verify(scheduleRepository, times(1)).findById(validId);
+        verify(scheduleRepository, never()).deleteById(validId);
     }
 }
