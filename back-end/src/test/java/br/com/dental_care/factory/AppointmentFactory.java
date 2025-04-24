@@ -55,6 +55,21 @@ public class AppointmentFactory {
                 .build();
     }
 
+    public AppointmentDTO createValidAppointmentDtoOutsideWorkingHours() {
+        return createValidAppointmentDTO()
+                .toBuilder()
+                .date(LocalDateTime.parse("2027-04-25T07:00"))
+                .build();
+    }
+
+    public AppointmentDTO createValidAppointmentDtoWithAlreadyScheduled() {
+        return createValidAppointmentDTO()
+                .toBuilder()
+                .date(LocalDateTime.parse("2027-04-25T10:00"))
+                .build();
+    }
+
+
     public Appointment createValidAppointment() {
         Appointment appointment = new Appointment();
         appointment.setId(1L);

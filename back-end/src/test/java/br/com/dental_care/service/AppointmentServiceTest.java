@@ -2,6 +2,7 @@ package br.com.dental_care.service;
 
 import br.com.dental_care.dto.AppointmentDTO;
 import br.com.dental_care.exception.ResourceNotFoundException;
+import br.com.dental_care.exception.ScheduleConflictException;
 import br.com.dental_care.factory.AppointmentFactory;
 import br.com.dental_care.factory.DentistFactory;
 import br.com.dental_care.factory.PatientFactory;
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mail.MailException;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -70,7 +72,7 @@ class AppointmentServiceTest {
     }
 
     @Test
-    void createAppointment_Should_returnAppointmentDTO_When_CreateAppointmentIsSuccessful() {
+    void createAppointment_Should_returnAppointmentDTOAndSendSuccessEmail_When_CreateAppointmentIsSuccessful() {
 
         when(dentistRepository.existsById(validId)).thenReturn(true);
         when(dentistRepository.getReferenceById(validId)).thenReturn(dentist);
@@ -89,6 +91,33 @@ class AppointmentServiceTest {
         assertEquals(appointmentDTO.getDentistMinDTO().getName(), dto.getDentistMinDTO().getName());
         assertEquals(appointmentDTO.getPatientMinDTO().getName(), dto.getPatientMinDTO().getName());
         assertEquals("Appointment confirmation email sent successfully.", dto.getMessage());
+        verify(appointmentRepository).save(any());
+        verify(scheduleRepository).save(any());
+        verify(emailService).sendAppointmentConfirmationEmail(any(), any());
+    }
+
+    @Test
+    void createAppointment_Should_returnAppointmentDTOAndNotSendEmail_When_CreateAppointmentIsSuccessfulAndEmailFail() {
+
+        when(dentistRepository.existsById(validId)).thenReturn(true);
+        when(dentistRepository.getReferenceById(validId)).thenReturn(dentist);
+        when(patientRepository.existsById(validId)).thenReturn(true);
+        when(patientRepository.getReferenceById(validId)).thenReturn(patient);
+        doNothing().when(authService).validateSelfOrAdmin(validId);
+        when(appointmentRepository.save(any())).thenReturn(appointment);
+        when(scheduleRepository.save(any())).thenReturn(new Schedule());
+        doThrow(new MailException("Appointment saved, but confirmation email could not be sent.") {
+        })
+                .when(emailService).sendAppointmentConfirmationEmail(any(), any());
+
+        AppointmentDTO dto = appointmentService.createAppointment(appointmentDTO);
+
+        assertNotNull(dto);
+        assertEquals(appointmentDTO.getDate(), dto.getDate());
+        assertEquals(appointmentDTO.getDescription(), dto.getDescription());
+        assertEquals(appointmentDTO.getDentistMinDTO().getName(), dto.getDentistMinDTO().getName());
+        assertEquals(appointmentDTO.getPatientMinDTO().getName(), dto.getPatientMinDTO().getName());
+        assertEquals("Appointment saved, but confirmation email could not be sent.", dto.getMessage());
         verify(appointmentRepository).save(any());
         verify(scheduleRepository).save(any());
         verify(emailService).sendAppointmentConfirmationEmail(any(), any());
@@ -126,6 +155,73 @@ class AppointmentServiceTest {
     }
 
     @Test
+    void createAppointment_Should_throwException_When_appointmentIsOutsideWorkingHours() {
+
+        appointmentDTO = AppointmentFactory.createValidAppointmentDtoOutsideWorkingHours();
+
+        when(dentistRepository.existsById(validId)).thenReturn(true);
+        when(dentistRepository.getReferenceById(validId)).thenReturn(dentist);
+        when(patientRepository.existsById(validId)).thenReturn(true);
+        when(patientRepository.getReferenceById(validId)).thenReturn(patient);
+        doNothing().when(authService).validateSelfOrAdmin(validId);
+
+        ScheduleConflictException exception = assertThrows(
+                ScheduleConflictException.class,
+                () -> appointmentService.createAppointment(appointmentDTO)
+        );
+
+        assertEquals("Appointment time is outside of working hours.", exception.getMessage());
+    }
+
+    @Test
+    void createAppointment_Should_throwException_When_dentistHasExactScheduleConflict() {
+
+        LocalDateTime alreadyScheduleTime = LocalDateTime.parse("2027-04-25T10:00");
+        appointmentDTO = AppointmentFactory.createValidAppointmentDtoWithAlreadyScheduled();
+
+        Schedule schedule = new Schedule();
+        schedule.setUnavailableTimeSlot(alreadyScheduleTime);
+        dentist.getSchedules().add(schedule);
+
+        when(dentistRepository.existsById(validId)).thenReturn(true);
+        when(dentistRepository.getReferenceById(validId)).thenReturn(dentist);
+        when(patientRepository.existsById(validId)).thenReturn(true);
+        when(patientRepository.getReferenceById(validId)).thenReturn(patient);
+        doNothing().when(authService).validateSelfOrAdmin(validId);
+
+        ScheduleConflictException exception = assertThrows(
+                ScheduleConflictException.class,
+                () -> appointmentService.createAppointment(appointmentDTO)
+        );
+
+        assertEquals("An appointment already exists for this time slot.", exception.getMessage());
+    }
+
+    @Test
+    void createAppointment_should_throwException_When_dentistHasNearbyScheduleConflict() {
+
+        LocalDateTime nearbyScheduleTime = LocalDateTime.parse("2027-04-25T10:30");
+        appointmentDTO = AppointmentFactory.createValidAppointmentDtoWithAlreadyScheduled(); // ("2027-04-25T10:00");
+
+        Schedule schedule = new Schedule();
+        schedule.setUnavailableTimeSlot(nearbyScheduleTime);
+        dentist.getSchedules().add(schedule);
+
+        when(dentistRepository.existsById(validId)).thenReturn(true);
+        when(dentistRepository.getReferenceById(validId)).thenReturn(dentist);
+        when(patientRepository.existsById(validId)).thenReturn(true);
+        when(patientRepository.getReferenceById(validId)).thenReturn(patient);
+        doNothing().when(authService).validateSelfOrAdmin(validId);
+
+        ScheduleConflictException exception = assertThrows(
+                ScheduleConflictException.class,
+                () -> appointmentService.createAppointment(appointmentDTO)
+        );
+
+        assertEquals("The time falls within another appointment slot.", exception.getMessage());
+    }
+
+    @Test
     void cancelAppointment_Should_returnAppointmentDTOWithCanceledStatus_When_SuccessfulCanceled() {
 
         appointment.setStatus(AppointmentStatus.SCHEDULED);
@@ -142,8 +238,36 @@ class AppointmentServiceTest {
         assertNotNull(dto);
         assertEquals(AppointmentStatus.CANCELED, dto.getStatus());
         assertEquals(AppointmentStatus.CANCELED, appointment.getStatus());
-        verify(appointmentRepository,times(1)).findById(validId);
+        verify(appointmentRepository, times(1)).findById(validId);
         verify(scheduleRepository).deleteById(validId);
+    }
+
+    @Test
+    void cancelAppointment_Should_throwException_When_appointmentAlreadyCanceled() {
+
+        appointment.setStatus(AppointmentStatus.CANCELED);
+
+        when(appointmentRepository.findById(validId)).thenReturn(Optional.of(appointment));
+
+        ScheduleConflictException exception = assertThrows(
+                ScheduleConflictException.class, () -> appointmentService.cancelAppointment(validId)
+        );
+
+        assertEquals("The appointment has already been completed or canceled.", exception.getMessage());
+    }
+
+    @Test
+    void cancelAppointment_Should_throwException_When_appointmentAlreadyCompleted() {
+
+        appointment.setStatus(AppointmentStatus.COMPLETED);
+
+        when(appointmentRepository.findById(validId)).thenReturn(Optional.of(appointment));
+
+        ScheduleConflictException exception = assertThrows(
+                ScheduleConflictException.class, () -> appointmentService.cancelAppointment(validId)
+        );
+
+        assertEquals("The appointment has already been completed or canceled.", exception.getMessage());
     }
 
     @Test
@@ -158,7 +282,7 @@ class AppointmentServiceTest {
         assertNotNull(dto);
         assertEquals(AppointmentStatus.COMPLETED, dto.getStatus());
         assertEquals(AppointmentStatus.COMPLETED, appointment.getStatus());
-        verify(appointmentRepository,times(1)).findById(validId);
+        verify(appointmentRepository, times(1)).findById(validId);
     }
 
     @Test
