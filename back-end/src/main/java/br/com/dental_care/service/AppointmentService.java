@@ -41,10 +41,9 @@ public class AppointmentService {
         Dentist dentist = validateDentist(dto.getDentistMinDTO().getId());
         Patient patient = validatePatient(dto.getPatientMinDTO().getId());
         authService.validateSelfOrAdmin(patient.getId());
-        boolean isDentistAvailable = checkDentistAvailability(dentist, dto.getDate());
         validateWorkingHours(dto.getDate());
 
-        if(isDentistAvailable) {
+        if(checkDentistAvailability(dentist, dto.getDate())) {
             Appointment appointment = AppointmentMapper.toEntity(dto, dentist, patient);
             appointment = appointmentRepository.save(appointment);
             Schedule schedule = createSchedule(appointment);
@@ -61,9 +60,8 @@ public class AppointmentService {
                 logger.warn("Appointment saved, but failed to send confirmation email: {}", e.getMessage());
                 dto.setMessage("Appointment saved, but confirmation email could not be sent.");
             }
-            return dto;
         }
-        return null;
+        return dto;
     }
 
     private Dentist validateDentist(Long id) {
