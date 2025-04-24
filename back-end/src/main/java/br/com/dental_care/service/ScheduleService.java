@@ -34,8 +34,8 @@ public class ScheduleService {
 
         validateDentistOwnership(dentistId);
         validateAbsenceDates(dto);
-        validateAbsencePeriodNotConflict(dentist, dto);
-        validateNoAppointmentsDuringAbsence(dentist, dto);
+        validateAbsencePeriodNotConflict(dentist, dto.getAbsenceStart(), dto.getAbsenceEnd());
+        validateNoAppointmentsDuringAbsence(dentist, dto.getAbsenceStart(), dto.getAbsenceEnd());
 
         Schedule scheduleAbsence = createAbsenceSchedule(dentist, dto);
         scheduleAbsence = scheduleRepository.save(scheduleAbsence);
@@ -61,11 +61,6 @@ public class ScheduleService {
             throw new InvalidDateRangeException("The end date and time cannot be before the start date and time.");
     }
 
-    private void validateAbsencePeriodNotConflict(Dentist dentist, AbsenceRequestDTO dto) {
-        if (isDentistAlreadyAbsent(dentist, dto.getAbsenceStart(), dto.getAbsenceEnd()))
-            throw new ScheduleConflictException("Dentist already absent in this period.");
-    }
-
     /**
      * Checks if the given dentist is already marked as absent during the specified period.
      * This method iterates through all schedules associated with the dentist. If a schedule contains
@@ -75,23 +70,15 @@ public class ScheduleService {
      * @param dentist the dentist to check for overlapping absence
      * @param start   the start date and time of the requested absence
      * @param end     the end date and time of the requested absence
-     * @return false always, since the method throws an exception in case of conflict
      * @throws ScheduleConflictException if the dentist is already absent during the given time range
      */
-    private boolean isDentistAlreadyAbsent(Dentist dentist, LocalDateTime start, LocalDateTime end) {
+    private void validateAbsencePeriodNotConflict(Dentist dentist, LocalDateTime start, LocalDateTime end) {
         for (Schedule schedule : dentist.getSchedules()) {
             if (schedule.getAbsenceStart() == null) continue;
 
             if (schedule.getAbsenceStart().isBefore(end) && schedule.getAbsenceEnd().isAfter(start))
                 throw new ScheduleConflictException("Dentist already absent in this period.");
         }
-        return false;
-    }
-
-    private void validateNoAppointmentsDuringAbsence(Dentist dentist, AbsenceRequestDTO dto) {
-        if (hasAppointmentsDuringAbsence(dentist, dto.getAbsenceStart(), dto.getAbsenceEnd()))
-            throw new ScheduleConflictException
-                    ("The dentist cannot be on leave during this period, as there is already an appointment scheduled.");
     }
 
     /**
@@ -101,9 +88,8 @@ public class ScheduleService {
      * @param dentist      the dentist whose schedule is being checked
      * @param absenceStart the start date and time of the absence period
      * @param absenceEnd   the end date and time of the absence period
-     * @return {@code true} if any appointment overlaps with the absence period, otherwise {@code false}
      */
-    private boolean hasAppointmentsDuringAbsence(Dentist dentist, LocalDateTime absenceStart, LocalDateTime absenceEnd) {
+    private void validateNoAppointmentsDuringAbsence(Dentist dentist, LocalDateTime absenceStart, LocalDateTime absenceEnd) {
         for (Schedule schedule : dentist.getSchedules()) {
             LocalDateTime appointmentStart = schedule.getUnavailableTimeSlot();
 
@@ -111,10 +97,10 @@ public class ScheduleService {
                 LocalDateTime appointmentEnd = appointmentStart.plusHours(1);
 
                 if (isOverlapping(appointmentStart, appointmentEnd, absenceStart, absenceEnd))
-                    return true;
+                    throw new ScheduleConflictException
+                            ("The dentist cannot be on leave during this period, as there is already an appointment scheduled.");
             }
         }
-        return false;
     }
 
     /**
