@@ -26,6 +26,7 @@ public class PatientDTO {
     private String name;
 
     @Schema(description = "Email of the patient", example = "john.doe@example.com")
+    @NotBlank(message = "Email is required.")
     @Email(message = "Please enter a valid email address.")
     private String email;
 

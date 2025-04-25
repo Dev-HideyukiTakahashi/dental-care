@@ -56,7 +56,7 @@ public class PatientController {
                             schema = @Schema(implementation = CustomError.class)))
     })
     @GetMapping(path = "/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PATIENT')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<PatientDTO> findById(@PathVariable Long id) {
         logger.info("Searching patient with id: {}", id);
         PatientDTO dto = patientService.findById(id);
@@ -82,7 +82,7 @@ public class PatientController {
                             schema = @Schema(implementation = CustomError.class)))
     })
     @GetMapping
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PATIENT')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<Page<PatientMinDTO>> findAll(
              @RequestParam(defaultValue = "0")
              @Parameter(description = "Page number", example = "0") int page,
@@ -176,7 +176,7 @@ public class PatientController {
                             schema = @Schema(implementation = CustomError.class)))
     })
     @DeleteMapping(path = "/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PATIENT')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         logger.info("Deleting patient with id: {}", id);
         patientService.deleteById(id);
