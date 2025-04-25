@@ -36,6 +36,7 @@ public class DentistDTO {
 
     @Schema(description = "Email of the dentist", example = "john.doe@example.com")
     @Email(message = "Please enter a valid email address.")
+    @NotBlank(message = "Email is required.")
     private String email;
 
     @Schema(description = "Password of the dentist", example = "#Password123")
