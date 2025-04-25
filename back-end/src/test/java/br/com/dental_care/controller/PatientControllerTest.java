@@ -6,6 +6,7 @@ import io.restassured.http.ContentType;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.annotation.DirtiesContext;
 
 import static io.restassured.RestAssured.given;
 
@@ -72,7 +73,7 @@ public class PatientControllerTest extends BaseIntegrationTest {
 
     @Test
     void findAll_Should_return403_When_patientLogged() throws Exception {
-        String accessToken = TokenUtil.obtainAccessToken("leonard.smile@example.com", "123456");
+        String accessToken = TokenUtil.obtainAccessToken("leonardo.smile@example.com", "123456");
 
         given()
                 .header("Authorization", "Bearer " + accessToken)
@@ -164,6 +165,7 @@ public class PatientControllerTest extends BaseIntegrationTest {
     }
 
     @Test
+    @DirtiesContext
     void update_Should_return200_When_patientLoggedAndValidData() throws Exception {
         String accessToken = TokenUtil.obtainAccessToken("leonardo.smile@example.com", "123456");
 
@@ -228,6 +230,7 @@ public class PatientControllerTest extends BaseIntegrationTest {
     }
 
     @Test
+    @DirtiesContext
     void update_Should_return200_When_adminLoggedAndValidData() throws Exception {
         String accessToken = TokenUtil.obtainAccessToken("elias.warrior@example.com", "123456");
 
