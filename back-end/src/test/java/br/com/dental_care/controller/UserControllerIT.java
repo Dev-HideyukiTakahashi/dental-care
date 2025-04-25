@@ -35,7 +35,7 @@ public class UserControllerIT extends BaseIntegrationTest{
                 .when()
                 .get("/api/v1/users/me")
                 .then()
-                .statusCode(HttpStatus.FORBIDDEN.value());  // Espera 403 Forbidden
+                .statusCode(HttpStatus.FORBIDDEN.value());
     }
 
     @Test
@@ -48,6 +48,6 @@ public class UserControllerIT extends BaseIntegrationTest{
                 .when()
                 .get("/api/v1/users/me")
                 .then()
-                .statusCode(HttpStatus.FORBIDDEN.value());  // Espera 403 Forbidden
+                .statusCode(HttpStatus.FORBIDDEN.value());
     }
 }
