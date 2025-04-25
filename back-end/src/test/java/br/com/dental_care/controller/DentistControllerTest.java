@@ -6,7 +6,6 @@ import io.restassured.http.ContentType;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.annotation.DirtiesContext;
 
 import static io.restassured.RestAssured.given;
 
@@ -100,7 +99,6 @@ public class DentistControllerTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DirtiesContext
     void insert_Should_return201_When_adminLoggedAndValidData() throws Exception {
         String accessToken = TokenUtil.obtainAccessToken("elias.warrior@example.com", "123456");
 
@@ -175,7 +173,6 @@ public class DentistControllerTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DirtiesContext
     void update_Should_return200_When_adminLoggedAndValidData() throws Exception {
         String accessToken = TokenUtil.obtainAccessToken("elias.warrior@example.com", "123456");
 
@@ -250,13 +247,12 @@ public class DentistControllerTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DirtiesContext
     void deleteById_Should_return204_When_adminDeletesDentistWithoutDependencies() throws Exception {
         String accessToken = TokenUtil.obtainAccessToken("elias.warrior@example.com", "123456");
 
         DentistDTO newDentist = DentistDTO.builder()
                 .name("Dr. Teste")
-                .email("dr.teste@example.com")
+                .email("dr.teste2@example.com")
                 .speciality("Orthodontics")
                 .password("#Newpassword123")
                 .registrationNumber("123456")

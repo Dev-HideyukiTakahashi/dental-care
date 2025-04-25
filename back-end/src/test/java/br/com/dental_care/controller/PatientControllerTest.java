@@ -6,7 +6,6 @@ import io.restassured.http.ContentType;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.annotation.DirtiesContext;
 
 import static io.restassured.RestAssured.given;
 
@@ -165,9 +164,8 @@ public class PatientControllerTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DirtiesContext
     void update_Should_return200_When_patientLoggedAndValidData() throws Exception {
-        String accessToken = TokenUtil.obtainAccessToken("leonardo.smile@example.com", "123456");
+        String accessToken = TokenUtil.obtainAccessToken("yuki.murasaki90@gmail.com", "123456");
 
         PatientDTO patientDTO = PatientDTO.builder()
                 .name("Updated Name")
@@ -181,7 +179,7 @@ public class PatientControllerTest extends BaseIntegrationTest {
                 .accept(ContentType.JSON)
                 .body(patientDTO)
                 .when()
-                .put("/api/v1/patients/2")
+                .put("/api/v1/patients/3")
                 .then()
                 .statusCode(HttpStatus.OK.value())
                 .body("email", Matchers.equalTo("updated.email@example.com"));
@@ -230,7 +228,6 @@ public class PatientControllerTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DirtiesContext
     void update_Should_return200_When_adminLoggedAndValidData() throws Exception {
         String accessToken = TokenUtil.obtainAccessToken("elias.warrior@example.com", "123456");
 
@@ -246,7 +243,7 @@ public class PatientControllerTest extends BaseIntegrationTest {
                 .accept(ContentType.JSON)
                 .body(patientDTO)
                 .when()
-                .put("/api/v1/patients/2")
+                .put("/api/v1/patients/3")
                 .then()
                 .statusCode(HttpStatus.OK.value())
                 .body("email", Matchers.equalTo("updated.email2@example.com"));
