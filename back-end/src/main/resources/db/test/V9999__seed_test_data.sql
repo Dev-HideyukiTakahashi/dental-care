@@ -78,7 +78,8 @@ INSERT INTO tb_appointment (date, dentist_id, patient_id, status, description)
 VALUES ('2025-02-23 10:00:00', 4, 2, 'COMPLETED', 'Procedimento de limpeza profunda concluído com sucesso'),
        ('2025-02-23 13:00:00', 4, 2, 'COMPLETED', 'Consulta odontológica de rotina e aplicação de flúor concluída'),
        ('2025-02-10 14:30:00', 5, 3, 'COMPLETED', 'Consulta odontológica de rotina'),
-       ('2025-02-15 09:00:00', 5, 3, 'COMPLETED', 'Avaliação inicial e planejamento de tratamento');
+       ('2025-02-15 09:00:00', 5, 3, 'COMPLETED', 'Avaliação inicial e planejamento de tratamento'),
+       ('2025-02-27 10:00:00', 4, 2, 'COMPLETED', 'Procedimento de limpeza profunda');
 
 -- Insert Ratings
 INSERT INTO TB_RATING (SCORE, DATE, IS_RATED, DENTIST_ID, PATIENT_ID, APPOINTMENT_ID, COMMENT)

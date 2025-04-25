@@ -1,6 +1,5 @@
 package br.com.dental_care.controller;
 
-import br.com.dental_care.dto.AbsenceDTO;
 import br.com.dental_care.dto.RatingDTO;
 import br.com.dental_care.exception.handler.CustomError;
 import br.com.dental_care.service.RatingService;
@@ -53,7 +52,7 @@ public class RatingController {
             @ApiResponse(responseCode = "404", description = "Dentist not found",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CustomError.class))),
-            @ApiResponse(responseCode = "409", description = "Schedule data conflict",
+            @ApiResponse(responseCode = "422", description = "Appointment has already been rated or not completed.",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CustomError.class))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error",
