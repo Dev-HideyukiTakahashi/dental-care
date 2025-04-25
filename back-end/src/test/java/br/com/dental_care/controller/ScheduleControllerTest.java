@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ScheduleControllerIT extends BaseIntegrationTest {
+public class ScheduleControllerTest extends BaseIntegrationTest {
 
     @Test
     void createDentistAbsence_Should_returnAbsence_When_validRequestAndDentistLogged() throws Exception {

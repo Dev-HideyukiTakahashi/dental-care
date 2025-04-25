@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 
 import static io.restassured.RestAssured.given;
 
-public class UserControllerIT extends BaseIntegrationTest{
+public class UserControllerTest extends BaseIntegrationTest{
 
     @Test
     void getMe_Should_returnPatient_When_patientLogged() throws JSONException {

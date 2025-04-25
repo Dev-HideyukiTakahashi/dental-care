@@ -1,8 +1,8 @@
 package br.com.dental_care.controller;
 
+
 import br.com.dental_care.dto.AbsenceDTO;
 import br.com.dental_care.dto.AbsenceRequestDTO;
-import br.com.dental_care.dto.AppointmentDTO;
 import br.com.dental_care.dto.ScheduleDTO;
 import br.com.dental_care.exception.handler.CustomError;
 import br.com.dental_care.service.ScheduleService;
