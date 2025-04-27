@@ -43,7 +43,7 @@ public class AppointmentService {
         authService.validateSelfOrAdmin(patient.getId());
         validateWorkingHours(dto.getDate());
 
-        if(checkDentistAvailability(dentist, dto.getDate())) {
+        if (checkDentistAvailability(dentist, dto.getDate())) {
             Appointment appointment = AppointmentMapper.toEntity(dto, dentist, patient);
             appointment = appointmentRepository.save(appointment);
             Schedule schedule = createSchedule(appointment);
@@ -65,14 +65,14 @@ public class AppointmentService {
     }
 
     private Dentist validateDentist(Long id) {
-        if(!dentistRepository.existsById(id)) {
+        if (!dentistRepository.existsById(id)) {
             throw new ResourceNotFoundException("Dentist not found! ID: " + id);
         }
         return dentistRepository.getReferenceById(id);
     }
 
     private Patient validatePatient(Long id) {
-        if(!patientRepository.existsById(id)) {
+        if (!patientRepository.existsById(id)) {
             throw new ResourceNotFoundException("Patient not found! ID: " + id);
         }
         return patientRepository.getReferenceById(id);
@@ -83,24 +83,30 @@ public class AppointmentService {
         final LocalTime startTime = LocalTime.of(8, 0);
         final LocalTime endTime = LocalTime.of(19, 0);
 
-        if(time.isBefore(startTime) || time.isAfter(endTime))
+        if (time.isBefore(startTime) || time.isAfter(endTime))
             throw new ScheduleConflictException("Appointment time is outside of working hours.");
     }
 
     private boolean checkDentistAvailability(Dentist dentist, LocalDateTime date) {
-        for(Schedule schedule : dentist.getSchedules()) {
+        for (Schedule schedule : dentist.getSchedules()) {
+            LocalDateTime unavailableTimeSlot = schedule.getUnavailableTimeSlot();
 
-            boolean existingAppointment = schedule.getUnavailableTimeSlot().equals(date);
-            if(existingAppointment)
+            if (unavailableTimeSlot == null) continue;
+
+
+            if (unavailableTimeSlot.equals(date))
                 throw new ScheduleConflictException("An appointment already exists for this time slot.");
 
-            LocalDateTime minusOneHour = schedule.getUnavailableTimeSlot().minusHours(1);
-            LocalDateTime plusOneHour = schedule.getUnavailableTimeSlot().plusHours(1);
-            if(date.isAfter(minusOneHour) && date.isBefore(plusOneHour))
+            if (isWithinOneHour(unavailableTimeSlot, date))
                 throw new ScheduleConflictException("The time falls within another appointment slot.");
         }
         return true;
     }
+
+    private boolean isWithinOneHour(LocalDateTime unavailableTimeSlot, LocalDateTime date) {
+        return date.isAfter(unavailableTimeSlot.minusHours(1)) && date.isBefore(unavailableTimeSlot.plusHours(1));
+    }
+
 
     private Schedule createSchedule(Appointment appointment) {
         Schedule schedule = new Schedule();
@@ -138,8 +144,8 @@ public class AppointmentService {
     private void deleteSchedule(Appointment appointment) {
         logger.info("Initiating schedule deletion process.");
         List<Schedule> dentistSchedules = appointment.getDentist().getSchedules();
-        for(Schedule schedule : dentistSchedules) {
-            if(schedule.getUnavailableTimeSlot().isEqual(appointment.getDate())) {
+        for (Schedule schedule : dentistSchedules) {
+            if (schedule.getUnavailableTimeSlot().isEqual(appointment.getDate())) {
                 scheduleRepository.deleteById(schedule.getId());
                 logger.info("Schedule deleted, id: {}", schedule.getId());
                 break;
@@ -151,8 +157,8 @@ public class AppointmentService {
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Appointment not found! Id: " + id));
 
-        if(appointment.getStatus() == AppointmentStatus.CANCELED ||
-           appointment.getStatus() == AppointmentStatus.COMPLETED)
+        if (appointment.getStatus() == AppointmentStatus.CANCELED ||
+                appointment.getStatus() == AppointmentStatus.COMPLETED)
             throw new ScheduleConflictException("The appointment has already been completed or canceled.");
 
         return appointment;
@@ -166,7 +172,7 @@ public class AppointmentService {
         Dentist dentist = validateDentist(appointment.getDentist().getId());
         boolean isDentistAvailable = checkDentistAvailability(dentist, dto.getDate());
 
-        if(isDentistAvailable && appointment.getDate().isAfter(LocalDateTime.now())) {
+        if (isDentistAvailable && appointment.getDate().isAfter(LocalDateTime.now())) {
             deleteSchedule(appointment);
             appointment.setDate(dto.getDate());
             createSchedule(appointment);
