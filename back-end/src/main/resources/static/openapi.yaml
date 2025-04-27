@@ -1,0 +1,25 @@
+openapi: 3.0.0
+info:
+  title: "Dental Appointment Scheduling System"
+  version: "1.0"
+  description: "API for scheduling dental appointments, including features for schedule, cancellation, and checking available time slots"
+  contact:
+    name: "Hideyuki Takahashi"
+    url: "https://github.com/Dev-HideyukiTakahashi/dental-care"
+    email: "dev.hideyukitakahashi@gmail.com"
+  license:
+    name: "MIT License"
+    url: "https://opensource.org/licenses/MIT"
+components:
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        password:
+          tokenUrl: "/oauth2/token"
+
+
+security:
+  - OAuth2:
+      - read
+      - write
