@@ -32,33 +32,6 @@ public class RatingController {
     private final RatingService ratingService;
     private final Logger logger = LoggerFactory.getLogger(RatingController.class);
 
-    @Operation(
-            summary = "Rate a dentist",
-            description = "Submit a rating for a dentist, providing feedback based on the service received.",
-            tags = "Rating")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Rating successfully added.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = RatingDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Bad Request",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = CustomError.class))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = CustomError.class))),
-            @ApiResponse(responseCode = "403", description = "Forbidden",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = CustomError.class))),
-            @ApiResponse(responseCode = "404", description = "Dentist not found",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = CustomError.class))),
-            @ApiResponse(responseCode = "422", description = "Appointment has already been rated or not completed.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = CustomError.class))),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = CustomError.class)))
-    })
     @PostMapping
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     public ResponseEntity<RatingDTO> rateDentist(@Valid @RequestBody RatingDTO dto) {

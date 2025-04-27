@@ -69,7 +69,7 @@ paths:
                 $ref: '#/components/schemas/CustomError'
 
   # ---------------------------------------------------------------------------------------------------
-  # SCHEDULE ENDPOINTS -------------------------------------------------------------------------------
+  # SCHEDULE ENDPOINTS --------------------------------------------------------------------------------
   # ---------------------------------------------------------------------------------------------------
 
   /api/v1/schedules/absences/dentist/{id}:
@@ -195,6 +195,68 @@ paths:
                 $ref: '#/components/schemas/CustomError'
     security:
       - bearerAuth: []
+
+  # ---------------------------------------------------------------------------------------------------
+  # RATING ENDPOINTS ----------------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------------------------------
+  /api/v1/ratings:
+    post:
+      summary: Rate a dentist
+      description: Submit a rating for a dentist, providing feedback based on the service received.
+      tags:
+        - Rating
+      operationId: rateDentist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RatingDTO'
+      responses:
+        '201':
+          description: Rating successfully added.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RatingDTO'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '404':
+          description: Dentist not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '422':
+          description: Appointment has already been rated or not completed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+      security:
+        - bearerAuth: []
 
 
   # ---------------------------------------------------------------------------------------------------
