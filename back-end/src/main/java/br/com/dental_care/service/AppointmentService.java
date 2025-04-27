@@ -36,8 +36,12 @@ public class AppointmentService {
     private final AuthService authService;
     private final EmailService emailService;
 
+    private static final LocalTime WORKING_HOURS_START = LocalTime.of(8, 0);
+    private static final LocalTime WORKING_HOURS_END = LocalTime.of(19, 0);
+
     @Transactional
     public AppointmentDTO createAppointment(AppointmentDTO dto) {
+
         Dentist dentist = validateDentist(dto.getDentistMinDTO().getId());
         Patient patient = validatePatient(dto.getPatientMinDTO().getId());
         authService.validateSelfOrAdmin(patient.getId());
@@ -53,37 +57,69 @@ public class AppointmentService {
             logger.info("Schedule successfully added to the dentist's schedule list.");
             logger.info("Appointment created, id: {}", appointment.getId());
 
-            try {
-                notifyAppointmentConfirmation(patient, appointment);
-                dto.setMessage("Appointment confirmation email sent successfully.");
-            } catch (MailException e) {
-                logger.warn("Appointment saved, but failed to send confirmation email: {}", e.getMessage());
-                dto.setMessage("Appointment saved, but confirmation email could not be sent.");
-            }
+            sendAppointmentConfirmationEmail(patient, appointment, dto);
         }
         return dto;
     }
 
-    private Dentist validateDentist(Long id) {
-        if (!dentistRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Dentist not found! ID: " + id);
+    @Transactional(readOnly = true)
+    public AppointmentDTO findById(Long id) {
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found! ID: " + id));
+
+        authService.validateSelfOrAdmin(appointment.getPatient().getId());
+        logger.info("Appointment found, id: {}", id);
+        return AppointmentMapper.toDTO(appointment);
+    }
+
+    @Transactional
+    public AppointmentDTO completeAppointment(Long id) {
+        Appointment appointment = validateAppointment(id);
+        appointment.setStatus(AppointmentStatus.COMPLETED);
+        logger.info("Appointment completed, id: {}", appointment.getId());
+        return AppointmentMapper.toDTO(appointment);
+    }
+
+    @Transactional
+    public AppointmentDTO updateAppointmentDateTime(Long id, AppointmentDTO dto) {
+        Appointment appointment = validateAppointment(id);
+        validatePatient(appointment.getPatient().getId());
+
+        Dentist dentist = validateDentist(appointment.getDentist().getId());
+        boolean futureDate = appointment.getDate().isAfter(LocalDateTime.now());
+        boolean isDentistAvailable = checkDentistAvailability(dentist, dto.getDate());
+
+        if (isDentistAvailable && futureDate) {
+            updateAppointmentDate(appointment, dto.getDate());
         }
-        return dentistRepository.getReferenceById(id);
+        return AppointmentMapper.toDTO(appointment);
+    }
+
+    @Transactional
+    public AppointmentDTO cancelAppointment(Long id) {
+        Appointment appointment = validateAppointment(id);
+        appointment.setStatus(AppointmentStatus.CANCELED);
+        authService.validateSelfOrAdmin(appointment.getPatient().getId());
+        deleteSchedule(appointment);
+        logger.info("Appointment canceled, id: {}", appointment.getId());
+        return AppointmentMapper.toDTO(appointment);
+    }
+
+    private Dentist validateDentist(Long id) {
+        return dentistRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Dentist not found! ID: " + id));
     }
 
     private Patient validatePatient(Long id) {
-        if (!patientRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Patient not found! ID: " + id);
-        }
-        return patientRepository.getReferenceById(id);
+        return patientRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found! ID: " + id));
     }
 
     private void validateWorkingHours(LocalDateTime dateTime) {
         LocalTime time = dateTime.toLocalTime();
-        final LocalTime startTime = LocalTime.of(8, 0);
-        final LocalTime endTime = LocalTime.of(19, 0);
 
-        if (time.isBefore(startTime) || time.isAfter(endTime))
+        boolean isOutsideWorkingHours = time.isBefore(WORKING_HOURS_START) || time.isAfter(WORKING_HOURS_END);
+        if (isOutsideWorkingHours)
             throw new ScheduleConflictException("Appointment time is outside of working hours.");
     }
 
@@ -93,10 +129,11 @@ public class AppointmentService {
 
             if (unavailableTimeSlot == null) continue;
 
-
+            // Check if the current unavailable time slot matches the given appointment time
             if (unavailableTimeSlot.equals(date))
                 throw new ScheduleConflictException("An appointment already exists for this time slot.");
 
+            // Check if the given appointment time falls within one hour of an existing schedule
             if (isWithinOneHour(unavailableTimeSlot, date))
                 throw new ScheduleConflictException("The time falls within another appointment slot.");
         }
@@ -115,30 +152,6 @@ public class AppointmentService {
         scheduleRepository.save(schedule);
         logger.info("Schedule created, id: {}", schedule.getId());
         return schedule;
-    }
-
-    private void notifyAppointmentConfirmation(Patient patient, Appointment appointment) {
-        logger.info("Sending appointment confirmation email to patient: {}", patient.getEmail());
-        emailService.sendAppointmentConfirmationEmail(patient, appointment);
-    }
-
-    @Transactional(readOnly = true)
-    public AppointmentDTO findById(Long id) {
-        Appointment appointment = appointmentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found! ID: " + id));
-        authService.validateSelfOrAdmin(appointment.getPatient().getId());
-        logger.info("Appointment found, id: {}", id);
-        return AppointmentMapper.toDTO(appointment);
-    }
-
-    @Transactional
-    public AppointmentDTO cancelAppointment(Long id) {
-        Appointment appointment = validateAppointment(id);
-        appointment.setStatus(AppointmentStatus.CANCELED);
-        authService.validateSelfOrAdmin(appointment.getPatient().getId());
-        deleteSchedule(appointment);
-        logger.info("Appointment canceled, id: {}", appointment.getId());
-        return AppointmentMapper.toDTO(appointment);
     }
 
     private void deleteSchedule(Appointment appointment) {
@@ -164,28 +177,20 @@ public class AppointmentService {
         return appointment;
     }
 
-    @Transactional
-    public AppointmentDTO updateAppointmentDateTime(Long id, AppointmentDTO dto) {
-        Appointment appointment = validateAppointment(id);
-
-        validatePatient(appointment.getPatient().getId());
-        Dentist dentist = validateDentist(appointment.getDentist().getId());
-        boolean isDentistAvailable = checkDentistAvailability(dentist, dto.getDate());
-
-        if (isDentistAvailable && appointment.getDate().isAfter(LocalDateTime.now())) {
-            deleteSchedule(appointment);
-            appointment.setDate(dto.getDate());
-            createSchedule(appointment);
-            logger.info("Appointment date/time updated, id: {}", appointment.getId());
+    private void sendAppointmentConfirmationEmail(Patient patient, Appointment appointment, AppointmentDTO dto) {
+        try {
+            emailService.sendAppointmentConfirmationEmail(patient, appointment);
+            dto.setMessage("Appointment confirmation email sent successfully.");
+        } catch (MailException e) {
+            logger.warn("Appointment saved, but failed to send confirmation email: {}", e.getMessage());
+            dto.setMessage("Appointment saved, but confirmation email could not be sent.");
         }
-        return AppointmentMapper.toDTO(appointment);
     }
 
-    @Transactional
-    public AppointmentDTO completeAppointment(Long id) {
-        Appointment appointment = validateAppointment(id);
-        appointment.setStatus(AppointmentStatus.COMPLETED);
-        logger.info("Appointment completed, id: {}", appointment.getId());
-        return AppointmentMapper.toDTO(appointment);
+    private void updateAppointmentDate(Appointment appointment, LocalDateTime newDate) {
+        deleteSchedule(appointment);
+        appointment.setDate(newDate);
+        createSchedule(appointment);
+        logger.info("Appointment date/time updated, id: {}", appointment.getId());
     }
 }

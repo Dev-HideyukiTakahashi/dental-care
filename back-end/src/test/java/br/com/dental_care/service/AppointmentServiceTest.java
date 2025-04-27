@@ -74,10 +74,8 @@ class AppointmentServiceTest {
     @Test
     void createAppointment_Should_returnAppointmentDTOAndSendSuccessEmail_When_CreateAppointmentIsSuccessful() {
 
-        when(dentistRepository.existsById(validId)).thenReturn(true);
-        when(dentistRepository.getReferenceById(validId)).thenReturn(dentist);
-        when(patientRepository.existsById(validId)).thenReturn(true);
-        when(patientRepository.getReferenceById(validId)).thenReturn(patient);
+        when(dentistRepository.findById(validId)).thenReturn(Optional.of(dentist));
+        when(patientRepository.findById(validId)).thenReturn(Optional.of(patient));
         doNothing().when(authService).validateSelfOrAdmin(validId);
         when(appointmentRepository.save(any())).thenReturn(appointment);
         when(scheduleRepository.save(any())).thenReturn(new Schedule());
@@ -99,10 +97,8 @@ class AppointmentServiceTest {
     @Test
     void createAppointment_Should_returnAppointmentDTOAndNotSendEmail_When_CreateAppointmentIsSuccessfulAndEmailFail() {
 
-        when(dentistRepository.existsById(validId)).thenReturn(true);
-        when(dentistRepository.getReferenceById(validId)).thenReturn(dentist);
-        when(patientRepository.existsById(validId)).thenReturn(true);
-        when(patientRepository.getReferenceById(validId)).thenReturn(patient);
+        when(dentistRepository.findById(validId)).thenReturn(Optional.of(dentist));
+        when(patientRepository.findById(validId)).thenReturn(Optional.of(patient));
         doNothing().when(authService).validateSelfOrAdmin(validId);
         when(appointmentRepository.save(any())).thenReturn(appointment);
         when(scheduleRepository.save(any())).thenReturn(new Schedule());
@@ -128,14 +124,14 @@ class AppointmentServiceTest {
 
         appointmentDTO = AppointmentFactory.createValidAppointmentDTOWithInvalidDentist();
 
-        when(dentistRepository.existsById(invalidId)).thenReturn(false);
+        when(dentistRepository.findById(invalidId)).thenReturn(Optional.empty());
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
                 () -> appointmentService.createAppointment(appointmentDTO));
 
         assertEquals("Dentist not found! ID: " + invalidId, exception.getMessage());
 
-        verify(dentistRepository, times(1)).existsById(invalidId);
+        verify(dentistRepository, times(1)).findById(invalidId);
     }
 
     @Test
@@ -143,15 +139,15 @@ class AppointmentServiceTest {
 
         appointmentDTO = AppointmentFactory.createValidAppointmentDTOWithInvalidPatient();
 
-        when(dentistRepository.existsById(validId)).thenReturn(true);
-        when(patientRepository.existsById(invalidId)).thenReturn(false);
+        when(dentistRepository.findById(validId)).thenReturn(Optional.of(dentist));
+        when(patientRepository.findById(invalidId)).thenReturn(Optional.empty());
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
                 () -> appointmentService.createAppointment(appointmentDTO));
 
         assertEquals("Patient not found! ID: " + invalidId, exception.getMessage());
 
-        verify(patientRepository, times(1)).existsById(invalidId);
+        verify(patientRepository, times(1)).findById(invalidId);
     }
 
     @Test
@@ -159,10 +155,8 @@ class AppointmentServiceTest {
 
         appointmentDTO = AppointmentFactory.createValidAppointmentDtoOutsideWorkingHours();
 
-        when(dentistRepository.existsById(validId)).thenReturn(true);
-        when(dentistRepository.getReferenceById(validId)).thenReturn(dentist);
-        when(patientRepository.existsById(validId)).thenReturn(true);
-        when(patientRepository.getReferenceById(validId)).thenReturn(patient);
+        when(dentistRepository.findById(validId)).thenReturn(Optional.of(dentist));
+        when(patientRepository.findById(validId)).thenReturn(Optional.of(patient));
         doNothing().when(authService).validateSelfOrAdmin(validId);
 
         ScheduleConflictException exception = assertThrows(
@@ -183,10 +177,8 @@ class AppointmentServiceTest {
         schedule.setUnavailableTimeSlot(alreadyScheduleTime);
         dentist.getSchedules().add(schedule);
 
-        when(dentistRepository.existsById(validId)).thenReturn(true);
-        when(dentistRepository.getReferenceById(validId)).thenReturn(dentist);
-        when(patientRepository.existsById(validId)).thenReturn(true);
-        when(patientRepository.getReferenceById(validId)).thenReturn(patient);
+        when(dentistRepository.findById(validId)).thenReturn(Optional.of(dentist));
+        when(patientRepository.findById(validId)).thenReturn(Optional.of(patient));
         doNothing().when(authService).validateSelfOrAdmin(validId);
 
         ScheduleConflictException exception = assertThrows(
@@ -207,10 +199,8 @@ class AppointmentServiceTest {
         schedule.setUnavailableTimeSlot(nearbyScheduleTime);
         dentist.getSchedules().add(schedule);
 
-        when(dentistRepository.existsById(validId)).thenReturn(true);
-        when(dentistRepository.getReferenceById(validId)).thenReturn(dentist);
-        when(patientRepository.existsById(validId)).thenReturn(true);
-        when(patientRepository.getReferenceById(validId)).thenReturn(patient);
+        when(dentistRepository.findById(validId)).thenReturn(Optional.of(dentist));
+        when(patientRepository.findById(validId)).thenReturn(Optional.of(patient));
         doNothing().when(authService).validateSelfOrAdmin(validId);
 
         ScheduleConflictException exception = assertThrows(
@@ -309,16 +299,14 @@ class AppointmentServiceTest {
         appointment.setDate(LocalDateTime.parse("2027-05-10T10:00:00"));
 
         when(appointmentRepository.findById(validId)).thenReturn(Optional.of(appointment));
-        when(patientRepository.existsById(any())).thenReturn(true);
-        when(patientRepository.getReferenceById(any())).thenReturn(patient);
-        when(dentistRepository.existsById(any())).thenReturn(true);
-        when(dentistRepository.getReferenceById(any())).thenReturn(dentist);
+        when(dentistRepository.findById(validId)).thenReturn(Optional.of(dentist));
+        when(patientRepository.findById(validId)).thenReturn(Optional.of(patient));
 
         AppointmentDTO dto = appointmentService.updateAppointmentDateTime(validId, updatedDTO);
 
         assertEquals(updatedDTO.getDate(), dto.getDate());
         verify(appointmentRepository, times(1)).findById(validId);
-        verify(patientRepository, times(1)).getReferenceById(any());
-        verify(dentistRepository, times(1)).getReferenceById(any());
+        verify(patientRepository, times(1)).findById(any());
+        verify(dentistRepository, times(1)).findById(any());
     }
 }
