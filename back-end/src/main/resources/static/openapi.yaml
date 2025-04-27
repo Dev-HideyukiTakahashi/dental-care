@@ -267,6 +267,8 @@ paths:
       summary: Find patient by ID
       description: Find a patient by their unique ID.
       operationId: findPatientById
+      tags:
+        - Patient
       parameters:
         - name: id
           in: path
@@ -317,6 +319,8 @@ paths:
       summary: Update an existing patient
       description: Update an existing patient by their ID.
       operationId: updatePatient
+      tags:
+        - Patient
       parameters:
         - name: id
           in: path
@@ -373,6 +377,8 @@ paths:
       summary: Delete a patient by ID
       description: Delete a patient by their unique ID.
       operationId: deletePatientById
+      tags:
+        - Patient
       parameters:
         - name: id
           in: path
@@ -414,6 +420,8 @@ paths:
       summary: Find all patients
       description: Retrieve all patients in a paginated format.
       operationId: findAllPatients
+      tags:
+        - Patient
       parameters:
         - name: page
           in: query
@@ -481,6 +489,8 @@ paths:
       summary: Create a new patient
       description: Create a new patient with the provided details.
       operationId: createPatient
+      tags:
+        - Patient
       requestBody:
         required: true
         content:
@@ -518,6 +528,319 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomError'
+
+  # ---------------------------------------------------------------------------------------------------
+  # DENTIST ENDPOINTS ---------------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------------------------------
+
+  /api/v1/dentists/{id}:
+    get:
+      summary: Find dentist by ID
+      description: Find a dentist by their unique ID.
+      operationId: findDentistById
+      tags:
+        - Dentist
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique ID of the dentist to retrieve
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Dentist found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DentistDTO'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '404':
+          description: Dentist not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+    put:
+      summary: Update an existing dentist
+      description: Update an existing dentist by their ID.
+      operationId: updateDentist
+      tags:
+        - Dentist
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique ID of the dentist to update
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        description: Dentist details to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DentistDTO'
+      responses:
+        '200':
+          description: Dentist updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DentistDTO'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '404':
+          description: Dentist not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+    delete:
+      summary: Delete a dentist by ID
+      description: Delete a dentist by their unique ID.
+      operationId: deleteDentistById
+      tags:
+        - Dentist
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique ID of the dentist to delete
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '204':
+          description: Dentist deleted successfully
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '404':
+          description: Dentist not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+
+  /api/v1/dentists:
+    get:
+      summary: Find all dentists
+      description: Retrieve all dentists in a paginated format.
+      operationId: findAllDentists
+      tags:
+        - Dentist
+      parameters:
+        - name: page
+          in: query
+          required: false
+          description: Page number
+          schema:
+            type: integer
+            default: 0
+            example: 0
+        - name: size
+          in: query
+          required: false
+          description: Page size
+          schema:
+            type: integer
+            default: 10
+            example: 10
+        - name: sort
+          in: query
+          required: false
+          description: Sorting criteria
+          schema:
+            type: string
+            default: "id,asc"
+            example: "id,asc"
+      responses:
+        '200':
+          description: Dentists found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DentistMinDTO'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+    post:
+      summary: Create a new dentist
+      description: Create a new dentist with the provided details.
+      operationId: createDentist
+      tags:
+        - Dentist
+      requestBody:
+        description: Dentist details to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DentistDTO'
+      responses:
+        '201':
+          description: Dentist created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DentistDTO'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+
+  # ---------------------------------------------------------------------------------------------------
+  # AUTH ENDPOINTS ------------------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------------------------------
+
+  /auth/signup:
+    post:
+      tags:
+        - "Auth"
+      summary: "Register a new patient"
+      description: "This endpoint registers a new patient in the system."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PatientDTO"
+      responses:
+        "201":
+          description: "Patient created successfully"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PatientDTO"
+        "400":
+          description: "Bad Request"
+        "500":
+          description: "Internal Server Error"
+
+  /auth/recover-token:
+    post:
+      tags:
+        - "Auth"
+      summary: "Create a password recovery token"
+      description: "Generates a token for password recovery based on the provided email."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmailDTO"
+      responses:
+        "204":
+          description: "No content"
+        "400":
+          description: "Bad Request"
+        "500":
+          description: "Internal Server Error"
+
 
 
   # ---------------------------------------------------------------------------------------------------
@@ -611,10 +934,10 @@ components:
           type: string
           description: "Status of the appointment"
           enum:
-            - "PENDING"
+            - "SCHEDULED"
             - "COMPLETED"
-            - "CANCELLED"
-          example: "PENDING"
+            - "CANCELED"
+          example: "SCHEDULED"
         description:
           type: string
           description: "Description of the appointment"
