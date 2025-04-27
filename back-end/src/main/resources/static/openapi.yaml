@@ -136,7 +136,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomError'
-    security:
+      security:
       - bearerAuth: []
 
   /api/v1/schedules/{id}:
@@ -193,12 +193,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomError'
-    security:
+      security:
       - bearerAuth: []
 
   # ---------------------------------------------------------------------------------------------------
   # RATING ENDPOINTS ----------------------------------------------------------------------------------
   # ---------------------------------------------------------------------------------------------------
+
   /api/v1/ratings:
     post:
       summary: Rate a dentist
