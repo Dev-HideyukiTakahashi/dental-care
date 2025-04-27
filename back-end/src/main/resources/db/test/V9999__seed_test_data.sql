@@ -55,7 +55,7 @@ VALUES ((SELECT id FROM tb_role WHERE authority = 'ROLE_DENTIST' LIMIT 1),
 INSERT INTO tb_schedule (dentist_id, unavailable_time_slot)
 VALUES (4, '2025-12-20 09:00:00'),
        (4, '2025-12-20 14:00:00'),
-       (4, '2025-12-23 10:00:00');
+       (4, '2025-12-21 10:00:00');
 
 -- Insert Schedule dentist id 5
 INSERT INTO tb_schedule (dentist_id, unavailable_time_slot)
