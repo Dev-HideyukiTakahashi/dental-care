@@ -1,8 +1,8 @@
 package br.com.dental_care.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -11,42 +11,26 @@ import java.util.Objects;
 @Builder(toBuilder = true)
 public class RatingDTO {
 
-  @Schema(description = "Unique identifier of the rating", example = "1",
-          accessMode = Schema.AccessMode.READ_ONLY)
-  private Long id;
+    private Long id;
+    private Integer score;
+    private String comment;
 
-  @Schema(description = "Score given to the dentist, ranging from 0 to 10", example = "8")
-  private Integer score;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime date;
+    private boolean isRated;
+    private Long patientId;
+    private Long dentistId;
+    private Long appointmentId;
 
-  @Schema(description = "Comment left by the patient about the service",
-          example = "Great service, highly recommend!")
-  private String comment;
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        RatingDTO ratingDTO = (RatingDTO) o;
+        return Objects.equals(id, ratingDTO.id);
+    }
 
-  @Schema(description = "Date and time when the rating was recorded", example = "2025-12-27T15:30:00")
-  @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-  private LocalDateTime date;
-
-  @Schema(description = "Indicates if the appointment has already been rated", example = "false")
-  private boolean isRated;
-
-  @Schema(description = "Identifier of the patient who made the rating", example = "2")
-  private Long patientId;
-
-  @Schema(description = "Identifier of the dentist being rated", example = "4")
-  private Long dentistId;
-
-  @Schema(description = "Identifier of the appointment associated with the rating", example = "11")
-  private Long appointmentId;
-
-  @Override
-  public boolean equals(Object o) {
-    if (o == null || getClass() != o.getClass()) return false;
-    RatingDTO ratingDTO = (RatingDTO) o;
-    return Objects.equals(id, ratingDTO.id);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hashCode(id);
-  }
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
 }
