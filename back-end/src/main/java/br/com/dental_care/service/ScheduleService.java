@@ -30,19 +30,32 @@ public class ScheduleService {
 
     @Transactional
     public AbsenceDTO createDentistAbsence(Long dentistId, AbsenceRequestDTO dto) {
-        Dentist dentist = getDentistById(dentistId);
 
+        Dentist dentist = getDentistById(dentistId);
         validateDentistOwnership(dentistId);
-        validateAbsenceDates(dto);
-        validateAbsencePeriodNotConflict(dentist, dto.getAbsenceStart(), dto.getAbsenceEnd());
+        validateAbsenceDates(dto.getAbsenceStart(), dto.getAbsenceEnd());
+        validateNoExistingAbsence(dentist, dto.getAbsenceStart(), dto.getAbsenceEnd());
         validateNoAppointmentsDuringAbsence(dentist, dto.getAbsenceStart(), dto.getAbsenceEnd());
 
-        Schedule scheduleAbsence = createAbsenceSchedule(dentist, dto);
+        Schedule scheduleAbsence = buildAbsenceSchedule(dentist, dto.getAbsenceStart(), dto.getAbsenceEnd());
         scheduleAbsence = scheduleRepository.save(scheduleAbsence);
         dentist.getSchedules().add(scheduleAbsence);
 
         logger.info("Dentist absence scheduled successfully with id: {}", scheduleAbsence.getId());
         return ScheduleMapper.toAbsenceDTO(scheduleAbsence);
+    }
+
+    @Transactional
+    public void removeDentistAbsence(Long id) {
+        Schedule schedule = scheduleRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Schedule not found! ID: " + id));
+
+        validateDentistAbsence(schedule);
+        validateAbsenceEndNotInPast(schedule);
+
+        scheduleRepository.deleteById(id);
+
+        logger.info("Successfully deleted schedule ID: {}", id);
     }
 
     private void validateDentistOwnership(Long dentistId) {
@@ -56,97 +69,48 @@ public class ScheduleService {
                 .orElseThrow(() -> new ResourceNotFoundException("Dentist not found! ID: " + dentistId));
     }
 
-    private void validateAbsenceDates(AbsenceRequestDTO dto) {
-        if (!dto.getAbsenceEnd().isAfter(dto.getAbsenceStart()))
+    private void validateAbsenceDates(LocalDateTime start, LocalDateTime end) {
+        if (end.isBefore(start))
             throw new InvalidDateRangeException("The end date and time cannot be before the start date and time.");
     }
 
-    /**
-     * Checks if the given dentist is already marked as absent during the specified period.
-     * This method iterates through all schedules associated with the dentist. If a schedule contains
-     * an absence period that overlaps with the provided start and end times, a {@link ScheduleConflictException}
-     * is thrown.
-     *
-     * @param dentist the dentist to check for overlapping absence
-     * @param start   the start date and time of the requested absence
-     * @param end     the end date and time of the requested absence
-     * @throws ScheduleConflictException if the dentist is already absent during the given time range
-     */
-    private void validateAbsencePeriodNotConflict(Dentist dentist, LocalDateTime start, LocalDateTime end) {
-        for (Schedule schedule : dentist.getSchedules()) {
-            if (schedule.getAbsenceStart() == null) continue;
+    private void validateNoExistingAbsence(Dentist dentist, LocalDateTime start, LocalDateTime end) {
 
-            if (schedule.getAbsenceStart().isBefore(end) && schedule.getAbsenceEnd().isAfter(start))
+        for (Schedule schedule : dentist.getSchedules()) {
+            LocalDateTime absenceStart = schedule.getAbsenceStart();
+            LocalDateTime absenceEnd = schedule.getAbsenceEnd();
+
+            if (absenceStart == null) continue; // No absence scheduled for this schedule entry, skip
+
+            if (absenceStart.isBefore(end) && absenceEnd.isAfter(start))
                 throw new ScheduleConflictException("Dentist already absent in this period.");
         }
     }
 
-    /**
-     * Checks if the dentist has any scheduled appointments that overlap with the requested absence period.
-     * Each appointment is represented by an {@code unavailableTimeSlot} and assumed to last 1 hour.
-     *
-     * @param dentist      the dentist whose schedule is being checked
-     * @param absenceStart the start date and time of the absence period
-     * @param absenceEnd   the end date and time of the absence period
-     */
     private void validateNoAppointmentsDuringAbsence(Dentist dentist, LocalDateTime absenceStart, LocalDateTime absenceEnd) {
+
         for (Schedule schedule : dentist.getSchedules()) {
             LocalDateTime appointmentStart = schedule.getUnavailableTimeSlot();
 
-            if (appointmentStart != null) {
-                LocalDateTime appointmentEnd = appointmentStart.plusHours(1);
+            if (appointmentStart == null) continue; // No appointment scheduled for this time slot, skip
 
-                if (isOverlapping(appointmentStart, appointmentEnd, absenceStart, absenceEnd))
-                    throw new ScheduleConflictException
-                            ("The dentist cannot be on leave during this period, as there is already an appointment scheduled.");
-            }
+            LocalDateTime appointmentEnd = appointmentStart.plusHours(1); // Assuming fixed 1-hour appointment duration
+
+            // Check if the absence period overlaps with the scheduled appointment
+            boolean isAbsenceDuringAppointment = absenceStart.isBefore(appointmentEnd) && absenceEnd.isAfter(appointmentStart);
+
+            if (isAbsenceDuringAppointment)
+                throw new ScheduleConflictException
+                        ("The dentist cannot be on leave during this period, as there is already an appointment scheduled.");
         }
     }
 
-    /**
-     * Determines if an appointment period and an absence period overlap.
-     *
-     * @param appointmentStart the start time of the appointment
-     * @param appointmentEnd   the end time of the appointment
-     * @param absenceStart     the start time of the absence
-     * @param absenceEnd       the end time of the absence
-     * @return {@code true} if the periods overlap, otherwise {@code false}
-     */
-    private boolean isOverlapping(LocalDateTime appointmentStart, LocalDateTime appointmentEnd,
-                                  LocalDateTime absenceStart, LocalDateTime absenceEnd) {
-
-        //Check if the appointment start time falls within the dentist's absence period
-        boolean isOverlappingWithExistingAppointment =
-                (appointmentStart.isAfter(absenceStart) || appointmentStart.isEqual(absenceStart)) &&
-                        (appointmentStart.isBefore(absenceEnd) || appointmentStart.isEqual(absenceEnd));
-
-        // Checks if the dentist's absence start time falls within the period of an existing appointment.
-        boolean absenceStartsDuringAppointment =
-                absenceStart.isAfter(appointmentStart) && absenceStart.isBefore(appointmentEnd);
-
-        return isOverlappingWithExistingAppointment || absenceStartsDuringAppointment;
-    }
-
-    private Schedule createAbsenceSchedule(Dentist dentist, AbsenceRequestDTO dto) {
+    private Schedule buildAbsenceSchedule(Dentist dentist, LocalDateTime start, LocalDateTime end) {
         Schedule schedule = new Schedule();
         schedule.setDentist(dentist);
-        schedule.setAbsenceStart(dto.getAbsenceStart());
-        schedule.setAbsenceEnd(dto.getAbsenceEnd());
+        schedule.setAbsenceStart(start);
+        schedule.setAbsenceEnd(end);
         return schedule;
-    }
-
-
-    @Transactional
-    public void removeDentistAbsence(Long id) {
-        Schedule schedule = scheduleRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Schedule not found! ID: " + id));
-
-        validateDentistAbsence(schedule);
-        validateAbsenceEndNotInPast(schedule);
-
-        scheduleRepository.deleteById(id);
-
-        logger.info("Successfully deleted schedule ID: {}", id);
     }
 
     private void validateDentistAbsence(Schedule schedule) {
