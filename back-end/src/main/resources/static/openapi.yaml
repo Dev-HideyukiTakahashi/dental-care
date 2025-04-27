@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: "Dental Appointment Scheduling System"
   version: "1.0"
-  description: "API for scheduling dental appointments, including features for schedule, cancellation, and checking available time slots"
+  description: "API for managing dental appointments, including scheduling, cancellation, availability checking, and dentist absence management."
   contact:
     name: "Hideyuki Takahashi"
     url: "https://github.com/Dev-HideyukiTakahashi/dental-care"
@@ -10,6 +10,197 @@ info:
   license:
     name: "MIT License"
     url: "https://opensource.org/licenses/MIT"
+
+  # ---------------------------------------------------------------------------------------------------
+  # ENDPOINTS -----------------------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------------------------------
+
+paths:
+
+  # ---------------------------------------------------------------------------------------------------
+  # USER ENDPOINTS ------------------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------------------------------
+
+  /api/v1/users/me:
+    get:
+      summary: "Get logged-in patient"
+      description: "Retrieves the currently authenticated patient based on the ID in the context."
+      operationId: "getLoggedUser"
+      tags:
+        - "User"
+      security:
+        - OAuth2: [ ]
+      responses:
+        '200':
+          description: "Patient retrieved successfully"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientDTO'
+        '400':
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '401':
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '403':
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '404':
+          description: "Not Found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '500':
+          description: "Internal Server Error"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+
+  # ---------------------------------------------------------------------------------------------------
+  # SCHEDULE ENDPOINTS -------------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------------------------------
+
+  /api/v1/schedules/absences/dentist/{id}:
+    post:
+      summary: Schedule a dentist absence
+      description: Create a new absence schedule for the dentist, marking a period when they will be unavailable to attend appointments.
+      tags:
+        - Schedule
+      operationId: createDentistAbsence
+      parameters:
+        - name: id
+          in: path
+          description: ID of the dentist
+          required: true
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AbsenceRequestDTO'
+      responses:
+        '201':
+          description: Absence successfully created in Schedule
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AbsenceDTO'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '404':
+          description: Dentist not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '409':
+          description: Schedule data conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+    security:
+      - bearerAuth: []
+
+  /api/v1/schedules/{id}:
+    delete:
+      summary: Remove a dentist absence
+      description: Cancel a previously scheduled absence for the dentist.
+      tags:
+        - Schedule
+      operationId: removeDentistAbsence
+      parameters:
+        - name: id
+          in: path
+          description: ID of the dentist's absence
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '204':
+          description: Schedule successfully deleted
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '404':
+          description: Schedule not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '409':
+          description: Schedule data conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+    security:
+      - bearerAuth: []
+
+
+  # ---------------------------------------------------------------------------------------------------
+  # COMPONENTS ----------------------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------------------------------
+
 components:
   securitySchemes:
     OAuth2:
@@ -18,6 +209,382 @@ components:
         password:
           tokenUrl: "/oauth2/token"
 
+  schemas:
+    CustomError:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: "Timestamp when the error occurred"
+          example: "2025-03-26T06:35:17.622Z"
+        status:
+          type: integer
+          description: "HTTP status code"
+          example: 400
+        error:
+          type: string
+          description: "Error message"
+          example: "Http status error"
+        message:
+          type: string
+          description: "Detailed error message"
+          example: "Error message example"
+        path:
+          type: string
+          description: "The path of the API that caused the error"
+          example: "/api/v1/resource/"
+
+    PatientDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: "ID of the patient"
+          example: 2
+          readOnly: true
+        medicalHistory:
+          type: string
+          description: "Patient's medical history"
+          example: "Root canal treatment"
+        name:
+          type: string
+          description: "Name of the patient"
+          example: "John Doe"
+        email:
+          type: string
+          description: "Email of the patient"
+          example: "john.doe@example.com"
+        password:
+          type: string
+          description: "Password of the patient"
+          example: "#Password123"
+        phone:
+          type: string
+          description: "Phone number of the patient"
+          example: "(11) 99710-2376"
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/RoleDTO'
+        appointments:
+          type: array
+          items:
+            $ref: '#/components/schemas/AppointmentMinDTO'
+
+    AppointmentMinDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: "ID of the appointment"
+          example: 2
+        date:
+          type: string
+          format: date-time
+          description: "Date and time of the appointment"
+          example: "2025-12-20T09:00:00"
+        status:
+          type: string
+          description: "Status of the appointment"
+          enum:
+            - "PENDING"
+            - "COMPLETED"
+            - "CANCELLED"
+          example: "PENDING"
+        description:
+          type: string
+          description: "Description of the appointment"
+          example: "Root canal treatment"
+        dentist:
+          type: string
+          description: "Name of the dentist assigned to the appointment"
+          example: "Dr. John Smith"
+
+    RoleDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: "Role ID"
+          example: 2
+        authority:
+          type: string
+          description: "Role authority"
+          example: "ROLE_PATIENT"
+      required:
+        - id
+        - authority
+
+    RatingDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: "Unique identifier of the rating"
+          example: 1
+          readOnly: true
+        score:
+          type: integer
+          description: "Score given to the dentist, ranging from 0 to 10"
+          example: 8
+        comment:
+          type: string
+          description: "Comment left by the patient about the service"
+          example: "Great service, highly recommend!"
+        date:
+          type: string
+          format: date-time
+          description: "Date and time when the rating was recorded"
+          example: "2025-12-27T15:30:00"
+        isRated:
+          type: boolean
+          description: "Indicates if the appointment has already been rated"
+          example: false
+        patientId:
+          type: integer
+          description: "Identifier of the patient who made the rating"
+          example: 2
+        dentistId:
+          type: integer
+          description: "Identifier of the dentist being rated"
+          example: 4
+        appointmentId:
+          type: integer
+          description: "Identifier of the appointment associated with the rating"
+          example: 11
+      required:
+        - id
+        - score
+        - date
+        - isRated
+        - patientId
+        - dentistId
+        - appointmentId
+
+    PatientMinDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: "ID do paciente"
+          example: 2
+        medicalHistory:
+          type: string
+          description: "Histórico médico do paciente"
+          example: "Sem alergias conhecidas, cirurgias anteriores: apendicectomia"
+        name:
+          type: string
+          description: "Nome do paciente"
+          example: "Jane Smith"
+        phone:
+          type: string
+          description: "Número de telefone do paciente"
+          example: "(11) 95555-6789"
+
+    DentistMinDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: "ID do dentista"
+          example: 4
+        speciality:
+          type: string
+          description: "Especialidade do dentista"
+          example: "Ortodontia"
+        name:
+          type: string
+          description: "Nome do dentista"
+          example: "Dr. John Doe"
+        registrationNumber:
+          type: string
+          description: "Número de registro do dentista"
+          example: "DR12345"
+        score:
+          type: integer
+          description: "Pontuação do dentista"
+          example: 8
+
+    AppointmentDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: "ID da consulta"
+          example: 2
+        date:
+          type: string
+          format: date-time
+          description: "Data da consulta"
+          example: "2025-12-21T06:00:00"
+        status:
+          type: string
+          description: "Status da consulta"
+          example: "SCHEDULED"
+        description:
+          type: string
+          description: "Descrição da consulta"
+          example: "Check-up de rotina com limpeza"
+        dentist:
+          $ref: "#/components/schemas/DentistMinDTO"
+        patient:
+          $ref: "#/components/schemas/PatientMinDTO"
+        message:
+          type: string
+          description: "Mensagem de status sobre o envio de e-mail da consulta"
+          example: "E-mail de confirmação da consulta enviado com sucesso."
+
+    AbsenceRequestDTO:
+      type: object
+      properties:
+        absenceStart:
+          type: string
+          format: date-time
+          description: "Data e hora de início da ausência do dentista"
+          example: "2025-12-14T10:00:00"
+        absenceEnd:
+          type: string
+          format: date-time
+          description: "Data e hora de término da ausência do dentista"
+          example: "2025-12-14T12:00:00"
+
+    AbsenceDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: "ID da ausência"
+          example: 2
+        dentist:
+          $ref: "#/components/schemas/DentistMinDTO"
+        absenceStart:
+          type: string
+          format: date-time
+          description: "Data e hora de início da ausência"
+          example: "2025-12-14T10:00:00"
+        absenceEnd:
+          type: string
+          format: date-time
+          description: "Data e hora de término da ausência"
+          example: "2025-12-14T12:00:00"
+
+    EmailDTO:
+      type: object
+      properties:
+        email:
+          type: string
+          example: "john.doe@example.com"
+          description: "Email of the dentist"
+      required:
+        - email
+
+    RatingMinDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+          description: "ID of the rating"
+        score:
+          type: integer
+          example: 4
+          description: "Score of the rating"
+        appointmentId:
+          type: integer
+          example: 2
+          description: "ID of the related appointment"
+      required:
+        - id
+        - score
+        - appointmentId
+
+    DentistDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 2
+          description: "ID of the dentist"
+        speciality:
+          type: string
+          example: "Orthodontics"
+          description: "Dentist's speciality"
+        registrationNumber:
+          type: string
+          example: "DR12345"
+          description: "Registration number of the dentist"
+        score:
+          type: integer
+          example: 8
+          description: "Score average of dentist rating"
+        name:
+          type: string
+          example: "John Doe"
+          description: "Name of the dentist"
+        email:
+          type: string
+          example: "john.doe@example.com"
+          description: "Email of the dentist"
+        password:
+          type: string
+          example: "#Password123"
+          description: "Password of the dentist"
+        phone:
+          type: string
+          example: "(11) 99710-2376"
+          description: "Phone number of the dentist"
+        roles:
+          type: array
+          items:
+            $ref: "#/components/schemas/RoleDTO"
+          description: "Roles assigned to the dentist"
+        ratings:
+          type: array
+          items:
+            $ref: "#/components/schemas/RatingDTO"
+          description: "Ratings assigned to the dentist"
+        schedules:
+          type: array
+          items:
+            $ref: "#/components/schemas/ScheduleDTO"
+          description: "Schedules assigned to the dentist"
+      required:
+        - id
+        - speciality
+        - registrationNumber
+        - name
+        - email
+        - password
+        - phone
+
+    ScheduleDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 2
+          description: "ID of the schedule"
+        unavailableTimeSlot:
+          type: string
+          format: date-time
+          example: "null"
+          description: "Time slots that are unavailable for scheduling"
+        absenceStart:
+          type: string
+          format: date-time
+          example: "2025-12-20T09:00:00"
+          description: "Start date and time of the dentist's absence period."
+        absenceEnd:
+          type: string
+          format: date-time
+          example: "2025-12-20T12:00:00"
+          description: "End date and time of the dentist's absence period."
+      required:
+        - id
+        - unavailableTimeSlot
+        - absenceStart
+        - absenceEnd
 
 security:
   - OAuth2:
