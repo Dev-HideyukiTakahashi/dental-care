@@ -37,9 +37,9 @@ Este sistema de agendamento odontológico facilita a marcação de consultas, o 
 - **JWT e OAuth2:** Implementação para autenticação segura, garantindo que os usuários possam se autenticar de forma eficaz.
 - **Flyway:** Ferramenta para gerenciamento de migrações do banco de dados.
 - **Swagger (OpenAPI):**
-Documentação da API em YAML para evitar poluição nos controllers, mantendo o código limpo e modular.
+  Documentação da API em YAML para evitar poluição nos controllers, mantendo o código limpo e modular.
 - **Spring Scheduler:**
-Implementação de um scheduler para enviar notificações automáticas aos pacientes 1 dia antes do compromisso.
+  Implementação de um scheduler para enviar notificações automáticas aos pacientes 1 dia antes do compromisso.
 - **Spring Mail:** Para envio de notificações por e-mail, como lembretes de consultas e confirmações.
 - **Spring Validation:** Utilizado para realizar validações de dados em requisições, garantindo a integridade e a precisão das informações enviadas pelos usuários.
 
@@ -65,12 +65,15 @@ Implementação de um scheduler para enviar notificações automáticas aos paci
 - **Node.js** (para o frontend).
 - **PostgreSQL**.
 - **Git** (para clonar a aplicação).
+- **Maven** (para gerenciar dependências e rodar o projeto backend).
 
 1. Clone o repositório e acesse o diretório
 
 ```bash
 git clone https://github.com/Dev-HideyukiTakahashi/dental-care.git
 ```
+
+---
 
 2. Backend - navegue até o diretório do projeto:
 
@@ -79,7 +82,7 @@ git clone https://github.com/Dev-HideyukiTakahashi/dental-care.git
 
 3. Certifique-se de que o PostgreSQL esteja corretamente instalado e em execução na sua máquina ou em um container (como Docker). Em seguida, crie o banco de dados com o nome dental_care.
 
-4. Configuração de envio de e-mails
+4. Configuração de envio de e-mails(**não obrigatório**)
    Para que o sistema possa enviar e-mails (como confirmações de agendamento), defina as seguintes variáveis de ambiente no seu sistema, IDE ou no terminal:
 
 ```bash
@@ -87,34 +90,43 @@ EMAIL_USERNAME=seuemail@gmail.com
 EMAIL_PASSWORD=sua-senha-de-app
 ```
 
-5. Rode o projeto pelo terminal:
+5. Limpeza e construção do projeto
+   Antes de rodar a aplicação, execute o comando abaixo para garantir que todas as dependências e o projeto estejam limpos e atualizados:
+
+```bash
+mvn clean
+```
+
+6. Rode o projeto pelo terminal:
 
 ```bash
 mvn spring-boot:run
 ```
 
-5. Frontend - navegue até o diretório do projeto:
+---
+
+7. Frontend - navegue até o diretório do projeto:
 
 - pasta front-end
 - pelo terminal `cd front-end`
 
-6. Instale as dependências pelo terminal:
+8. Instale as dependências pelo terminal:
 
 ```bash
 npm install
 ```
 
-7. Inicie o servidor de desenvolvimento pelo terminal:
+9. Inicie o servidor de desenvolvimento pelo terminal:
 
 ```bash
 ng serve
 ```
 
-8. Abra o navegador e acesse `http://localhost:4200`.
+10. Abra o navegador e acesse `http://localhost:4200`.
 
 ## Endpoints da API
 
-- A documentação completa da API está disponível em: `http://localhost:8080/swagger-ui/`
+- A documentação completa da API está disponível em: `http://localhost:8080/swagger-ui/index.html`
 
 ## Fluxo de Trabalho
 
