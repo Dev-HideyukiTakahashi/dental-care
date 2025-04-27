@@ -841,7 +841,295 @@ paths:
         "500":
           description: "Internal Server Error"
 
+  # ---------------------------------------------------------------------------------------------------
+  # APPOINTMENT ENDPOINTS -----------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------------------------------
 
+  /api/v1/appointments:
+    post:
+      tags:
+        - "Appointment"
+      summary: "Create a new appointment"
+      description: "Create a new appointment and add it to the dentist's schedule."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AppointmentDTO"
+      responses:
+        "201":
+          description: "Appointment created successfully"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppointmentDTO"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomError"
+        "401":
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomError"
+        "403":
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomError"
+        "404":
+          description: "Dentist or Patient not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomError"
+        "409":
+          description: "Schedule data conflict"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomError"
+        "500":
+          description: "Internal Server Error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomError"
+
+  /api/v1/appointments/{id}:
+      get:
+        tags:
+          - "Appointment"
+        summary: "Find appointment by ID"
+        description: "Find an appointment by their unique ID."
+        parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+        responses:
+          "200":
+            description: "Appointment found"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/AppointmentDTO"
+          "400":
+            description: "Bad Request"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CustomError"
+          "401":
+            description: "Unauthorized"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CustomError"
+          "403":
+            description: "Forbidden"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CustomError"
+          "404":
+            description: "Appointment not found"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CustomError"
+          "409":
+            description: "Schedule data conflict"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CustomError"
+          "500":
+            description: "Internal Server Error"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CustomError"
+
+  /api/v1/appointments/{id}/cancel:
+    put:
+        tags:
+          - "Appointment"
+        summary: "Cancel an appointment"
+        description: "Cancel an existing appointment and remove it from the dentist's schedule."
+        parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+        responses:
+          "200":
+            description: "Appointment successfully canceled"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/AppointmentDTO"
+          "400":
+            description: "Bad Request"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CustomError"
+          "401":
+            description: "Unauthorized"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CustomError"
+          "403":
+            description: "Forbidden"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CustomError"
+          "404":
+            description: "Dentist or Patient not found"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CustomError"
+          "409":
+            description: "Appointment cannot be canceled due to a conflict"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CustomError"
+          "500":
+            description: "Internal Server Error"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CustomError"
+
+  /api/v1/appointments/{id}/complete:
+      put:
+        tags:
+          - "Appointment"
+        summary: "Complete an appointment"
+        description: "Mark an existing appointment as completed."
+        parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+        responses:
+          "200":
+            description: "Appointment successfully completed"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/AppointmentDTO"
+          "400":
+            description: "Bad Request"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CustomError"
+          "401":
+            description: "Unauthorized"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CustomError"
+          "403":
+            description: "Forbidden"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CustomError"
+          "404":
+            description: "Appointment not found"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CustomError"
+          "409":
+            description: "Appointment cannot be completed due to a conflict"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CustomError"
+          "500":
+            description: "Internal Server Error"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CustomError"
+
+  /api/v1/appointments/{id}/:
+      put:
+        tags:
+          - "Appointment"
+        summary: "Update an appointment"
+        description: "Update the date/time of an existing appointment in the dentist's schedule."
+        parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppointmentDTO"
+        responses:
+          "200":
+            description: "Appointment successfully updated"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/AppointmentDTO"
+          "400":
+            description: "Bad Request"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CustomError"
+          "401":
+            description: "Unauthorized"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CustomError"
+          "403":
+            description: "Forbidden"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CustomError"
+          "404":
+            description: "Dentist or Patient not found"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CustomError"
+          "409":
+            description: "Appointment cannot be updated due to a conflict"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CustomError"
+          "500":
+            description: "Internal Server Error"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CustomError"
 
   # ---------------------------------------------------------------------------------------------------
   # COMPONENTS ----------------------------------------------------------------------------------------
@@ -1076,10 +1364,6 @@ components:
           $ref: "#/components/schemas/DentistMinDTO"
         patient:
           $ref: "#/components/schemas/PatientMinDTO"
-        message:
-          type: string
-          description: "Mensagem de status sobre o envio de e-mail da consulta"
-          example: "E-mail de confirmação da consulta enviado com sucesso."
 
     AbsenceRequestDTO:
       type: object
