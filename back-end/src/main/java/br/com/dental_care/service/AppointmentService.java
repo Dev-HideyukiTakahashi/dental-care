@@ -129,6 +129,7 @@ public class AppointmentService {
     public AppointmentDTO cancelAppointment(Long id) {
         Appointment appointment = validateAppointment(id);
         appointment.setStatus(AppointmentStatus.CANCELED);
+        authService.validateSelfOrAdmin(appointment.getPatient().getId());
         deleteSchedule(appointment);
         logger.info("Appointment canceled, id: {}", appointment.getId());
         return AppointmentMapper.toDTO(appointment);

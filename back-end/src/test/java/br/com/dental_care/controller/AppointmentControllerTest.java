@@ -33,7 +33,6 @@ public class AppointmentControllerTest extends BaseIntegrationTest {
         adminToken = TokenUtil.obtainAccessToken("elias.warrior@example.com", "123456");
         patientToken = TokenUtil.obtainAccessToken("leonardo.smile@example.com", "123456");
         dentistToken = TokenUtil.obtainAccessToken("victor.dent@example.com", "123456");
-        ;
 
         dentist = DentistMinDTO.builder()
                 .id(4L)
@@ -234,7 +233,7 @@ public class AppointmentControllerTest extends BaseIntegrationTest {
     }
 
     @Test
-    void findById_Should_return403_When_dentistLogged() throws Exception {
+    void findById_Should_return403_When_dentistLogged()  {
 
         given()
                 .header("Authorization", "Bearer " + dentistToken)
@@ -424,11 +423,6 @@ public class AppointmentControllerTest extends BaseIntegrationTest {
 
         Long alreadyCanceledAppointment = 6L;
 
-        AppointmentDTO completedAppointmentDTO = existsAppointmentDTO
-                .toBuilder()
-                .status(AppointmentStatus.CANCELED)
-                .build();
-
         given()
                 .header("Authorization", "Bearer " + adminToken)
                 .contentType(ContentType.JSON)
@@ -487,11 +481,6 @@ public class AppointmentControllerTest extends BaseIntegrationTest {
         AppointmentDTO conflictingAppointmentDTO = existsAppointmentDTO
                 .toBuilder()
                 .patientMinDTO(anotherPatient)
-                .build();
-
-        AppointmentDTO updatedAppointmentDTO = existsAppointmentDTO
-                .toBuilder()
-                .date(LocalDateTime.now().plusMinutes(30))
                 .build();
 
         given()
