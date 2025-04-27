@@ -3,18 +3,19 @@ package br.com.dental_care.service;
 import br.com.dental_care.dto.RatingDTO;
 import br.com.dental_care.exception.InvalidRatingDataException;
 import br.com.dental_care.exception.ResourceNotFoundException;
-import br.com.dental_care.exception.ScheduleConflictException;
 import br.com.dental_care.mapper.RatingMapper;
 import br.com.dental_care.model.*;
 import br.com.dental_care.model.enums.AppointmentStatus;
-import br.com.dental_care.repository.*;
+import br.com.dental_care.repository.AppointmentRepository;
+import br.com.dental_care.repository.DentistRepository;
+import br.com.dental_care.repository.PatientRepository;
+import br.com.dental_care.repository.RatingRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -48,7 +49,9 @@ public class RatingService {
 
     private void validateAlreadyRated(RatingDTO dto) {
         Optional<Rating> rating = ratingRepository.findByAppointment_Id(dto.getAppointmentId());
-        if (rating.isPresent() && rating.get().isRated())
+
+        boolean alreadyRated = rating.isPresent() && rating.get().isRated();
+        if (alreadyRated)
             throw new InvalidRatingDataException("This appointment has already been rated.");
     }
 
@@ -87,12 +90,13 @@ public class RatingService {
     }
 
     private void updateAverageRating(Dentist dentist, Rating newRating) {
+
         dentist.getRatings().add(newRating);
-        double sum = 0;
-        for (Rating rating : dentist.getRatings()) {
-            sum += rating.getScore();
-        }
-        int average = (int) Math.ceil(sum / dentist.getRatings().size());
-        dentist.setScore(average);
+        double average = dentist.getRatings().stream()
+                .mapToInt(Rating::getScore)
+                .average()
+                .orElse(0);
+
+        dentist.setScore((int) Math.ceil(average));
     }
 }
