@@ -1,0 +1,82 @@
+.sb-sidenav {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  flex-wrap: nowrap;
+  position: relative;
+}
+
+.sb-sidenav-dark {
+  background-color: #212529;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.sb-sidenav-menu {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.sb-sidenav-menu .nav {
+  flex-direction: column;
+  flex-wrap: nowrap;
+}
+
+.sb-sidenav-menu .nav-link {
+  padding: 0.75rem 1rem;
+  color: rgba(255, 255, 255, 0.5);
+  display: flex;
+  align-items: center;
+}
+
+.sb-sidenav-menu .nav-link:hover {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.sb-sidenav-menu .nav-link .sb-nav-link-icon {
+  color: rgba(255, 255, 255, 0.25);
+  margin-right: 0.5rem;
+}
+
+.sb-sidenav-menu-heading {
+  padding: 1.75rem 1rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.sb-sidenav-collapse-arrow {
+  margin-left: auto;
+  color: rgba(255, 255, 255, 0.25);
+  transition: transform 0.15s;
+}
+
+.sb-sidenav-menu .nav-link.collapsed .sb-sidenav-collapse-arrow {
+  transform: rotate(-90deg);
+}
+
+.sb-sidenav-menu-nested {
+  margin-left: 1.5rem;
+  flex-direction: column;
+}
+
+.sb-sidenav-footer {
+  padding: 1rem;
+  flex-shrink: 0;
+  background-color: #343a40;
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+  z-index: 1;
+}
+
+.sb-sidenav-footer .small {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 0.25rem;
+}
+
+.sb-sidenav-footer div:last-child {
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+}
