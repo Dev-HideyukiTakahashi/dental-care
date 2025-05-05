@@ -3,24 +3,29 @@
   background: linear-gradient(135deg, #64b5f6, #1e3a8a, #64b5f6);
   display: flex;
   align-items: center;
-  justify-content: center; 
-  padding: 20px; 
+  justify-content: center;
+  padding: 20px;
   box-sizing: border-box;
   font-family: 'Arial', sans-serif;
 }
 
 .login {
-  width: 100%; 
+  width: 100%;
   max-width: 350px;
   padding: 2rem;
   background-color: #ffffff;
   border-radius: 8px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  
+
+  &__error {
+    color: red;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
 
   &__title {
     font-size: 1.8rem;
-    color: #555555; 
+    color: #555555;
     text-align: center;
     margin-bottom: 1.8rem;
     font-weight: 600;
@@ -34,12 +39,12 @@
 
   &__input {
     padding: 0.7rem 1rem;
-    border: 1px solid #ddd;
+    border: 1px solid #b2b2b2;
     border-radius: 4px;
     font-size: 0.95rem;
     transition: all 0.3s ease;
     width: 100%;
-    box-sizing: border-box; 
+    box-sizing: border-box;
 
     &:focus {
       outline: none;
@@ -61,7 +66,7 @@
     cursor: pointer;
     transition: all 0.3s ease;
     width: 100%;
-    box-sizing: border-box; 
+    box-sizing: border-box;
 
     &:active {
       transform: scale(0.98);
@@ -87,18 +92,26 @@
       &:hover {
         background-color: rgba(30, 58, 138, 0.1);
         color: #152c6e;
+        background-color: #c9d5e1;
         border-color: #152c6e;
       }
     }
   }
 
+  &__button[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
   &__link {
     text-align: center;
-    color: #888888 ;
+    color: #888888;
     text-decoration: none;
     font-size: 0.85rem;
     transition: color 0.3s ease;
-    display: block; 
+    display: block;
 
     &:hover {
       color: #152c6e;
@@ -108,15 +121,15 @@
 }
 
 @media (max-width: 400px) {
-
   .login {
     padding: 1.5rem;
-    
+
     &__title {
       font-size: 1.6rem;
     }
-    
-    &__input, &__button {
+
+    &__input,
+    &__button {
       padding: 0.6rem 0.9rem;
     }
   }

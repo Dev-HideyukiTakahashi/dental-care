@@ -50,7 +50,7 @@
 
   &__input {
     padding: 0.7rem 1rem;
-    border: 1px solid #ddd;
+    border: 1px solid #b2b2b2;
     border-radius: 4px;
     font-size: 0.95rem;
     transition: all 0.3s ease;
@@ -95,7 +95,6 @@
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       }
     }
-    
   }
 
   &__link {
@@ -116,8 +115,8 @@
 }
 
 // Remove arrow in phone (number type)
-input[type=number]::-webkit-outer-spin-button,
-input[type=number]::-webkit-inner-spin-button {
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }

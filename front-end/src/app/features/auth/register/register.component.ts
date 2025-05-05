@@ -9,7 +9,7 @@ import {
 } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
-import { IRegisterPatient } from '../../../shared/model/register-patient.interface';
+import { IRegisterPatient } from '../../../shared/model/register-patient.model';
 import { getPasswordErrors, ValidatorsUtil } from './utils/register-utils';
 
 @Component({
