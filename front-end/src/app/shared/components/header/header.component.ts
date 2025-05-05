@@ -8,8 +8,10 @@ import { Component, EventEmitter, Output } from '@angular/core';
 })
 export class HeaderComponent {
   @Output() toggleSidebarEvent = new EventEmitter<void>();
+  sidebarCollapsed: boolean = false;
 
   toggleSidebar() {
+    this.sidebarCollapsed = !this.sidebarCollapsed;
     this.toggleSidebarEvent.emit();
   }
 }

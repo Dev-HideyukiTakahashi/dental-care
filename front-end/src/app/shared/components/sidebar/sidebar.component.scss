@@ -1,3 +1,4 @@
+/* Main structure */
 .sb-sidenav {
   display: flex;
   flex-direction: column;
@@ -11,6 +12,7 @@
   color: rgba(255, 255, 255, 0.5);
 }
 
+/* Menu */
 .sb-sidenav-menu {
   flex-grow: 1;
   overflow-y: auto;
@@ -21,15 +23,17 @@
   flex-wrap: nowrap;
 }
 
+/* Menu items */
 .sb-sidenav-menu .nav-link {
   padding: 0.75rem 1rem;
   color: rgba(255, 255, 255, 0.5);
   display: flex;
   align-items: center;
+  cursor: pointer;
 }
 
 .sb-sidenav-menu .nav-link:hover {
-  color: rgba(255, 255, 255, 0.75);
+  color: #0a58ca;
 }
 
 .sb-sidenav-menu .nav-link .sb-nav-link-icon {
@@ -37,6 +41,7 @@
   margin-right: 0.5rem;
 }
 
+/* Section headers */
 .sb-sidenav-menu-heading {
   padding: 1.75rem 1rem 0.75rem;
   font-size: 0.75rem;
@@ -45,6 +50,7 @@
   color: rgba(255, 255, 255, 0.25);
 }
 
+/* Expansion arrows */
 .sb-sidenav-collapse-arrow {
   margin-left: auto;
   color: rgba(255, 255, 255, 0.25);
@@ -55,11 +61,13 @@
   transform: rotate(-90deg);
 }
 
+/* Nested submenus */
 .sb-sidenav-menu-nested {
   margin-left: 1.5rem;
   flex-direction: column;
 }
 
+/* Footer - UPDATED */
 .sb-sidenav-footer {
   padding: 1rem;
   flex-shrink: 0;
