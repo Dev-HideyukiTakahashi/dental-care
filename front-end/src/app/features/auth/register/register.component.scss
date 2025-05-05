@@ -1,0 +1,142 @@
+.container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #64b5f6, #1e3a8a, #64b5f6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+  font-family: 'Arial', sans-serif;
+}
+
+.register {
+  width: 100%;
+  max-width: 400px;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+
+  &__field {
+    margin-bottom: 0.5rem;
+  }
+
+  &__error {
+    color: #dc3545;
+    font-size: 0.8rem;
+    margin-top: 0.3rem;
+    padding-left: 0.5rem;
+  }
+
+  &__input.ng-invalid.ng-touched,
+  &__input.ng-invalid.ng-dirty {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.1);
+  }
+
+  &__title {
+    font-size: 1.8rem;
+    color: #555555;
+    text-align: center;
+    margin-bottom: 1.8rem;
+    font-weight: 600;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  &__input {
+    padding: 0.7rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: #1e3a8a;
+      box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.2);
+    }
+
+    &::placeholder {
+      color: #999;
+    }
+  }
+
+  &__button {
+    padding: 0.7rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 0.5rem;
+
+    &:active {
+      transform: scale(0.98);
+    }
+
+    &--submit {
+      background-color: #1e3a8a;
+      color: white;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+
+      &:hover {
+        background-color: #152c6e;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+    }
+    
+  }
+
+  &__link {
+    margin-top: 1rem;
+    text-align: center;
+    color: #888888;
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: color 0.3s ease;
+    display: block;
+    cursor: pointer;
+
+    &:hover {
+      color: #152c6e;
+      text-decoration: underline;
+    }
+  }
+}
+
+// Remove arrow in phone (number type)
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+@media (max-width: 400px) {
+  .register {
+    padding: 1.5rem;
+
+    &__title {
+      font-size: 1.6rem;
+    }
+
+    &__input,
+    &__button {
+      padding: 0.6rem 0.9rem;
+    }
+
+    &__link {
+      font-size: 0.8rem;
+    }
+  }
+}

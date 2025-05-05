@@ -1,0 +1,94 @@
+<div class="container">
+  <div class="register">
+    <h1 class="register__title">Cadastre-se</h1>
+    <form
+      class="register__form"
+      (ngSubmit)="onSubmit()"
+      [formGroup]="registerForm"
+    >
+      <!-- Name -->
+      <div class="register__field">
+        <input
+          type="text"
+          class="register__input"
+          placeholder="Nome completo"
+          formControlName="name"
+        />
+        <div
+          *ngIf="field['name'].errors && formSubmitted"
+          class="register__error"
+        >
+          Nome é obrigatório
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="register__field">
+        <input
+          type="email"
+          class="register__input"
+          placeholder="E-mail"
+          formControlName="email"
+        />
+        <div
+          *ngIf="field['email'].errors && formSubmitted"
+          class="register__error"
+        >
+          <div *ngIf="field['email'].errors['required']">
+            E-mail é obrigatório
+          </div>
+          <div *ngIf="field['email'].errors['email']">
+            Informe um e-mail válido
+          </div>
+        </div>
+      </div>
+
+      <!-- Phone -->
+      <div class="register__field">
+        <input
+          type="number"
+          class="register__input"
+          placeholder="Telefone (XX) 9XXXX-XXXX"
+          formControlName="phone"
+        />
+        <div
+          *ngIf="field['phone'].errors && formSubmitted"
+          class="register__error"
+        >
+          <div *ngIf="field['phone'].errors['required']">
+            Telefone é obrigatório
+          </div>
+          <div *ngIf="field['phone'].errors['pattern']">
+            Formato inválido. Use (XX) 9XXXX-XXXX
+          </div>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="register__field">
+        <input
+          type="password"
+          class="register__input"
+          placeholder="Senha"
+          formControlName="password"
+        />
+        <div
+          *ngIf="field['password'].errors && formSubmitted"
+          class="register__error"
+        >
+          <div *ngFor="let error of passwordErrors()">{{ error }}</div>
+        </div>
+      </div>
+
+      <input
+        type="submit"
+        class="register__button register__button--submit"
+        value="Cadastrar"
+      />
+
+      <a routerLink="/login" class="register__link"
+        >Já tem uma conta? Faça login</a
+      >
+    </form>
+  </div>
+</div>
