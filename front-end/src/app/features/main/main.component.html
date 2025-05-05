@@ -1,0 +1,17 @@
+<div class="sb-nav-fixed">
+  <!-- Header -->
+  <app-header (toggleSidebarEvent)="toggleSidebar()"></app-header>
+  <div id="layoutSidenav">
+    <!-- Fix Sidebar -->
+    <div id="layoutSidenav_nav">
+      <app-sidebar></app-sidebar>
+    </div>
+
+    <!-- Main content with scroll -->
+    <div id="layoutSidenav_content">
+      <main class="content-area">
+        <router-outlet></router-outlet>
+      </main>
+    </div>
+  </div>
+</div>
