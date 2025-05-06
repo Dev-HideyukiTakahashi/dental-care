@@ -63,6 +63,7 @@ Este sistema de agendamento odontológico facilita a marcação de consultas, o 
 
 - **Java 17** ou superior.
 - **Node.js** (para o frontend).
+- **Angular 19** ou superior.
 - **PostgreSQL**.
 - **Git** (para clonar a aplicação).
 - **Maven** (para gerenciar dependências e rodar o projeto backend).
@@ -77,50 +78,53 @@ git clone https://github.com/Dev-HideyukiTakahashi/dental-care.git
 
 2. Backend - navegue até o diretório do projeto:
 
-- pasta back-end
-- pelo terminal `cd back-end`
+   - pasta back-end
 
-3. Certifique-se de que o PostgreSQL esteja corretamente instalado e em execução na sua máquina ou em um container (como Docker). Em seguida, crie o banco de dados com o nome dental_care.
+3. Certifique-se de que o PostgreSQL esteja corretamente instalado e em execução na sua máquina. Em seguida, crie o banco de dados com o nome dental_care.
+
+   Opcional Docker:
+
+   - Caso preferir Docker, execute o comando **`docker-compose up`** dentro da pasta back-end para subir um banco postgreSQL já configurado.
+   - Altere a porta para 5433 no `application-dev.properties`: spring.datasource.url=jdbc:postgresql://localhost:**5433**/dental_care
 
 4. Configuração de envio de e-mails(**não obrigatório**)
-   Para que o sistema possa enviar e-mails (como confirmações de agendamento), defina as seguintes variáveis de ambiente no seu sistema, IDE ou no terminal:
+   Para que o sistema possa enviar e-mails (como confirmações de agendamento, recuperação de senha), defina as seguintes variáveis de ambiente no seu sistema, IDE ou no terminal:
 
-```bash
-EMAIL_USERNAME=seuemail@gmail.com
-EMAIL_PASSWORD=sua-senha-de-app
-```
+   ```bash
+   EMAIL_USERNAME=seuemail@gmail.com
+   EMAIL_PASSWORD=sua-senha-de-app
+   ```
 
 5. Limpeza e construção do projeto
    Antes de rodar a aplicação, execute o comando abaixo para garantir que todas as dependências e o projeto estejam limpos e atualizados:
 
-```bash
-mvn clean
-```
+   ```bash
+   mvn clean
+   ```
 
 6. Rode o projeto pelo terminal:
 
-```bash
-mvn spring-boot:run
-```
+   ```bash
+   mvn spring-boot:run
+   ```
 
 ---
 
 7. Frontend - navegue até o diretório do projeto:
 
-- pasta front-end
-- pelo terminal `cd front-end`
+   - pasta front-end
 
 8. Instale as dependências pelo terminal:
 
-```bash
-npm install
-```
+   ```bash
+   npm install
+   ```
 
 9. Inicie o servidor de desenvolvimento pelo terminal:
 
-```bash
-ng serve
-```
+   ```bash
+   ng serve
+   ```
 
 10. Abra o navegador e acesse `http://localhost:4200`.
 
@@ -128,30 +132,11 @@ ng serve
 
 - A documentação completa da API está disponível em: `http://localhost:8080/swagger-ui/index.html`
 
-## Fluxo de Trabalho
-
-### Para Pacientes
-
-1. **Cadastro e Login**: O paciente se cadastra e realiza o login.
-2. **Agendamento de Consultas**: O paciente agenda uma consulta com um dentista disponível.
-3. **Avaliação do Dentista**: Após a consulta, o paciente pode avaliar o dentista.
-
-### Para Dentistas
-
-1. **Cadastro e Login**: O dentista se cadastra e realiza o login.
-2. **Gerenciamento de Agenda**: O dentista define seus horários de atendimento.
-3. **Gerenciamento de Consultas**: O dentista gerencia consultas agendadas.
-
-### Para Administradores
-
-1. **Gerenciamento de Usuários**: O administrador pode gerenciar contas de pacientes e dentistas.
-2. **Relatórios**: O administrador acessa relatórios e estatísticas.
-
 ## Casos de Uso
 
-- **Paciente**: Agendar consultas, cancelar, avaliar dentistas, receber notificações.
-- **Dentista**: Gerenciar horários, confirmar consultas, interagir com pacientes.
-- **Administrador**: Gerenciar usuários, visualizar relatórios de consultas e estatísticas.
+- **Paciente**: Agendar consultas, atualizar horário, cancelar, avaliar dentistas, receber notificações.
+- **Dentista**: Gerenciar horários, definir afastamentos.
+- **Administrador**: Gerenciar usuários, cadastrar dentistas, visualizar relatórios de consultas e estatísticas.
 
 ## Licença
 
