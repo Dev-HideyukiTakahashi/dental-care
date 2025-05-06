@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 import { Observable } from 'rxjs';
 import { LoginData } from '../../model/login.model';
@@ -13,7 +14,8 @@ export class AuthService {
   private clientId = 'myclientid';
   private clientSecret = 'myclientsecret';
 
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
+  private router = inject(Router);
 
   // ***** LOGIN REQUEST *****
   login(userData: LoginData): Observable<any> {
@@ -42,6 +44,7 @@ export class AuthService {
 
   logout(): void {
     localStorage.clear();
+    this.router.navigate(['/login']);
   }
 
   getDecodedToken(): any | null {
@@ -59,5 +62,20 @@ export class AuthService {
   getUserRole(): string {
     const decoded = this.getDecodedToken();
     return decoded?.authorities?.[0];
+  }
+
+  isAdmin(): boolean {
+    if (!this.getDecodedToken()) return false;
+    return this.getUserRole() === 'ROLE_ADMIN';
+  }
+
+  isPatient(): boolean {
+    if (!this.getDecodedToken()) return false;
+    return this.getUserRole() === 'ROLE_PATIENT';
+  }
+
+  isDentist(): boolean {
+    if (!this.getDecodedToken()) return false;
+    return this.getUserRole() === 'ROLE_DENTIST';
   }
 }

@@ -8,8 +8,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService } from '../../../core/auth.service';
-import { LoginData } from '../../../shared/model/login.model';
+import { AuthService } from '../../../core/service/auth.service';
+import { LoginData } from '../../../model/login.model';
 
 @Component({
   selector: 'app-login',
@@ -37,13 +37,8 @@ export class LoginComponent {
       next: (response: any) => {
         localStorage.setItem('access_token', response.access_token);
 
-        const role = this.authService.getUserRole();
-        localStorage.setItem('role', role);
-
-        // TODO retirar após tests
-        console.log('Usuário logado');
-
-        this.router.navigate(['/home']);
+        // TODO navigate to admin/dentist/patient page
+        this.router.navigate(['/']);
       },
       error: () => {
         this.errorMessage = 'Usuário ou senha inválido';

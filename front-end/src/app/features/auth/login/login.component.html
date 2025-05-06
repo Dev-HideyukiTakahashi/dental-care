@@ -1,14 +1,15 @@
 <div class="login-container">
+  <!-- Error in API response -->
+  <div *ngIf="errorMessage" class="login__error">
+    {{ errorMessage }}
+  </div>
+
   <div class="login">
     <h1 class="login__title">Dental Care</h1>
-    <div *ngIf="errorMessage" class="login__error">
-      {{ errorMessage }}
-    </div>
-    <form class="login__form" (ngSubmit)="onSubmit()" [formGroup]="registerForm">
-      <!-- EMAIL -->
-      <input type="text" class="login__input" placeholder="E-mail" formControlName="username" />
 
-      <!-- PASSWORD -->
+    <!-- Login Form -->
+    <form class="login__form" (ngSubmit)="onSubmit()" [formGroup]="registerForm">
+      <input type="text" class="login__input" placeholder="E-mail" formControlName="username" />
       <input type="password" class="login__input" placeholder="Senha" formControlName="password" />
 
       <input
@@ -17,6 +18,7 @@
         value="Entrar"
         [disabled]="registerForm.invalid"
       />
+
       <input
         type="button"
         class="login__button login__button--create-account"
