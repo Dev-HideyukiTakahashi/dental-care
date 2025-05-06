@@ -15,10 +15,7 @@ public class NewPasswordDTO {
 
     @NotBlank(message = "Password is required")
     @Size(min = 6, max = 20, message = "Password must be between 6 and 20 characters.")
-    @Pattern(regexp = ".*[A-Z].*", message = "Password must contain at least one uppercase letter.")
-    @Pattern(regexp = ".*[a-z].*", message = "Password must contain at least one lowercase letter.")
-    @Pattern(regexp = ".*[0-9].*", message = "Password must contain at least one number.")
-    @Pattern(regexp = ".*[!@#$%^&*(),.?\":{}|<>].*", message = "Password must contain at least one special character.")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*(),.?\":{}|<>])[A-Za-z\\d!@#$%^&*(),.?\":{}|<>]{6,20}$", message = "Password must be 6–20 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.")
     private String password;
 
 }
