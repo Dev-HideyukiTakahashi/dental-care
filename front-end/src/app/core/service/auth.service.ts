@@ -2,23 +2,24 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
 import { Observable } from 'rxjs';
-import { LoginData } from '../shared/model/login.model';
+import { LoginData } from '../../model/login.model';
+import { IRegisterPatient } from '../../model/register-patient.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private API = 'http://localhost:8080/oauth2/token';
+  private API = 'http://localhost:8080';
+  private clientId = 'myclientid';
+  private clientSecret = 'myclientsecret';
 
   constructor(private http: HttpClient) {}
 
+  // ***** LOGIN REQUEST *****
   login(userData: LoginData): Observable<any> {
-    const clientId = 'myclientid';
-    const clientSecret = 'myclientsecret';
-
     const headers = new HttpHeaders({
       'Content-Type': 'application/x-www-form-urlencoded',
-      Authorization: 'Basic ' + btoa(`${clientId}:${clientSecret}`),
+      Authorization: 'Basic ' + btoa(`${this.clientId}:${this.clientSecret}`),
     });
 
     const body = new HttpParams()
@@ -26,7 +27,17 @@ export class AuthService {
       .set('username', userData.username)
       .set('password', userData.password);
 
-    return this.http.post(this.API, body.toString(), { headers });
+    return this.http.post(`${this.API}/oauth2/token`, body.toString(), { headers });
+  }
+
+  // ***** SIGNUP REQUEST *****
+  signup(patient: IRegisterPatient): Observable<IRegisterPatient> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: 'Basic ' + btoa(`${this.clientId}:${this.clientSecret}`),
+    });
+
+    return this.http.post<IRegisterPatient>(`${this.API}/auth/signup`, patient, { headers });
   }
 
   logout(): void {

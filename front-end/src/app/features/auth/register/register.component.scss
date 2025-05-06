@@ -18,14 +18,17 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 
   &__field {
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
+    position: relative;
   }
 
   &__error {
     color: #dc3545;
+    position: absolute;
+    bottom: -1.25rem;
+    left: 0.5rem;
     font-size: 0.8rem;
-    margin-top: 0.3rem;
-    padding-left: 0.5rem;
+    line-height: 1.2;
   }
 
   &__input.ng-invalid.ng-touched,
@@ -114,11 +117,42 @@
   }
 }
 
-// Remove arrow in phone (number type)
-input[type='number']::-webkit-outer-spin-button,
-input[type='number']::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+@mixin status-message($bg-color, $text-color, $border-color) {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 40px);
+  max-width: 450px;
+  padding: 12px 16px;
+  background-color: $bg-color;
+  color: $text-color;
+  border: 1px solid $border-color;
+  border-radius: 4px;
+  text-align: center;
+  margin-bottom: 20px;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.register-api-error {
+  @include status-message(#f8d7da, #721c24, #f5c6cb);
+}
+
+.register-api-success {
+  @include status-message(#d4edda, #155724, #c3e6cb);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 }
 
 @media (max-width: 400px) {

@@ -1,8 +1,16 @@
 <div class="register-container">
+  <!-- Feedback from API -->
+  <div *ngIf="apiResponse" [ngClass]="isSuccess ? 'register-api-success' : 'register-api-error'">
+    {{ apiResponse }}
+  </div>
+
+  <!-- Register Form -->
   <div class="register">
     <h1 class="register__title">Cadastre-se</h1>
+
+    <!-- Form -->
     <form class="register__form" (ngSubmit)="onSubmit()" [formGroup]="registerForm">
-      <!-- Name -->
+      <!-- Name Field -->
       <div class="register__field">
         <input
           type="text"
@@ -15,7 +23,7 @@
         </div>
       </div>
 
-      <!-- Email -->
+      <!-- Email Field -->
       <div class="register__field">
         <input type="email" class="register__input" placeholder="E-mail" formControlName="email" />
         <div *ngIf="field['email'].errors && formSubmitted" class="register__error">
@@ -24,10 +32,10 @@
         </div>
       </div>
 
-      <!-- Phone -->
+      <!-- Phone Field -->
       <div class="register__field">
         <input
-          type="number"
+          type="tel"
           class="register__input"
           placeholder="Telefone (XX) 9XXXX-XXXX"
           formControlName="phone"
@@ -38,7 +46,7 @@
         </div>
       </div>
 
-      <!-- Password -->
+      <!-- Password Field -->
       <div class="register__field">
         <input
           type="password"
@@ -52,8 +60,7 @@
       </div>
 
       <input type="submit" class="register__button register__button--submit" value="Cadastrar" />
-
-      <a routerLink="/login" class="register__link">Já tem uma conta? Faça login</a>
+      <a routerLink="/login" class="register__link"> Já tem uma conta? Faça login </a>
     </form>
   </div>
 </div>
