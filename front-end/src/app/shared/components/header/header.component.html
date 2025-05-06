@@ -39,8 +39,24 @@
       <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
         <li><a class="dropdown-item" href="#!">Configurações</a></li>
         <li><hr class="dropdown-divider" /></li>
-        <li><a class="dropdown-item" href="#!">Logout</a></li>
+        <li><a class="dropdown-item" (click)="openLogoutModal()">Logout</a></li>
       </ul>
     </li>
   </ul>
 </nav>
+
+<!-- Logout Confirmation Modal -->
+<div class="modal-backdrop" *ngIf="showLogoutModal" (click)="closeModal()"></div>
+<div *ngIf="showLogoutModal" class="modal-overlay">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-content">
+      <div class="modal-body">
+        <p>Você realmente deseja sair?</p>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-primary" (click)="logout()">Sair</button>
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>

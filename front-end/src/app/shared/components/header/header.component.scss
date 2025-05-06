@@ -1,0 +1,41 @@
+a {
+  cursor: pointer;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 999;
+}
+
+.modal {
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #343a40;
+  border-radius: 8px;
+  display: block;
+  max-width: 600px;
+  max-height: 200px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.modal-content {
+  background-color: #343a40;
+}
+
+.modal-body p {
+  margin: 0;
+  color: #fff;
+  font-size: 1.2rem;
+}
+
+.modal-actions {
+  display: flex;
+  padding: 10px;
+  gap: 10px;
+}
