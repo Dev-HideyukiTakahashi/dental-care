@@ -22,6 +22,8 @@ export class LoginComponent {
   private router = inject(Router);
   registerForm: FormGroup;
   errorMessage: string | null = null;
+  showResetPasswordModal = false;
+  recoveryEmail: string = '';
 
   constructor(private fb: FormBuilder) {
     this.registerForm = this.fb.nonNullable.group({
@@ -44,5 +46,18 @@ export class LoginComponent {
         this.errorMessage = 'Usuário ou senha inválido';
       },
     });
+  }
+
+  openResetPasswordModal() {
+    this.showResetPasswordModal = true;
+  }
+
+  closeModal() {
+    this.showResetPasswordModal = false;
+  }
+
+  sendEmail() {
+    // TODO
+    console.log(this.recoveryEmail);
   }
 }

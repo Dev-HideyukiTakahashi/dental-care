@@ -25,7 +25,29 @@
         value="Criar uma conta"
         routerLink="/register"
       />
-      <a href="#" class="login__link">Esqueceu sua senha?</a>
+      <a (click)="openResetPasswordModal()" class="login__link">Esqueceu sua senha?</a>
     </form>
+  </div>
+</div>
+
+<!-- Reset Password Modal -->
+<div class="modal-backdrop" *ngIf="showResetPasswordModal" (click)="closeModal()"></div>
+<div *ngIf="showResetPasswordModal" class="modal-overlay">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-content">
+      <div class="modal-body">
+        <p>Digite seu email para receber o link:</p>
+      </div>
+      <input
+        type="email"
+        [(ngModel)]="recoveryEmail"
+        placeholder="Digite seu email"
+        class="modal-input"
+      />
+      <div class="modal-actions">
+        <button type="button" class="btn btn-primary" (click)="sendEmail()">Enviar</button>
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
+      </div>
+    </div>
   </div>
 </div>
