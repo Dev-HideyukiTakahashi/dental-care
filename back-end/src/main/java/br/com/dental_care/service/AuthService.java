@@ -1,6 +1,18 @@
 package br.com.dental_care.service;
 
+import java.time.Instant;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import br.com.dental_care.dto.EmailDTO;
+import br.com.dental_care.dto.NewPasswordDTO;
 import br.com.dental_care.dto.PatientDTO;
 import br.com.dental_care.exception.ForbiddenException;
 import br.com.dental_care.exception.RegistrationDataException;
@@ -14,15 +26,6 @@ import br.com.dental_care.repository.PasswordRecoverRepository;
 import br.com.dental_care.repository.PatientRepository;
 import br.com.dental_care.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.Instant;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -52,12 +55,25 @@ public class AuthService {
 
     @Transactional
     public void createRecoverToken(EmailDTO body) {
-        userRepository.findByEmail(body.getEmail()).orElseThrow(() ->
-                new ResourceNotFoundException("Email not found."));
+        userRepository.findByEmail(body.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("Email not found."));
 
         PasswordRecover entity = buildPasswordRecover(body);
         passwordRecoverRepository.save(entity);
         emailService.sendPasswordResetTokenEmail(body.getEmail(), entity.getToken());
+    }
+
+    @Transactional
+    public void saveNewPassword(NewPasswordDTO dto) {
+        Optional<PasswordRecover> result = passwordRecoverRepository.searchValidTokens(dto.getToken(), Instant.now());
+        if (result.isEmpty()) {
+            throw new ResourceNotFoundException("Token inválido");
+        }
+
+        User user = userRepository.findByEmail(result.get().getEmail()).get();
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user = userRepository.save(user);
+        logger.info("Reset password success");
     }
 
     private PasswordRecover buildPasswordRecover(EmailDTO body) {
@@ -69,7 +85,7 @@ public class AuthService {
     }
 
     private void validateEmail(String email) {
-        if(userRepository.findByEmail(email).isPresent()) {
+        if (userRepository.findByEmail(email).isPresent()) {
             logger.warn("Attempt to register with already existing email: {}", email);
             throw new RegistrationDataException("Email already registered.");
         }
@@ -90,7 +106,7 @@ public class AuthService {
 
     public void validateSelfOrAdmin(Long userId) {
         User userLogged = userService.authenticated();
-        if(!userLogged.hasRole("ROLE_ADMIN") && !userLogged.getId().equals(userId))
+        if (!userLogged.hasRole("ROLE_ADMIN") && !userLogged.getId().equals(userId))
             throw new ForbiddenException("Access denied: You do not have permission to perform this action");
     }
 

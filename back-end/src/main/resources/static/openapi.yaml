@@ -842,6 +842,36 @@ paths:
         "500":
           description: "Internal Server Error"
 
+  /auth/new-password:
+    put:
+      tags:
+        - Auth
+      summary: Redefinir senha do usuário
+      description: Endpoint para salvar uma nova senha usando um token válido de recuperação
+      operationId: saveNewPassword
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewPasswordDTO'
+      responses:
+        '204':
+          description: Senha alterada com sucesso
+        '400':
+          description: Requisição inválida (DTO inválido ou token expirado/inválido)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+        '500':
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+
+
   # ---------------------------------------------------------------------------------------------------
   # APPOINTMENT ENDPOINTS -----------------------------------------------------------------------------
   # ---------------------------------------------------------------------------------------------------
@@ -1516,6 +1546,41 @@ components:
         - unavailableTimeSlot
         - absenceStart
         - absenceEnd
+
+    NewPasswordDTO:
+      type: object
+      required:
+        - token
+        - newPassword
+      properties:
+        token:
+          type: string
+          description: Password reset token
+          example: "abc123-xyz456-789"
+        newPassword:
+          type: string
+          description: User's new password (minimum 6 characters)
+          example: "@Newpass123"
+          minLength: 6
+    ErrorResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          example: "2025-05-05T23:04:14.968-03:00"
+        status:
+          type: integer
+          example: 400
+        error:
+          type: string
+          example: "Bad Request"
+        message:
+          type: string
+          example: "Invalid or expired token"
+        path:
+          type: string
+          example: "/new-password"
 
 security:
   - OAuth2:
