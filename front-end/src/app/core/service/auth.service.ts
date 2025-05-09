@@ -5,6 +5,7 @@ import { jwtDecode } from 'jwt-decode';
 import { Observable } from 'rxjs';
 import { LoginData } from '../../model/login.model';
 import { IRegisterPatient } from '../../model/register-patient.model';
+import { UserRole } from '../../model/user-role.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -64,17 +65,24 @@ export class AuthService {
     return decoded?.authorities?.[0];
   }
 
-  isAdmin(): boolean {
+  getRole(): UserRole | null {
+    if (this.isAdmin()) return UserRole.Admin;
+    if (this.isDentist()) return UserRole.Dentist;
+    if (this.isPatient()) return UserRole.Patient;
+    return null;
+  }
+
+  private isAdmin(): boolean {
     if (!this.getDecodedToken()) return false;
     return this.getUserRole() === 'ROLE_ADMIN';
   }
 
-  isPatient(): boolean {
+  private isPatient(): boolean {
     if (!this.getDecodedToken()) return false;
     return this.getUserRole() === 'ROLE_PATIENT';
   }
 
-  isDentist(): boolean {
+  private isDentist(): boolean {
     if (!this.getDecodedToken()) return false;
     return this.getUserRole() === 'ROLE_DENTIST';
   }

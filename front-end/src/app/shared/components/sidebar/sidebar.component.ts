@@ -1,5 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { AuthService } from '../../../core/service/auth.service';
+import { UserRole } from '../../../model/user-role.enum';
 
 @Component({
   selector: 'app-sidebar',
@@ -8,13 +10,19 @@ import { Component } from '@angular/core';
   styleUrl: './sidebar.component.scss',
 })
 export class SidebarComponent {
-  currentDate: Date = new Date();
+  private authService: AuthService = inject(AuthService);
   private timer: any;
+
+  currentDate: Date = new Date();
 
   ngOnInit() {
     this.timer = setInterval(() => {
       this.currentDate = new Date();
     }, 1000);
+  }
+
+  get role(): UserRole | null {
+    return this.authService.getRole();
   }
 
   ngOnDestroy() {

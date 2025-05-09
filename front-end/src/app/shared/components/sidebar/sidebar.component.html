@@ -1,40 +1,70 @@
 <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
   <div class="sb-sidenav-menu">
     <div class="nav">
+      <!-- HOME  -->
+      <div class="sb-sidenav-menu-heading">Home</div>
+      <a class="nav-link" routerLink="#">
+        <div class="sb-nav-link-icon"><i class="fa-solid fa-house"></i></div>
+        Home
+      </a>
       <!-- ADMIN  -->
+      @if(role === 'admin'){
+
       <div class="sb-sidenav-menu-heading">Admin</div>
       <a class="nav-link" routerLink="#">
         <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
         Dashboard
       </a>
-      <!-- DENTIST  -->
-      <div class="sb-sidenav-menu-heading">Dentistas</div>
       <a class="nav-link" href="#">
         <div class="sb-nav-link-icon"><i class="fa-solid fa-user-doctor"></i></div>
-        Consultar
+        Dentistas
       </a>
-      <a class="nav-link" href="#">
-        <div class="sb-nav-link-icon"><i class="fa-solid fa-plus"></i></div>
-        Cadastrar
-      </a>
-      <!-- PATIENT  -->
-      <div class="sb-sidenav-menu-heading">Pacientes</div>
       <a class="nav-link" href="#">
         <div class="sb-nav-link-icon"><i class="fa-solid fa-users"></i></div>
-        Consultar
+        Pacientes
       </a>
       <a class="nav-link" href="#">
         <div class="sb-nav-link-icon"><i class="fa-solid fa-plus"></i></div>
-        Cadastrar
+        Dentista
+      </a>
+      <a class="nav-link" href="#">
+        <div class="sb-nav-link-icon"><i class="fa-solid fa-plus"></i></div>
+        Paciente
       </a>
 
-      <!-- APPOINTMENT  -->
-      <div class="sb-sidenav-menu-heading">Consultas</div>
+      }
+      <!-- DENTIST  -->
+      @if(role === 'dentist' || role === 'admin'){
+
+      <div class="sb-sidenav-menu-heading">Dentistas</div>
       <a class="nav-link" href="#">
-        <div class="sb-nav-link-icon"><i class="fa-solid fa-clipboard-list"></i></div>
-        Todas Consultas
+        <div class="sb-nav-link-icon"><i class="fa-solid fa-calendar-days"></i></div>
+        Agenda
       </a>
+
+      }
+      <!-- PATIENT  -->
+      @if(role === 'patient' || role === 'admin'){
+
+      <div class="sb-sidenav-menu-heading">Pacientes</div>
+      <a class="nav-link" href="#">
+        <div class="sb-nav-link-icon"><i class="fa-solid fa-plus"></i></div>
+        Consulta
+      </a>
+      <a class="nav-link" href="#">
+        <div class="sb-nav-link-icon"><i class="fa-solid fa-user-pen"></i></div>
+        Editar
+      </a>
+
+      @if(role === 'patient'){
+      <a class="nav-link" href="#">
+        <div class="sb-nav-link-icon"><i class="fa-solid fa-star"></i></div>
+        Avaliar
+      </a>
+
+      } }
     </div>
+    <!-- FOOTER SIDEBAR  -->
   </div>
   <div class="sb-sidenav-footer">
     <div class="small">

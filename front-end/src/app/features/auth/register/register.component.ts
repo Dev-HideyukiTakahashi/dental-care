@@ -10,7 +10,7 @@ import {
 import { Router, RouterModule } from '@angular/router';
 
 import { AuthService } from '../../../core/service/auth.service';
-import { getPasswordErrors, ValidatorsUtil } from './utils/register-utils';
+import { getPasswordErrors, ValidatorsUtil } from '../../../shared/utils/validator-utils';
 
 @Component({
   selector: 'app-register',
