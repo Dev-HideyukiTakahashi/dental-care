@@ -1,5 +1,17 @@
 package br.com.dental_care.service;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.mail.MailException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import br.com.dental_care.dto.AppointmentDTO;
 import br.com.dental_care.exception.ResourceNotFoundException;
 import br.com.dental_care.exception.ScheduleConflictException;
@@ -8,21 +20,13 @@ import br.com.dental_care.model.Appointment;
 import br.com.dental_care.model.Dentist;
 import br.com.dental_care.model.Patient;
 import br.com.dental_care.model.Schedule;
+import br.com.dental_care.model.User;
 import br.com.dental_care.model.enums.AppointmentStatus;
 import br.com.dental_care.repository.AppointmentRepository;
 import br.com.dental_care.repository.DentistRepository;
 import br.com.dental_care.repository.PatientRepository;
 import br.com.dental_care.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.mail.MailException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +39,7 @@ public class AppointmentService {
     private final ScheduleRepository scheduleRepository;
     private final AuthService authService;
     private final EmailService emailService;
+    private final UserService userService;
 
     private static final LocalTime WORKING_HOURS_START = LocalTime.of(8, 0);
     private static final LocalTime WORKING_HOURS_END = LocalTime.of(19, 0);
@@ -60,6 +65,26 @@ public class AppointmentService {
             sendAppointmentConfirmationEmail(patient, appointment, dto);
         }
         return dto;
+    }
+
+    @Transactional(readOnly = true)
+    public Page<AppointmentDTO> findAll(Pageable pageable) {
+
+        Page<Appointment> page;
+        User loggedUser = userService.getLoggedUser();
+
+        if (loggedUser.hasRole("ROLE_ADMIN")) {
+            page = appointmentRepository.findAll(pageable);
+        } else if (loggedUser.hasRole("ROLE_PATIENT")) {
+            page = appointmentRepository.findByPatient_Id(pageable, loggedUser.getId());
+        } else if (loggedUser.hasRole("ROLE_DENTIST")) {
+            page = appointmentRepository.findByDentist_Id(pageable, loggedUser.getId());
+        } else {
+            logger.warn("User role is empty or not authorized");
+            return Page.empty();
+        }
+
+        return page.map(appointment -> AppointmentMapper.toDTO(appointment));
     }
 
     @Transactional(readOnly = true)
@@ -127,13 +152,15 @@ public class AppointmentService {
         for (Schedule schedule : dentist.getSchedules()) {
             LocalDateTime unavailableTimeSlot = schedule.getUnavailableTimeSlot();
 
-            if (unavailableTimeSlot == null) continue;
+            if (unavailableTimeSlot == null)
+                continue;
 
             // Check if the current unavailable time slot matches the given appointment time
             if (unavailableTimeSlot.equals(date))
                 throw new ScheduleConflictException("An appointment already exists for this time slot.");
 
-            // Check if the given appointment time falls within one hour of an existing schedule
+            // Check if the given appointment time falls within one hour of an existing
+            // schedule
             if (isWithinOneHour(unavailableTimeSlot, date))
                 throw new ScheduleConflictException("The time falls within another appointment slot.");
         }
@@ -143,7 +170,6 @@ public class AppointmentService {
     private boolean isWithinOneHour(LocalDateTime unavailableTimeSlot, LocalDateTime date) {
         return date.isAfter(unavailableTimeSlot.minusHours(1)) && date.isBefore(unavailableTimeSlot.plusHours(1));
     }
-
 
     private Schedule createSchedule(Appointment appointment) {
         Schedule schedule = new Schedule();

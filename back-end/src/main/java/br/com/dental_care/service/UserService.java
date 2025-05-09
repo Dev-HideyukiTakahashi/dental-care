@@ -45,11 +45,19 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional(readOnly = true)
-    public PatientDTO getLoggedUser() {
+    public PatientDTO getLoggedPatient() {
         User user = authenticated();
 
         logger.info("Patient details retrieved successfully. ID: {}", user.getId());
         return PatientMapper.toDTO(patientRepository.getReferenceById(user.getId()));
+    }
+
+    @Transactional(readOnly = true)
+    public User getLoggedUser() {
+        User user = authenticated();
+
+        logger.info("User details retrieved successfully. ID: {}", user.getId());
+        return user;
     }
 
     protected User authenticated() {
