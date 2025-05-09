@@ -1,12 +1,18 @@
 package br.com.dental_care.service;
 
-import br.com.dental_care.dto.PatientDTO;
-import br.com.dental_care.factory.PatientFactory;
-import br.com.dental_care.factory.UserFactory;
-import br.com.dental_care.model.User;
-import br.com.dental_care.projection.UserDetailsProjection;
-import br.com.dental_care.repository.PatientRepository;
-import br.com.dental_care.repository.UserRepository;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,12 +26,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.jwt.Jwt;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import br.com.dental_care.dto.PatientDTO;
+import br.com.dental_care.factory.PatientFactory;
+import br.com.dental_care.factory.UserFactory;
+import br.com.dental_care.model.User;
+import br.com.dental_care.projection.UserDetailsProjection;
+import br.com.dental_care.repository.PatientRepository;
+import br.com.dental_care.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -76,8 +83,8 @@ class UserServiceTest {
 
         when(userRepository.searchUserAndRolesByEmail(invalidUser)).thenReturn(Collections.emptyList());
 
-        Exception exception = assertThrows(UsernameNotFoundException.class, () ->{
-            UserDetails details = userService.loadUserByUsername(invalidUser);
+        Exception exception = assertThrows(UsernameNotFoundException.class, () -> {
+            userService.loadUserByUsername(invalidUser);
         });
 
         assertEquals("User not found!", exception.getMessage());
@@ -108,7 +115,7 @@ class UserServiceTest {
                 .thenReturn(PatientFactory.createValidPatient());
 
         // Act
-        PatientDTO dto = userService.getLoggedUser();
+        PatientDTO dto = userService.getLoggedPatient();
 
         // Assert
         assertNotNull(dto);
@@ -123,7 +130,6 @@ class UserServiceTest {
     public void authenticated_Should_returnUser_When_validJwt() {
 
         // Arrange
-        String validJwt = "valid.jwt.token";
         String userEmail = "test@example.com";
 
         // Mock the Jwt, extracting the "username" claim from the JWT
@@ -154,10 +160,6 @@ class UserServiceTest {
 
     @Test
     public void authenticated_Should_throwException_When_anyErrorOccurs() {
-
-        // Arrange
-        String invalidJwt = "invalid.jwt.token";
-        String userEmail = "test@example.com";
 
         // Mock the Jwt, simulating a failure when retrieving the claim
         Jwt jwt = mock(Jwt.class);

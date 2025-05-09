@@ -1,18 +1,23 @@
 package br.com.dental_care.service;
 
-import br.com.dental_care.model.Appointment;
-import br.com.dental_care.repository.AppointmentRepository;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-
-import static org.mockito.Mockito.*;
+import br.com.dental_care.model.Appointment;
+import br.com.dental_care.repository.AppointmentRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class NotificationSchedulerTest {
@@ -39,8 +44,7 @@ public class NotificationSchedulerTest {
         // Mock behavior of appointmentRepository
         when(appointmentRepository.findByDateBetween(
                 any(LocalDateTime.class),
-                any(LocalDateTime.class))
-        ).thenReturn(appointments);
+                any(LocalDateTime.class))).thenReturn(appointments);
 
         // Act
         notificationScheduler.sendAppointmentReminders();
@@ -52,13 +56,11 @@ public class NotificationSchedulerTest {
     @Test
     public void sendAppointmentReminders_Should_logNoAppointments_When_NoAppointmentsFound() {
 
-        LocalDateTime tomorrow = LocalDateTime.now().plusDays(1);
         List<Appointment> appointments = Collections.emptyList();
 
         when(appointmentRepository.findByDateBetween(
                 any(LocalDateTime.class),
-                any(LocalDateTime.class))
-        ).thenReturn(appointments);
+                any(LocalDateTime.class))).thenReturn(appointments);
 
         notificationScheduler.sendAppointmentReminders();
 
@@ -79,8 +81,7 @@ public class NotificationSchedulerTest {
 
         when(appointmentRepository.findByDateBetween(
                 any(LocalDateTime.class),
-                any(LocalDateTime.class))
-        ).thenReturn(appointments);
+                any(LocalDateTime.class))).thenReturn(appointments);
 
         notificationScheduler.sendAppointmentReminders();
 

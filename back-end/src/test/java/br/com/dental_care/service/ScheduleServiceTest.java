@@ -1,11 +1,33 @@
 package br.com.dental_care.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import br.com.dental_care.dto.AbsenceDTO;
 import br.com.dental_care.dto.AbsenceRequestDTO;
 import br.com.dental_care.exception.InvalidDateRangeException;
 import br.com.dental_care.exception.ResourceNotFoundException;
 import br.com.dental_care.exception.ScheduleConflictException;
-import br.com.dental_care.factory.AppointmentFactory;
 import br.com.dental_care.factory.DentistFactory;
 import br.com.dental_care.factory.ScheduleFactory;
 import br.com.dental_care.factory.UserFactory;
@@ -15,18 +37,6 @@ import br.com.dental_care.model.Schedule;
 import br.com.dental_care.model.User;
 import br.com.dental_care.repository.DentistRepository;
 import br.com.dental_care.repository.ScheduleRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalDateTime;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ScheduleServiceTest {
@@ -45,14 +55,12 @@ public class ScheduleServiceTest {
 
     private Long validId;
     private Long invalidId;
-    private AbsenceDTO absenceDTO;
     private AbsenceRequestDTO absenceRequestDTO;
     private Dentist dentist;
     private User user;
     private Schedule schedule;
     private LocalDateTime start;
     private LocalDateTime end;
-    private Appointment appointment;
 
     @BeforeEach
     void setUp() {
@@ -63,7 +71,6 @@ public class ScheduleServiceTest {
         dentist = DentistFactory.createValidDentist();
         user = UserFactory.createValidUser();
         schedule = ScheduleFactory.createValidSchedule();
-        appointment = AppointmentFactory.createValidAppointment();
         absenceRequestDTO = AbsenceRequestDTO.builder()
                 .absenceStart(start)
                 .absenceEnd(end)
@@ -159,8 +166,8 @@ public class ScheduleServiceTest {
             scheduleService.createDentistAbsence(validId, absenceRequestDTO);
         });
 
-        assertEquals("The dentist cannot be on leave during this period, as there is already an appointment scheduled."
-                , exception.getMessage());
+        assertEquals("The dentist cannot be on leave during this period, as there is already an appointment scheduled.",
+                exception.getMessage());
         verify(scheduleRepository, never()).save(any(Schedule.class));
     }
 
