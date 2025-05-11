@@ -1,0 +1,26 @@
+.confirm-dialog-container {
+  padding: 24px;
+  max-width: 400px;
+  text-align: center;
+}
+
+.confirm-dialog-container h2 {
+  margin-bottom: 16px;
+  font-size: 1.4rem;
+  color: #333;
+}
+
+.confirm-dialog-container .confirm-dialog-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.confirm-dialog-container .confirm-dialog-buttons button {
+  min-width: 100px;
+}
+
+.confirm-dialog-buttons button:hover {
+  background-color: #0a58ca;
+}
