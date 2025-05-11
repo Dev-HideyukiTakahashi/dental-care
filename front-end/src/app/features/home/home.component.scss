@@ -149,6 +149,73 @@
   background-color: #0056b3;
 }
 
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border-radius: 8px;
+  display: block;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-width: 50vw;
+  max-height: 75vh;
+  overflow-y: auto;
+}
+
+.modal-content {
+  background-color: #fff;
+}
+
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.modal-content h2 {
+  margin-left: 0.3em;
+  margin-top: 0.3em;
+}
+
+.modal-body p {
+  margin: 0;
+  color: #555555;
+  font-size: 1.2rem;
+}
+
+.modal-actions {
+  display: flex;
+  padding: 10px;
+  gap: 10px;
+  justify-content: flex-start;
+}
+
+.modal-actions button {
+  padding: 10px 15px;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.modal-actions button:hover {
+  background-color: #0056b3;
+}
+
+.modal-input {
+  display: block;
+  margin: 0 auto;
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
 .home__no-results {
   padding: 1rem;
   text-align: center;
@@ -203,5 +270,8 @@
 
   mat-form-field {
     width: 100%;
+  }
+  .modal {
+    max-width: 90vw;
   }
 }
