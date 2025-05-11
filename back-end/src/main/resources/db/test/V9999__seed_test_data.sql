@@ -9,15 +9,15 @@ VALUES ('ROLE_ADMIN'),
 -- Insert Users
 INSERT INTO tb_user (email, name, password, phone)
 VALUES ('elias.warrior@example.com', 'Elias Warrior', '$2b$12$.rYCnS9Yx5BPr8N6uGhY0etPuXhCqTGuJ7GpnNzMYsl6RwvqrIDRe',
-        '(11) 55555-1234'),
+        '1155551234'),
        ('leonardo.smile@example.com', 'Leonardo Smile', '$2b$12$.rYCnS9Yx5BPr8N6uGhY0etPuXhCqTGuJ7GpnNzMYsl6RwvqrIDRe',
-        '(31) 55555-3456'),
+        '3155553456'),
        ('yuki.murasaki90@gmail.com', 'Nina Soul', '$2b$12$.rYCnS9Yx5BPr8N6uGhY0etPuXhCqTGuJ7GpnNzMYsl6RwvqrIDRe',
-        '(51) 55555-5678'),
+        '5155555678'),
        ('victor.dent@example.com', 'Victor Dent', '$2b$12$.rYCnS9Yx5BPr8N6uGhY0etPuXhCqTGuJ7GpnNzMYsl6RwvqrIDRe',
-        '(61) 55555-6789'),
+        '6155556789'),
        ('henry.surge@example.com', 'Henry Surge', '$2b$12$.rYCnS9Yx5BPr8N6uGhY0etPuXhCqTGuJ7GpnNzMYsl6RwvqrIDRe',
-        '(81) 55555-8901');
+        '8155558901');
 
 -- Admin 
 INSERT INTO tb_admin (id)
