@@ -1,13 +1,15 @@
 package br.com.dental_care.controller;
 
-import br.com.dental_care.dto.EmailDTO;
-import br.com.dental_care.dto.PatientDTO;
-import io.restassured.http.ContentType;
+import static io.restassured.RestAssured.given;
+
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
-import static io.restassured.RestAssured.given;
+import br.com.dental_care.dto.EmailDTO;
+import br.com.dental_care.dto.NewPasswordDTO;
+import br.com.dental_care.dto.PatientDTO;
+import io.restassured.http.ContentType;
 
 public class AuthControllerTest extends BaseIntegrationTest {
 
@@ -19,7 +21,6 @@ public class AuthControllerTest extends BaseIntegrationTest {
                 .password("#Password123")
                 .phone("(11) 99710-2376")
                 .build();
-
 
         given()
                 .contentType(ContentType.JSON)
@@ -98,4 +99,38 @@ public class AuthControllerTest extends BaseIntegrationTest {
                 .then()
                 .statusCode(HttpStatus.NOT_FOUND.value());
     }
+
+    void saveNewPassword_Should_return404_When_tokenNotValid() {
+        NewPasswordDTO dto = NewPasswordDTO.builder()
+                .token("invalid-token")
+                .password("NewPassword123!")
+                .build();
+
+        given()
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .body(dto)
+                .when()
+                .put("/auth/new-password")
+                .then()
+                .statusCode(HttpStatus.NO_CONTENT.value());
+    }
+
+    @Test
+    void saveNewPassword_Should_return422_When_dataIsInvalid() {
+        NewPasswordDTO dto = NewPasswordDTO.builder()
+                .token("valid-reset-token")
+                .password("")
+                .build();
+
+        given()
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .body(dto)
+                .when()
+                .put("/auth/new-password")
+                .then()
+                .statusCode(HttpStatus.UNPROCESSABLE_ENTITY.value());
+    }
+
 }

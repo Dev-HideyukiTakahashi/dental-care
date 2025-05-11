@@ -1,34 +1,53 @@
 package br.com.dental_care.service;
 
-import br.com.dental_care.dto.AppointmentDTO;
-import br.com.dental_care.exception.ResourceNotFoundException;
-import br.com.dental_care.exception.ScheduleConflictException;
-import br.com.dental_care.factory.AppointmentFactory;
-import br.com.dental_care.factory.DentistFactory;
-import br.com.dental_care.factory.PatientFactory;
-import br.com.dental_care.model.Appointment;
-import br.com.dental_care.model.Dentist;
-import br.com.dental_care.model.Patient;
-import br.com.dental_care.model.Schedule;
-import br.com.dental_care.model.enums.AppointmentStatus;
-import br.com.dental_care.repository.AppointmentRepository;
-import br.com.dental_care.repository.DentistRepository;
-import br.com.dental_care.repository.PatientRepository;
-import br.com.dental_care.repository.ScheduleRepository;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.mail.MailException;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import br.com.dental_care.dto.AppointmentDTO;
+import br.com.dental_care.exception.ResourceNotFoundException;
+import br.com.dental_care.exception.ScheduleConflictException;
+import br.com.dental_care.factory.AppointmentFactory;
+import br.com.dental_care.factory.DentistFactory;
+import br.com.dental_care.factory.PatientFactory;
+import br.com.dental_care.factory.UserFactory;
+import br.com.dental_care.model.Appointment;
+import br.com.dental_care.model.Dentist;
+import br.com.dental_care.model.Patient;
+import br.com.dental_care.model.Role;
+import br.com.dental_care.model.Schedule;
+import br.com.dental_care.model.User;
+import br.com.dental_care.model.enums.AppointmentStatus;
+import br.com.dental_care.repository.AppointmentRepository;
+import br.com.dental_care.repository.DentistRepository;
+import br.com.dental_care.repository.PatientRepository;
+import br.com.dental_care.repository.ScheduleRepository;
 
 @ExtendWith(MockitoExtension.class)
 class AppointmentServiceTest {
@@ -50,6 +69,9 @@ class AppointmentServiceTest {
 
     @Mock
     private AuthService authService;
+
+    @Mock
+    private UserService userService;
 
     @Mock
     private EmailService emailService;
@@ -161,8 +183,7 @@ class AppointmentServiceTest {
 
         ScheduleConflictException exception = assertThrows(
                 ScheduleConflictException.class,
-                () -> appointmentService.createAppointment(appointmentDTO)
-        );
+                () -> appointmentService.createAppointment(appointmentDTO));
 
         assertEquals("Appointment time is outside of working hours.", exception.getMessage());
     }
@@ -183,8 +204,7 @@ class AppointmentServiceTest {
 
         ScheduleConflictException exception = assertThrows(
                 ScheduleConflictException.class,
-                () -> appointmentService.createAppointment(appointmentDTO)
-        );
+                () -> appointmentService.createAppointment(appointmentDTO));
 
         assertEquals("An appointment already exists for this time slot.", exception.getMessage());
     }
@@ -205,8 +225,7 @@ class AppointmentServiceTest {
 
         ScheduleConflictException exception = assertThrows(
                 ScheduleConflictException.class,
-                () -> appointmentService.createAppointment(appointmentDTO)
-        );
+                () -> appointmentService.createAppointment(appointmentDTO));
 
         assertEquals("The time falls within another appointment slot.", exception.getMessage());
     }
@@ -240,8 +259,7 @@ class AppointmentServiceTest {
         when(appointmentRepository.findById(validId)).thenReturn(Optional.of(appointment));
 
         ScheduleConflictException exception = assertThrows(
-                ScheduleConflictException.class, () -> appointmentService.cancelAppointment(validId)
-        );
+                ScheduleConflictException.class, () -> appointmentService.cancelAppointment(validId));
 
         assertEquals("The appointment has already been completed or canceled.", exception.getMessage());
     }
@@ -254,8 +272,7 @@ class AppointmentServiceTest {
         when(appointmentRepository.findById(validId)).thenReturn(Optional.of(appointment));
 
         ScheduleConflictException exception = assertThrows(
-                ScheduleConflictException.class, () -> appointmentService.cancelAppointment(validId)
-        );
+                ScheduleConflictException.class, () -> appointmentService.cancelAppointment(validId));
 
         assertEquals("The appointment has already been completed or canceled.", exception.getMessage());
     }
@@ -309,4 +326,161 @@ class AppointmentServiceTest {
         verify(patientRepository, times(1)).findById(any());
         verify(dentistRepository, times(1)).findById(any());
     }
+
+    @Test
+    void findAll_shouldReturnAllAppointments_whenUserIsAdmin() {
+        User admin = UserFactory.createValidUser();
+        admin.getRoles().clear();
+        admin.addRole(new Role(2L, "ROLE_ADMIN"));
+
+        Pageable pageable = PageRequest.of(0, 10);
+        List<Appointment> appointments = List.of(AppointmentFactory.createValidAppointment());
+        Page<Appointment> page = new PageImpl<>(appointments);
+
+        when(userService.getLoggedUser()).thenReturn(admin);
+        when(appointmentRepository.findAll(pageable)).thenReturn(page);
+
+        Page<AppointmentDTO> result = appointmentService.findAll(pageable);
+
+        assertEquals(1, result.getTotalElements());
+        verify(appointmentRepository).findAll(pageable);
+    }
+
+    @Test
+    void findAll_shouldReturnAppointmentsByPatient_whenUserIsPatient() {
+        User patient = UserFactory.createValidUser();
+        dentist.getRoles().clear();
+        dentist.addRole(new Role(2L, "ROLE_PATIENT"));
+
+        Pageable pageable = PageRequest.of(0, 10);
+        List<Appointment> appointments = List.of(AppointmentFactory.createValidAppointment());
+        Page<Appointment> page = new PageImpl<>(appointments);
+
+        when(userService.getLoggedUser()).thenReturn(patient);
+        when(appointmentRepository.findByPatient_Id(pageable, 1L)).thenReturn(page);
+
+        Page<AppointmentDTO> result = appointmentService.findAll(pageable);
+
+        assertEquals(1, result.getTotalElements());
+        verify(appointmentRepository).findByPatient_Id(pageable, 1L);
+    }
+
+    @Test
+    void findAll_shouldReturnAppointmentsByDentist_whenUserIsDentist() {
+        User dentist = UserFactory.createValidUser();
+        dentist.getRoles().clear();
+        dentist.addRole(new Role(3L, "ROLE_DENTIST"));
+
+        dentist.setId(2L);
+        Pageable pageable = PageRequest.of(0, 10);
+        List<Appointment> appointments = List.of(AppointmentFactory.createValidAppointment());
+        Page<Appointment> page = new PageImpl<>(appointments);
+
+        when(userService.getLoggedUser()).thenReturn(dentist);
+        when(appointmentRepository.findByDentist_Id(pageable, 2L)).thenReturn(page);
+
+        Page<AppointmentDTO> result = appointmentService.findAll(pageable);
+
+        assertEquals(1, result.getTotalElements());
+        verify(appointmentRepository).findByDentist_Id(pageable, 2L);
+    }
+
+    @Test
+    void findAll_shouldReturnEmptyPage_whenUserRoleIsInvalid() {
+        User user = UserFactory.createValidUser();
+        user.getRoles().clear();
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        when(userService.getLoggedUser()).thenReturn(user);
+
+        Page<AppointmentDTO> result = appointmentService.findAll(pageable);
+
+        assertTrue(result.isEmpty());
+        verifyNoInteractions(appointmentRepository);
+    }
+
+    @Test
+    void findByDate_shouldReturnAppointmentsBetweenDates_whenUserIsAdmin() {
+        User admin = UserFactory.createValidUser();
+        admin.getRoles().clear();
+        admin.addRole(new Role(2L, "ROLE_ADMIN"));
+
+        String date = "2025-05-11";
+        Pageable pageable = PageRequest.of(0, 10);
+        LocalDateTime start = LocalDate.parse(date).atStartOfDay();
+        LocalDateTime end = LocalDate.parse(date).atTime(LocalTime.MAX);
+        List<Appointment> appointments = List.of(AppointmentFactory.createValidAppointment());
+        Page<Appointment> page = new PageImpl<>(appointments);
+
+        when(userService.getLoggedUser()).thenReturn(admin);
+        when(appointmentRepository.findByDateBetween(start, end, pageable)).thenReturn(page);
+
+        Page<AppointmentDTO> result = appointmentService.findByDate(date, pageable);
+
+        assertEquals(1, result.getTotalElements());
+        verify(appointmentRepository).findByDateBetween(start, end, pageable);
+    }
+
+    @Test
+    void findByDate_shouldReturnAppointmentsForDentist_whenUserIsDentist() {
+        User dentist = UserFactory.createValidUser();
+        dentist.setId(2L);
+        dentist.getRoles().clear();
+        dentist.addRole(new Role(3L, "ROLE_DENTIST"));
+
+        String date = "2025-05-11";
+        Pageable pageable = PageRequest.of(0, 10);
+        LocalDateTime start = LocalDate.parse(date).atStartOfDay();
+        LocalDateTime end = LocalDate.parse(date).atTime(LocalTime.MAX);
+        List<Appointment> appointments = List.of(AppointmentFactory.createValidAppointment());
+        Page<Appointment> page = new PageImpl<>(appointments);
+
+        when(userService.getLoggedUser()).thenReturn(dentist);
+        when(appointmentRepository.findByDentistAndDateBetween(2L, start, end, pageable)).thenReturn(page);
+
+        Page<AppointmentDTO> result = appointmentService.findByDate(date, pageable);
+
+        assertEquals(1, result.getTotalElements());
+        verify(appointmentRepository).findByDentistAndDateBetween(2L, start, end, pageable);
+    }
+
+    @Test
+    void findByDate_shouldReturnAppointmentsForPatient_whenUserIsPatient() {
+        User patient = UserFactory.createValidUser();
+        dentist.getRoles().clear();
+        dentist.addRole(new Role(2L, "ROLE_PATIENT"));
+
+        String date = "2025-05-11";
+        Pageable pageable = PageRequest.of(0, 10);
+        LocalDateTime start = LocalDate.parse(date).atStartOfDay();
+        LocalDateTime end = LocalDate.parse(date).atTime(LocalTime.MAX);
+        List<Appointment> appointments = List.of(AppointmentFactory.createValidAppointment());
+        Page<Appointment> page = new PageImpl<>(appointments);
+
+        when(userService.getLoggedUser()).thenReturn(patient);
+        when(appointmentRepository.findByPatientAndDateBetween(1L, start, end, pageable)).thenReturn(page);
+
+        Page<AppointmentDTO> result = appointmentService.findByDate(date, pageable);
+
+        assertEquals(1, result.getTotalElements());
+        verify(appointmentRepository).findByPatientAndDateBetween(1L, start, end, pageable);
+    }
+
+    @Test
+    void findByDate_shouldReturnEmptyPage_whenUserRoleIsInvalid() {
+        User user = UserFactory.createValidUser();
+        user.getRoles().clear();
+
+        String date = "2025-05-11";
+        Pageable pageable = PageRequest.of(0, 10);
+
+        when(userService.getLoggedUser()).thenReturn(user);
+
+        Page<AppointmentDTO> result = appointmentService.findByDate(date, pageable);
+
+        assertTrue(result.isEmpty());
+        verifyNoInteractions(appointmentRepository);
+    }
+
 }

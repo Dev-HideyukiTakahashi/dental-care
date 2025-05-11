@@ -55,7 +55,7 @@ public class AppointmentController {
     @GetMapping(path = "/date")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PATIENT', 'ROLE_DENTIST')")
     public ResponseEntity<Page<AppointmentDTO>> findByDate(@RequestParam String date, Pageable pageable) {
-        logger.info("Searching page of appointments in date {}", date);
+        logger.info("Retrieving appointments by date with pagination");
         Page<AppointmentDTO> dto = appointmentService.findByDate(date, pageable);
         return ResponseEntity.ok(dto);
     }

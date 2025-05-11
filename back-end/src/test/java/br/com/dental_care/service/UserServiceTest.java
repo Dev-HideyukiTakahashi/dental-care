@@ -92,7 +92,7 @@ class UserServiceTest {
     }
 
     @Test
-    public void getLoggedUser_Should_returnPatientDTO_When_authenticatedUserExists() {
+    public void getLoggedPatient_Should_returnPatientDTO_When_authenticatedPatientExists() {
 
         String validUser = "john.doe@example.com";
         User user = UserFactory.createValidUser();
@@ -124,6 +124,39 @@ class UserServiceTest {
         assertEquals(validUser, dto.getEmail());
         assertEquals("John Doe", dto.getName());
         assertEquals("(11) 99710-2376", dto.getPhone());
+    }
+
+    @Test
+    public void getLoggedUser_Should_returnPatientDTO_When_authenticatedUserExists() {
+
+        String validUser = "test@example.com";
+        User user = UserFactory.createValidUser();
+
+        // Mock JWT and Spring Security context
+        Jwt jwt = mock(Jwt.class);
+        when(jwt.getClaim("username")).thenReturn(validUser);
+
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getPrincipal()).thenReturn(jwt);
+
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+
+        SecurityContextHolder.setContext(securityContext);
+
+        // Mocks repositories
+        when(userRepository.findByEmail(validUser)).thenReturn(Optional.of(user));
+
+        // Act
+        User result = userService.getLoggedUser();
+
+        // Assert
+        assertNotNull(result);
+        assertNotNull(result.getEmail());
+        assertNotNull(result.getName());
+        assertEquals(validUser, result.getEmail());
+        assertEquals("Test User", result.getName());
+        assertEquals("11912345678", result.getPhone());
     }
 
     @Test
