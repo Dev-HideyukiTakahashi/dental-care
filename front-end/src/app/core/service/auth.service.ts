@@ -60,9 +60,18 @@ export class AuthService {
     }
   }
 
-  getUserRole(): string {
-    const decoded = this.getDecodedToken();
-    return decoded?.authorities?.[0];
+  isLoggedIn(): boolean {
+    const token = localStorage.getItem('access_token');
+    if (!token) return false;
+
+    try {
+      const decoded: any = jwtDecode(token);
+      const currentTime = Math.floor(Date.now() / 1000);
+      return decoded.exp && decoded.exp > currentTime;
+    } catch (e) {
+      // invalid token
+      return false;
+    }
   }
 
   getRole(): UserRole | null {
@@ -70,6 +79,11 @@ export class AuthService {
     if (this.isDentist()) return UserRole.Dentist;
     if (this.isPatient()) return UserRole.Patient;
     return null;
+  }
+
+  private getUserRole(): string {
+    const decoded = this.getDecodedToken();
+    return decoded?.authorities?.[0];
   }
 
   private isAdmin(): boolean {
