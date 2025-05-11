@@ -65,3 +65,17 @@ app-header {
   overflow-y: auto;
   height: calc(100% - 60px);
 }
+
+@media (max-width: 768px) {
+  #layoutSidenav_nav {
+    transform: translateX(-225px);
+  }
+
+  #layoutSidenav_content {
+    margin-left: 0 !important;
+  }
+
+  .sb-nav-fixed {
+    overflow-x: hidden;
+  }
+}
