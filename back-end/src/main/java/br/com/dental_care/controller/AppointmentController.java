@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -48,6 +49,14 @@ public class AppointmentController {
     public ResponseEntity<Page<AppointmentDTO>> findAll(Pageable pageable) {
         logger.info("Searching page of appointments");
         Page<AppointmentDTO> dto = appointmentService.findAll(pageable);
+        return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping(path = "/date")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PATIENT', 'ROLE_DENTIST')")
+    public ResponseEntity<Page<AppointmentDTO>> findByDate(@RequestParam String date, Pageable pageable) {
+        logger.info("Searching page of appointments in date {}", date);
+        Page<AppointmentDTO> dto = appointmentService.findByDate(date, pageable);
         return ResponseEntity.ok(dto);
     }
 

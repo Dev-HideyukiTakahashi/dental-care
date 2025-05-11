@@ -1,7 +1,26 @@
 <div class="home">
   <div class="home__header">
-    <h1 class="home__title">Consultas Agendadas</h1>
-    <p class="home__subtitle">Lista das últimas consultas odontológicas</p>
+    <div class="home__header-left">
+      <h1 class="home__title">Consultas Agendadas</h1>
+      <p class="home__subtitle">Lista das últimas consultas odontológicas</p>
+    </div>
+
+    <div class="home__header-right">
+      <mat-form-field appearance="fill">
+        <mat-label>Filtrar por data</mat-label>
+        <input
+          matInput
+          [matDatepicker]="picker"
+          [(ngModel)]="selectedDate"
+          (dateChange)="filteredByDate()"
+        />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <div class="home__clear-filter">
+        <button mat-button (click)="clearFilter()">Limpar filtro</button>
+      </div>
+    </div>
   </div>
 
   <div class="home__table-wrapper">
@@ -27,6 +46,7 @@
               {{ appointment.status | appointmentStatus }}
             </span>
           </td>
+
           <td class="home__td">
             <button
               class="home__btn home__btn--view"
@@ -35,6 +55,7 @@
             >
               Ver
             </button>
+            @if(!dentistLogged){
             <button
               class="home__btn home__btn--edit"
               aria-label="Editar consulta"
@@ -49,10 +70,14 @@
             >
               Cancelar
             </button>
+            }
           </td>
         </tr>
       </tbody>
     </table>
+    <div *ngIf="(appointments$ | async)?.length === 0" class="home__no-results">
+      Nenhuma consulta encontrada.
+    </div>
   </div>
   <nav *ngIf="pageInfo?.page && pageInfo.page.totalPages > 1" aria-label="Page navigation">
     <ul class="pagination justify-content-center mt-3">

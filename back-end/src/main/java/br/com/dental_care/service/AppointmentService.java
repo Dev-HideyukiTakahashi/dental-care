@@ -1,5 +1,6 @@
 package br.com.dental_care.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -81,6 +82,31 @@ public class AppointmentService {
             page = appointmentRepository.findByDentist_Id(pageable, loggedUser.getId());
         } else {
             logger.warn("User role is empty or not authorized");
+            return Page.empty();
+        }
+
+        return page.map(appointment -> AppointmentMapper.toDTO(appointment));
+    }
+
+    @Transactional
+    public Page<AppointmentDTO> findByDate(String date, Pageable pageable) {
+
+        LocalDate localDate = LocalDate.parse(date);
+        LocalDateTime startOfDay = localDate.atStartOfDay();
+        LocalDateTime endOfDay = localDate.atTime(LocalTime.MAX);
+        Page<Appointment> page;
+
+        User loggedUser = userService.getLoggedUser();
+
+        if (loggedUser.hasRole("ROLE_ADMIN")) {
+            page = appointmentRepository.findByDateBetween(startOfDay, endOfDay, pageable);
+        } else if (loggedUser.hasRole("ROLE_DENTIST")) {
+            page = appointmentRepository.findByDentistAndDateBetween(loggedUser.getId(), startOfDay, endOfDay,
+                    pageable);
+        } else if (loggedUser.hasRole("ROLE_PATIENT")) {
+            page = appointmentRepository.findByPatientAndDateBetween(loggedUser.getId(), startOfDay, endOfDay,
+                    pageable);
+        } else {
             return Page.empty();
         }
 
@@ -219,4 +245,5 @@ public class AppointmentService {
         createSchedule(appointment);
         logger.info("Appointment date/time updated, id: {}", appointment.getId());
     }
+
 }

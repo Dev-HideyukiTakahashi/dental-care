@@ -17,4 +17,10 @@ export class AppointmentService {
       `${this.API}/appointments?page=${page}&size=${size}&sort=date,desc`,
     );
   }
+
+  findByDate(page: number, size: number, date: string): Observable<Page<IAppointment>> {
+    return this.http.get<Page<IAppointment>>(
+      `${this.API}/appointments/date?date=${date}&page=${page}&size=${size}&sort=date,desc`,
+    );
+  }
 }
