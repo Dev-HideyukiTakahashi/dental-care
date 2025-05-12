@@ -9,6 +9,7 @@ import { Observable, of } from 'rxjs';
 import { AppointmentService } from '../../core/service/appointment.service';
 import { AuthService } from '../../core/service/auth.service';
 import { IAppointment } from '../../model/appointment.model';
+import { AppointmentStatus } from '../../model/enum/appointment-status.enum';
 import { UserRole } from '../../model/enum/user-role.enum';
 import { Page } from '../../model/page.model';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
@@ -43,6 +44,7 @@ export class HomeComponent {
   dentistLogged: boolean = true;
   showAppointmentDetailsModal: boolean = false;
   selectedAppointment: IAppointment | null = null;
+  AppointmentStatus = AppointmentStatus;
 
   constructor(private dialog: MatDialog) {
     this.dentistLogged = this.authService.getRole() === UserRole.Dentist;
@@ -99,7 +101,10 @@ export class HomeComponent {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        console.log('cancelou');
+        this.appointmentService.cancelAppointment(appointmentId).subscribe({
+          next: () => this.loadAppointments(0),
+          error: (err) => console.log(err),
+        });
       }
     });
   }

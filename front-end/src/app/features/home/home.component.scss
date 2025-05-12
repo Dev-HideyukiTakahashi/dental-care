@@ -131,6 +131,13 @@
       &:hover {
         background-color: #bb2d3b;
       }
+
+      &:disabled {
+        background-color: #6c757d !important;
+        color: #e9ecef;
+        cursor: not-allowed;
+        opacity: 0.65;
+      }
     }
   }
 }

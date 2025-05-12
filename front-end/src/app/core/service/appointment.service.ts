@@ -27,4 +27,8 @@ export class AppointmentService {
   findById(id: number): Observable<IAppointment> {
     return this.http.get<IAppointment>(`${this.API}/appointments/${id}`);
   }
+
+  cancelAppointment(id: number): Observable<IAppointment> {
+    return this.http.put<IAppointment>(`${this.API}/appointments/${id}/cancel`, null);
+  }
 }

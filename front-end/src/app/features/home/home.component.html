@@ -67,6 +67,10 @@
               class="home__btn home__btn--cancel"
               aria-label="Cancelar consulta"
               (click)="onCancelAppointment(appointment.id!)"
+              [disabled]="
+                appointment.status === AppointmentStatus.CANCELED ||
+                appointment.status === AppointmentStatus.COMPLETED
+              "
             >
               Cancelar
             </button>
