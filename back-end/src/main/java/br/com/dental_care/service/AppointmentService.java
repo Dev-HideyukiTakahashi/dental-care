@@ -140,6 +140,7 @@ public class AppointmentService {
         Dentist dentist = validateDentist(appointment.getDentist().getId());
         boolean futureDate = appointment.getDate().isAfter(LocalDateTime.now());
         boolean isDentistAvailable = checkDentistAvailability(dentist, dto.getDate());
+        validateWorkingHours(dto.getDate());
 
         if (isDentistAvailable && futureDate) {
             updateAppointmentDate(appointment, dto.getDate());
