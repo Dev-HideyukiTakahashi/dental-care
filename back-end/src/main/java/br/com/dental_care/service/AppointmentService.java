@@ -163,16 +163,12 @@ public class AppointmentService {
 
     private boolean isAppointmentOwner(Appointment appointment) {
         User user = userService.authenticated();
+
         boolean isPatient = user.getId() == appointment.getPatient().getId();
         boolean isDentist = user.getId() == appointment.getDentist().getId();
+        boolean isAdmin = user.hasRole("ROLE_ADMIN");
 
-        if (isPatient) {
-            authService.validateSelfOrAdmin(appointment.getPatient().getId());
-            return true;
-        }
-
-        if (isDentist) {
-            authService.validateSelfOrAdmin(appointment.getDentist().getId());
+        if (isPatient || isDentist || isAdmin) {
             return true;
         }
 
