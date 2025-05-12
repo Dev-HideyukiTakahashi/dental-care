@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { IAppointment } from '../../model/appointment.model';
 import { Page } from '../../model/page.model';
+import { IUpdateAppointment } from '../../model/update-appointment-model';
 
 @Injectable({
   providedIn: 'root',
@@ -26,6 +27,10 @@ export class AppointmentService {
 
   findById(id: number): Observable<IAppointment> {
     return this.http.get<IAppointment>(`${this.API}/appointments/${id}`);
+  }
+
+  updateAppointment(id: number, body: IUpdateAppointment): Observable<IAppointment> {
+    return this.http.put<IAppointment>(`${this.API}/appointments/${id}`, body);
   }
 
   cancelAppointment(id: number): Observable<IAppointment> {

@@ -12,6 +12,7 @@ import { IAppointment } from '../../model/appointment.model';
 import { AppointmentStatus } from '../../model/enum/appointment-status.enum';
 import { UserRole } from '../../model/enum/user-role.enum';
 import { Page } from '../../model/page.model';
+import { IUpdateAppointment } from '../../model/update-appointment-model';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
 import { AppointmentStatusPipe } from '../../shared/pipes/appointment-status.pipe';
 import { PhonePipe } from '../../shared/pipes/phone.pipe';
@@ -78,7 +79,7 @@ export class HomeComponent {
     this.loadAppointments(0);
   }
 
-  // Show modal appointment details
+  //  ******** Show modal appointment details ********
   openAppointmentDetails(appointmentId: number) {
     this.appointmentService.findById(appointmentId).subscribe((appointment) => {
       this.selectedAppointment = appointment;
@@ -91,9 +92,59 @@ export class HomeComponent {
     this.showAppointmentDetailsModal = false;
   }
 
-  onEditAppointment(appointment: IAppointment) {}
+  //  ******** Show modal edit appointment  ********
+  showEditAppointmentModal = false;
+  editedAppointment!: IAppointment;
+  editMessage: string | null = null;
+  editSuccess: boolean = false;
 
-  // cancel with confirm-dialog customized
+  onEditAppointment(appointment: IAppointment) {
+    this.editedAppointment = { ...appointment };
+    this.showEditAppointmentModal = true;
+    this.editSuccess = false;
+    this.editMessage = '';
+  }
+
+  closeEditModal() {
+    this.showEditAppointmentModal = false;
+  }
+
+  updateAppointment() {
+    const body: IUpdateAppointment = {
+      date: this.editedAppointment.date,
+    };
+    this.appointmentService.updateAppointment(this.editedAppointment.id!, body).subscribe({
+      next: () => this.handleEditSuccess(),
+      error: (err) => (this.editMessage = this.handleEditError(err)),
+    });
+  }
+
+  private handleEditSuccess(): void {
+    this.editMessage = 'Consulta atualizada com sucesso!';
+    this.editSuccess = true;
+    this.loadAppointments(0);
+    setTimeout(() => {
+      this.editMessage = null;
+      this.closeEditModal();
+    }, 3000);
+  }
+
+  handleEditError(error: any): string {
+    console.error(error);
+
+    const msg = error?.error?.error || 'Erro desconhecido';
+
+    switch (msg) {
+      case 'An appointment already exists for this time slot.':
+        return 'Já existe uma consulta agendada para este horário.';
+      case 'The time falls within another appointment slot.':
+        return 'O horário está dentro do intervalo de outra consulta.';
+      default:
+        return 'Erro ao atualizar a consulta.';
+    }
+  }
+
+  //  ******** Cancel appointment  ********
   onCancelAppointment(appointmentId: number) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: 'Tem certeza que deseja cancelar a consulta?',
