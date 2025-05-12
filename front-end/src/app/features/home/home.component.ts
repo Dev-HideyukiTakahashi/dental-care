@@ -1,10 +1,7 @@
-import { CommonModule, formatDate } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialog } from '@angular/material/dialog';
-import { MatInputModule } from '@angular/material/input';
 import { Observable, of } from 'rxjs';
 import { AppointmentService } from '../../core/service/appointment.service';
 import { AuthService } from '../../core/service/auth.service';
@@ -14,21 +11,19 @@ import { UserRole } from '../../model/enum/user-role.enum';
 import { Page } from '../../model/page.model';
 import { IUpdateAppointment } from '../../model/update-appointment-model';
 import { AppointmentDetailsModalComponent } from '../../shared/components/appointment-details-modal/appointment-details-modal.component';
+import { AppointmentFilterComponent } from '../../shared/components/appointment-filter/appointment-filter.component';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
 import { AppointmentStatusPipe } from '../../shared/pipes/appointment-status.pipe';
-import { PhonePipe } from '../../shared/pipes/phone.pipe';
+import { getAppointmentErrorMessage } from './util/appointment-error.util';
 
 @Component({
   selector: 'app-home',
   imports: [
     CommonModule,
     AppointmentStatusPipe,
-    MatDatepickerModule,
-    MatInputModule,
-    MatNativeDateModule,
     FormsModule,
-    PhonePipe,
     AppointmentDetailsModalComponent,
+    AppointmentFilterComponent,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
@@ -44,13 +39,11 @@ export class HomeComponent {
 
   appointments$!: Observable<IAppointment[]>;
   selectedDate: Date | null = null;
-  dentistLogged: boolean = true;
   showAppointmentDetailsModal: boolean = false;
   selectedAppointment: IAppointment | null = null;
   AppointmentStatus = AppointmentStatus;
 
   constructor(private dialog: MatDialog) {
-    this.dentistLogged = this.authService.getRole() === UserRole.Dentist;
     this.loadAppointments(0);
   }
 
@@ -61,18 +54,24 @@ export class HomeComponent {
     });
   }
 
+  get role(): UserRole | null {
+    return this.authService.getRole();
+  }
+
   goToPage(page: number): void {
     this.loadAppointments(page);
   }
 
-  filteredByDate() {
-    if (!this.selectedDate) return;
+  onFilterByDate(date: Date | null): void {
+    if (!date) return;
 
-    const date = formatDate(this.selectedDate, 'yyyy-MM-dd', 'en-US');
-    const currentPage = this.pageInfo.page.number;
-    this.appointmentService.findByDate(currentPage, 10, date).subscribe((response) => {
-      this.pageInfo = response;
-      this.appointments$ = of(response.content);
+    const dateStr = date.toISOString().split('T')[0];
+    this.appointmentService.findByDate(this.pageInfo.page.number, 10, dateStr).subscribe({
+      next: (response) => {
+        this.pageInfo = response;
+        this.appointments$ = of(response.content);
+      },
+      error: (err) => console.error(err),
     });
   }
 
@@ -81,7 +80,9 @@ export class HomeComponent {
     this.loadAppointments(0);
   }
 
+  //  ************************************************
   //  ******** Show modal appointment details ********
+  //  ************************************************
   openAppointmentDetails(appointmentId: number) {
     this.appointmentService.findById(appointmentId).subscribe((appointment) => {
       this.selectedAppointment = appointment;
@@ -94,7 +95,9 @@ export class HomeComponent {
     this.showAppointmentDetailsModal = false;
   }
 
-  //  ******** Show modal edit appointment  ********
+  //  ************************************************
+  //  ******** Show edit appointment details *********
+  //  ************************************************
   showEditAppointmentModal = false;
   editedAppointment!: IAppointment;
   editMessage: string | null = null;
@@ -117,7 +120,7 @@ export class HomeComponent {
     };
     this.appointmentService.updateAppointment(this.editedAppointment.id!, body).subscribe({
       next: () => this.handleEditSuccess(),
-      error: (err) => (this.editMessage = this.handleEditError(err)),
+      error: (err) => (this.editMessage = getAppointmentErrorMessage(err)),
     });
   }
 
@@ -131,24 +134,9 @@ export class HomeComponent {
     }, 3000);
   }
 
-  handleEditError(error: any): string {
-    console.error(error);
-
-    const msg = error?.error?.error || 'Erro desconhecido';
-
-    switch (msg) {
-      case 'An appointment already exists for this time slot.':
-        return 'Já existe uma consulta agendada para este horário.';
-      case 'The time falls within another appointment slot.':
-        return 'O horário está dentro do intervalo de outra consulta.';
-      case 'Appointment time is outside of working hours.':
-        return 'O horário da consulta está fora do horário de expediente.';
-      default:
-        return 'Erro ao atualizar a consulta.';
-    }
-  }
-
-  //  ******** Cancel appointment  ********
+  //  ************************************************
+  //  ******** Cancel Appointment ********************
+  //  ************************************************
   onCancelAppointment(appointmentId: number) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: 'Tem certeza que deseja cancelar a consulta?',

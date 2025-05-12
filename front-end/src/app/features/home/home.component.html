@@ -6,23 +6,14 @@
     </div>
     <!-- APPOINTMENTS FILTERED BY DATE -->
     <div class="home__header-right">
-      <mat-form-field appearance="fill">
-        <mat-label>Filtrar por data</mat-label>
-        <input
-          matInput
-          [matDatepicker]="picker"
-          [(ngModel)]="selectedDate"
-          (dateChange)="filteredByDate()"
-        />
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
-      </mat-form-field>
-      <div class="home__clear-filter">
-        <button mat-button (click)="clearFilter()">Limpar filtro</button>
-      </div>
+      <app-appointment-filter
+        (dateSelected)="onFilterByDate($event)"
+        (clearFilter)="loadAppointments(0)"
+      ></app-appointment-filter>
     </div>
   </div>
 
+  <!-- LIST OF APPOINTMENTS -->
   <div class="home__table-wrapper">
     <table class="home__table">
       <thead class="home__thead">
@@ -55,7 +46,7 @@
             >
               Ver
             </button>
-            @if(!dentistLogged){
+            @if(role !== "dentist"){
             <button
               class="home__btn home__btn--edit"
               aria-label="Editar consulta"
