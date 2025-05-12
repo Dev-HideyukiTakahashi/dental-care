@@ -1,0 +1,46 @@
+<div class="modal-backdrop" (click)="onClose()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-content">
+      <h2>Editar Consulta</h2>
+
+      <form #editForm="ngForm" (ngSubmit)="onSubmit()">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="description"><strong>Descrição:</strong></label>
+            <input
+              disabled=""
+              name="description"
+              [(ngModel)]="appointment.description"
+              class="form-control"
+            />
+          </div>
+          <!-- UPDATE APPOINTMENT DATE -->
+          <mat-form-field>
+            <mat-label>Data</mat-label>
+            <input matInput [matDatepicker]="datepicker" [(ngModel)]="value" name="date" />
+            <mat-datepicker #datepicker />
+            <mat-datepicker-toggle [for]="datepicker" matSuffix />
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Hora</mat-label>
+            <input matInput [matTimepicker]="timepicker" [(ngModel)]="value" name="time" />
+            <mat-timepicker #timepicker />
+            <mat-timepicker-toggle [for]="timepicker" matSuffix />
+          </mat-form-field>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" (click)="onClose()">Cancelar</button>
+          <button type="submit" class="btn btn-primary" [disabled]="!editForm.valid">Salvar</button>
+        </div>
+
+        @if(message) {
+        <div class="message" [class.success]="isSuccess" [class.error]="!isSuccess">
+          {{ message }}
+        </div>
+        }
+      </form>
+    </div>
+  </div>
+</div>

@@ -14,6 +14,7 @@ import { AppointmentDetailsModalComponent } from '../../shared/components/appoin
 import { AppointmentFilterComponent } from '../../shared/components/appointment-filter/appointment-filter.component';
 import { AppointmentTableComponent } from '../../shared/components/appointment-table/appointment-table.component';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
+import { EditAppointmentModalComponent } from '../../shared/components/edit-appointment-modal/edit-appointment-modal.component';
 import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
 import { getAppointmentErrorMessage } from './util/appointment-error.util';
 
@@ -26,6 +27,7 @@ import { getAppointmentErrorMessage } from './util/appointment-error.util';
     AppointmentFilterComponent,
     AppointmentTableComponent,
     PaginationComponent,
+    EditAppointmentModalComponent,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
@@ -85,25 +87,25 @@ export class HomeComponent {
     this.showAppointmentDetailsModal = false;
   }
 
-  showEditAppointmentModal = false;
+  showEditModal = false;
   editedAppointment!: IAppointment;
   editMessage: string | null = null;
   editSuccess: boolean = false;
 
-  onEditAppointment(appointment: IAppointment) {
-    this.editedAppointment = { ...appointment };
-    this.showEditAppointmentModal = true;
+  openEditModal(appointment: IAppointment): void {
+    this.editedAppointment = appointment;
+    this.showEditModal = true;
+    this.editMessage = null;
     this.editSuccess = false;
-    this.editMessage = '';
   }
 
   closeEditModal() {
-    this.showEditAppointmentModal = false;
+    this.showEditModal = false;
   }
 
-  updateAppointment() {
+  updateAppointment(updateData: IUpdateAppointment) {
     const body: IUpdateAppointment = {
-      date: this.editedAppointment.date,
+      date: updateData.date,
     };
     this.appointmentService.updateAppointment(this.editedAppointment.id!, body).subscribe({
       next: () => this.handleEditSuccess(),

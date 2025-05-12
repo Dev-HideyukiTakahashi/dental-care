@@ -19,7 +19,7 @@
     [appointments]="(appointments$ | async) || []"
     [role]="role"
     (viewDetails)="openAppointmentDetails($event)"
-    (editAppointment)="onEditAppointment($event)"
+    (editAppointment)="openEditModal($event)"
     (cancelAppointment)="onCancelAppointment($event)"
   ></app-appointment-table>
 
@@ -39,52 +39,12 @@
   ></app-appointment-details-modal>
 
   <!-- EDIT APPOINTMENT MODAL -->
-  <div class="modal-backdrop" *ngIf="showEditAppointmentModal" (click)="closeEditModal()"></div>
-  <div *ngIf="showEditAppointmentModal" class="modal-overlay">
-    <div class="modal" (click)="$event.stopPropagation()">
-      <div class="modal-content">
-        <h2>Editar Consulta</h2>
-
-        <form #editForm="ngForm" (ngSubmit)="updateAppointment()">
-          <div class="modal-body">
-            <label for="description"><strong>Descrição:</strong></label>
-            <input
-              type="text"
-              id="description"
-              name="description"
-              [(ngModel)]="editedAppointment.description"
-              required
-              class="form-control"
-            />
-
-            <label for="date"><strong>Data e Hora:</strong></label>
-            <input
-              type="datetime-local"
-              id="date"
-              name="date"
-              [(ngModel)]="editedAppointment.date"
-              required
-              class="form-control"
-            />
-          </div>
-
-          <div class="modal-actions">
-            <button type="button" class="btn btn-secondary" (click)="closeEditModal()">
-              Cancelar
-            </button>
-            <button type="submit" class="btn btn-success" [disabled]="!editForm.form.valid">
-              Salvar
-            </button>
-          </div>
-          <div
-            *ngIf="editMessage"
-            class="edit-message"
-            [ngClass]="{ success: editSuccess, error: !editSuccess }"
-          >
-            {{ editMessage }}
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
+  <app-edit-appointment-modal
+    *ngIf="showEditModal && editedAppointment"
+    [appointment]="editedAppointment"
+    [message]="editMessage"
+    [isSuccess]="editSuccess"
+    (save)="updateAppointment($event)"
+    (close)="showEditModal = false"
+  ></app-edit-appointment-modal>
 </div>
