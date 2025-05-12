@@ -14,6 +14,7 @@ import { AppointmentDetailsModalComponent } from '../../shared/components/appoin
 import { AppointmentFilterComponent } from '../../shared/components/appointment-filter/appointment-filter.component';
 import { AppointmentTableComponent } from '../../shared/components/appointment-table/appointment-table.component';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
+import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
 import { getAppointmentErrorMessage } from './util/appointment-error.util';
 
 @Component({
@@ -24,6 +25,7 @@ import { getAppointmentErrorMessage } from './util/appointment-error.util';
     AppointmentDetailsModalComponent,
     AppointmentFilterComponent,
     AppointmentTableComponent,
+    PaginationComponent,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
@@ -58,10 +60,6 @@ export class HomeComponent {
     return this.authService.getRole();
   }
 
-  goToPage(page: number): void {
-    this.loadAppointments(page);
-  }
-
   onFilterByDate(date: Date | null): void {
     if (!date) return;
 
@@ -75,14 +73,6 @@ export class HomeComponent {
     });
   }
 
-  clearFilter(): void {
-    this.selectedDate = null;
-    this.loadAppointments(0);
-  }
-
-  //  ************************************************
-  //  ******** Show modal appointment details ********
-  //  ************************************************
   openAppointmentDetails(appointmentId: number) {
     this.appointmentService.findById(appointmentId).subscribe((appointment) => {
       this.selectedAppointment = appointment;
@@ -91,13 +81,10 @@ export class HomeComponent {
     this.showAppointmentDetailsModal = true;
   }
 
-  closeModal() {
+  closeDetailsModal() {
     this.showAppointmentDetailsModal = false;
   }
 
-  //  ************************************************
-  //  ******** Show edit appointment details *********
-  //  ************************************************
   showEditAppointmentModal = false;
   editedAppointment!: IAppointment;
   editMessage: string | null = null;

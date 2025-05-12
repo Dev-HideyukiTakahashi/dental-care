@@ -1,0 +1,13 @@
+.page-link {
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.page-link:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+.page-item.active .page-link {
+  background-color: #0056b3;
+}

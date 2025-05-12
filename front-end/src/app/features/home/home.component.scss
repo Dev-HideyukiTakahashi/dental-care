@@ -25,45 +25,6 @@
     font-size: 1rem;
     color: #343a40;
   }
-
-  &__clear-filter {
-    text-align: right;
-    margin-top: -8px;
-    margin-bottom: 16px;
-
-    button {
-      font-size: 12px;
-      padding: 2px 6px;
-      color: #666;
-      background: none;
-      border: none;
-      text-decoration: underline;
-      cursor: pointer;
-
-      &:hover {
-        color: #0a58ca;
-        text-decoration: none;
-      }
-
-      &:focus {
-        outline: none;
-      }
-    }
-  }
-}
-
-.page-link {
-  font-size: 1rem;
-  transition: background-color 0.3s ease;
-}
-
-.page-link:hover {
-  background-color: #007bff;
-  color: white;
-}
-
-.page-item.active .page-link {
-  background-color: #0056b3;
 }
 
 .modal {

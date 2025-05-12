@@ -24,95 +24,67 @@
   ></app-appointment-table>
 
   <!-- PAGINATION -->
-  <nav *ngIf="pageInfo?.page && pageInfo.page.totalPages > 1" aria-label="Page navigation">
-    <ul class="pagination justify-content-center mt-3">
-      <li class="page-item" [class.disabled]="pageInfo.page.number === 0">
-        <button
-          class="page-link"
-          (click)="goToPage(pageInfo.page.number - 1)"
-          [disabled]="pageInfo.page.number === 0"
-        >
-          Anterior
-        </button>
-      </li>
-      <li
-        class="page-item"
-        *ngFor="let page of [].constructor(pageInfo.page.totalPages); let i = index"
-        [class.active]="i === pageInfo.page.number"
-      >
-        <button class="page-link" (click)="goToPage(i)">
-          {{ i + 1 }}
-        </button>
-      </li>
-      <li
-        class="page-item"
-        [class.disabled]="pageInfo.page.number === pageInfo.page.totalPages - 1"
-      >
-        <button
-          class="page-link"
-          (click)="goToPage(pageInfo.page.number + 1)"
-          [disabled]="pageInfo.page.number === pageInfo.page.totalPages - 1"
-        >
-          Próxima
-        </button>
-      </li>
-    </ul>
-  </nav>
-</div>
+  <app-pagination
+    [currentPage]="pageInfo.page.number"
+    [totalPages]="pageInfo.page.totalPages"
+    (pageChange)="loadAppointments($event)"
+    *ngIf="pageInfo.page.totalPages > 1"
+  ></app-pagination>
 
-<!-- APPOINTMENT DETAILS MODAL -->
-<app-appointment-details-modal
-  *ngIf="showAppointmentDetailsModal && selectedAppointment"
-  [appointment]="selectedAppointment"
-  (close)="closeModal()"
-></app-appointment-details-modal>
+  <!-- APPOINTMENT DETAILS MODAL -->
+  <app-appointment-details-modal
+    *ngIf="showAppointmentDetailsModal && selectedAppointment"
+    [appointment]="selectedAppointment"
+    (close)="closeDetailsModal()"
+  ></app-appointment-details-modal>
 
-<!-- EDIT APPOINTMENT MODAL -->
-<div class="modal-backdrop" *ngIf="showEditAppointmentModal" (click)="closeEditModal()"></div>
-<div *ngIf="showEditAppointmentModal" class="modal-overlay">
-  <div class="modal" (click)="$event.stopPropagation()">
-    <div class="modal-content">
-      <h2>Editar Consulta</h2>
+  <!-- EDIT APPOINTMENT MODAL -->
+  <div class="modal-backdrop" *ngIf="showEditAppointmentModal" (click)="closeEditModal()"></div>
+  <div *ngIf="showEditAppointmentModal" class="modal-overlay">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-content">
+        <h2>Editar Consulta</h2>
 
-      <form #editForm="ngForm" (ngSubmit)="updateAppointment()">
-        <div class="modal-body">
-          <label for="description"><strong>Descrição:</strong></label>
-          <input
-            type="text"
-            id="description"
-            name="description"
-            [(ngModel)]="editedAppointment.description"
-            required
-            class="form-control"
-          />
+        <form #editForm="ngForm" (ngSubmit)="updateAppointment()">
+          <div class="modal-body">
+            <label for="description"><strong>Descrição:</strong></label>
+            <input
+              type="text"
+              id="description"
+              name="description"
+              [(ngModel)]="editedAppointment.description"
+              required
+              class="form-control"
+            />
 
-          <label for="date"><strong>Data e Hora:</strong></label>
-          <input
-            type="datetime-local"
-            id="date"
-            name="date"
-            [(ngModel)]="editedAppointment.date"
-            required
-            class="form-control"
-          />
-        </div>
+            <label for="date"><strong>Data e Hora:</strong></label>
+            <input
+              type="datetime-local"
+              id="date"
+              name="date"
+              [(ngModel)]="editedAppointment.date"
+              required
+              class="form-control"
+            />
+          </div>
 
-        <div class="modal-actions">
-          <button type="button" class="btn btn-secondary" (click)="closeEditModal()">
-            Cancelar
-          </button>
-          <button type="submit" class="btn btn-success" [disabled]="!editForm.form.valid">
-            Salvar
-          </button>
-        </div>
-        <div
-          *ngIf="editMessage"
-          class="edit-message"
-          [ngClass]="{ success: editSuccess, error: !editSuccess }"
-        >
-          {{ editMessage }}
-        </div>
-      </form>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" (click)="closeEditModal()">
+              Cancelar
+            </button>
+            <button type="submit" class="btn btn-success" [disabled]="!editForm.form.valid">
+              Salvar
+            </button>
+          </div>
+          <div
+            *ngIf="editMessage"
+            class="edit-message"
+            [ngClass]="{ success: editSuccess, error: !editSuccess }"
+          >
+            {{ editMessage }}
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </div>
