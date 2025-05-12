@@ -8,7 +8,7 @@
     <h1 class="login__title">Dental Care</h1>
 
     <!-- Login Form -->
-    <form class="login__form" (ngSubmit)="onSubmit()" [formGroup]="registerForm">
+    <form class="login__form" (ngSubmit)="onSubmit()" [formGroup]="loginForm">
       <input type="text" class="login__input" placeholder="E-mail" formControlName="username" />
       <input type="password" class="login__input" placeholder="Senha" formControlName="password" />
 
@@ -16,7 +16,7 @@
         type="submit"
         class="login__button login__button--submit"
         value="Entrar"
-        [disabled]="registerForm.invalid"
+        [disabled]="loginForm.invalid"
       />
 
       <input
@@ -40,14 +40,20 @@
       </div>
       <input
         type="email"
-        [(ngModel)]="recoveryEmail"
+        [(ngModel)]="recoveryToken.email"
         placeholder="Digite seu email"
         class="modal-input"
       />
       <div class="modal-actions">
-        <button type="button" class="btn btn-primary" (click)="sendEmail()">Enviar</button>
+        <button type="button" class="btn btn-primary" [disabled]="isSending" (click)="sendEmail()">
+          {{ isSending ? 'Enviando...' : 'Enviar' }}
+        </button>
         <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
       </div>
+    </div>
+    <div class="modal-footer">
+      <p *ngIf="successModal" class="success-message">{{ successModal }}</p>
+      <p *ngIf="errorModal" class="error-message">{{ errorModal }}</p>
     </div>
   </div>
 </div>

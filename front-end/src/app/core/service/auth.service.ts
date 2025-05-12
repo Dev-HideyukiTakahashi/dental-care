@@ -3,9 +3,11 @@ import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 import { Observable } from 'rxjs';
-import { LoginData } from '../../model/login.model';
-import { IRegisterPatient } from '../../model/register-patient.model';
-import { UserRole } from '../../model/user-role.enum';
+import { LoginData } from '../../model/auth/login.model';
+import { IRecoverToken } from '../../model/auth/recover-token.model';
+import { IRegisterPatient } from '../../model/auth/register-patient.model';
+import { IResetPassword } from '../../model/auth/reset-password.model';
+import { UserRole } from '../../model/enum/user-role.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -41,6 +43,26 @@ export class AuthService {
     });
 
     return this.http.post<IRegisterPatient>(`${this.API}/auth/signup`, patient, { headers });
+  }
+
+  // ***** RECOVER TOKEN EMAIL *****
+  recoverToken(email: IRecoverToken): Observable<IRecoverToken> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: 'Basic ' + btoa(`${this.clientId}:${this.clientSecret}`),
+    });
+
+    return this.http.post<IRecoverToken>(`${this.API}/auth/recover-token`, email, { headers });
+  }
+
+  // ***** RESET PASSWORD *****
+  resetPassword(body: IResetPassword): Observable<IResetPassword> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: 'Basic ' + btoa(`${this.clientId}:${this.clientSecret}`),
+    });
+
+    return this.http.put<IResetPassword>(`${this.API}/auth/new-password`, body, { headers });
   }
 
   logout(): void {

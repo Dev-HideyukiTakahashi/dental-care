@@ -1,4 +1,4 @@
-import { AppointmentStatus } from './appointment-status.enum';
+import { AppointmentStatus } from './enum/appointment-status.enum';
 
 interface DentistMin {
   id: number;

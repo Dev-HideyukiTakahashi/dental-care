@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { AuthService } from '../../../core/service/auth.service';
-import { UserRole } from '../../../model/user-role.enum';
+import { UserRole } from '../../../model/enum/user-role.enum';
 
 @Component({
   selector: 'app-sidebar',

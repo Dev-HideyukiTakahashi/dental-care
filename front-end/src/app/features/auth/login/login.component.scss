@@ -163,7 +163,7 @@
   border-radius: 8px;
   display: block;
   max-width: 600px;
-  max-height: 230px;
+  max-height: 250px;
   padding: 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -195,6 +195,18 @@
   transition: border-color 0.2s, box-shadow 0.2;
 }
 
+.success-message {
+  color: green;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
 @media (max-width: 400px) {
   .login {
     padding: 1.5rem;
@@ -207,5 +219,9 @@
     &__button {
       padding: 0.6rem 0.9rem;
     }
+  }
+
+  .modal {
+    max-height: 280px;
   }
 }

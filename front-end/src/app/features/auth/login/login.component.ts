@@ -9,7 +9,8 @@ import {
 } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../core/service/auth.service';
-import { LoginData } from '../../../model/login.model';
+import { LoginData } from '../../../model/auth/login.model';
+import { IRecoverToken } from '../../../model/auth/recover-token.model';
 
 @Component({
   selector: 'app-login',
@@ -20,26 +21,23 @@ import { LoginData } from '../../../model/login.model';
 export class LoginComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
-  registerForm: FormGroup;
+  loginForm: FormGroup;
   errorMessage: string | null = null;
-  showResetPasswordModal = false;
-  recoveryEmail: string = '';
 
   constructor(private fb: FormBuilder) {
-    this.registerForm = this.fb.nonNullable.group({
+    this.loginForm = this.fb.nonNullable.group({
       username: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],
     });
   }
 
   onSubmit() {
-    const userData: LoginData = this.registerForm.value;
+    const userData: LoginData = this.loginForm.value;
 
     this.authService.login(userData).subscribe({
       next: (response: any) => {
         localStorage.setItem('access_token', response.access_token);
 
-        // TODO navigate to admin/dentist/patient page
         this.router.navigate(['/']);
       },
       error: () => {
@@ -48,7 +46,18 @@ export class LoginComponent {
     });
   }
 
+  // ***** MODAL RESET PASSWORD *****
+
+  showResetPasswordModal = false;
+  recoveryToken: IRecoverToken = {} as IRecoverToken;
+  successModal: string = '';
+  errorModal: string = '';
+  isSending: boolean = false;
+
   openResetPasswordModal() {
+    this.errorModal = '';
+    this.successModal = '';
+    this.recoveryToken.email = '';
     this.showResetPasswordModal = true;
   }
 
@@ -57,7 +66,24 @@ export class LoginComponent {
   }
 
   sendEmail() {
-    // TODO
-    console.log(this.recoveryEmail);
+    this.isSending = true;
+    this.authService.recoverToken(this.recoveryToken).subscribe({
+      next: (response: any) => {
+        this.successModal = 'E-mail enviado com sucesso!';
+        this.errorModal = '';
+      },
+      error: () => {
+        this.successModal = '';
+        this.errorModal = 'Email inválido';
+        this.isSending = false;
+      },
+      complete: () => {
+        setTimeout(() => {
+          this.closeModal();
+          this.successModal = '';
+          this.isSending = false;
+        }, 3000);
+      },
+    });
   }
 }
