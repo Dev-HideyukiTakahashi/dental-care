@@ -9,10 +9,6 @@
     flex-wrap: wrap;
   }
 
-  &__header-left {
-    max-width: 60%;
-  }
-
   &__header-right {
     min-width: 200px;
     margin-left: auto;
@@ -51,92 +47,6 @@
 
       &:focus {
         outline: none;
-      }
-    }
-  }
-
-  &__table-wrapper {
-    overflow-x: auto;
-    background-color: #2c3034;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  }
-
-  &__table {
-    width: 100%;
-    border-collapse: collapse;
-    color: #dee2e6;
-  }
-
-  &__thead {
-    background-color: #343a40;
-  }
-
-  &__th,
-  &__td {
-    padding: 1rem;
-    text-align: left;
-    border-bottom: 1px solid #495057;
-  }
-
-  &__row:hover {
-    background-color: #3a3f44;
-  }
-
-  &__status {
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    display: inline-block;
-
-    &--pendente {
-      background-color: #ffc107;
-      color: #212529;
-    }
-
-    &--confirmada {
-      background-color: #198754;
-      color: #fff;
-    }
-
-    &--cancelada {
-      background-color: #dc3545;
-      color: #fff;
-    }
-  }
-
-  &__btn {
-    padding: 0.4rem 0.75rem;
-    border: none;
-    border-radius: 4px;
-    font-size: 0.875rem;
-    cursor: pointer;
-    margin-right: 0.5rem;
-    transition: background-color 0.2s ease;
-
-    &--view {
-      background-color: #0d6efd;
-      color: #fff;
-
-      &:hover {
-        background-color: #0b5ed7;
-      }
-    }
-
-    &--cancel {
-      background-color: #dc3545;
-      color: #fff;
-
-      &:hover {
-        background-color: #bb2d3b;
-      }
-
-      &:disabled {
-        background-color: #6c757d !important;
-        color: #e9ecef;
-        cursor: not-allowed;
-        opacity: 0.65;
       }
     }
   }
@@ -260,27 +170,6 @@
 }
 
 @media (max-width: 576px) {
-  .home__btn {
-    display: block;
-    width: 100%;
-    margin: 0.25rem 0;
-  }
-
-  .home__td:last-child {
-    white-space: nowrap;
-  }
-
-  .home__th:nth-child(1),
-  .home__td:nth-child(1),
-  .home__th:nth-child(2),
-  .home__td:nth-child(2),
-  .home__th:nth-child(4),
-  .home__td:nth-child(4),
-  .home__th:nth-child(5),
-  .home__td:nth-child(5) {
-    display: none;
-  }
-
   .home__header {
     flex-direction: column;
     align-items: flex-start;

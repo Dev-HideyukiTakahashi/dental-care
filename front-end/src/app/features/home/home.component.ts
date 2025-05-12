@@ -12,18 +12,18 @@ import { Page } from '../../model/page.model';
 import { IUpdateAppointment } from '../../model/update-appointment-model';
 import { AppointmentDetailsModalComponent } from '../../shared/components/appointment-details-modal/appointment-details-modal.component';
 import { AppointmentFilterComponent } from '../../shared/components/appointment-filter/appointment-filter.component';
+import { AppointmentTableComponent } from '../../shared/components/appointment-table/appointment-table.component';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
-import { AppointmentStatusPipe } from '../../shared/pipes/appointment-status.pipe';
 import { getAppointmentErrorMessage } from './util/appointment-error.util';
 
 @Component({
   selector: 'app-home',
   imports: [
     CommonModule,
-    AppointmentStatusPipe,
     FormsModule,
     AppointmentDetailsModalComponent,
     AppointmentFilterComponent,
+    AppointmentTableComponent,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
