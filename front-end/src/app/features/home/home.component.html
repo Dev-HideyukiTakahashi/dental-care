@@ -125,39 +125,11 @@
 </div>
 
 <!-- APPOINTMENT DETAILS MODAL -->
-<div class="modal-backdrop" *ngIf="showAppointmentDetailsModal" (click)="closeModal()"></div>
-<div *ngIf="showAppointmentDetailsModal" class="modal-overlay">
-  <div class="modal" (click)="$event.stopPropagation()">
-    <div class="modal-content">
-      <h2>Detalhes da Consulta</h2>
-
-      <div class="modal-body" *ngIf="selectedAppointment">
-        <p><strong>Data:</strong> {{ selectedAppointment.date | date : 'dd/MM/yyyy HH:mm' }}</p>
-        <p><strong>Status:</strong> {{ selectedAppointment.status | appointmentStatus }}</p>
-        <p><strong>Descrição:</strong> {{ selectedAppointment.description }}</p>
-
-        <hr />
-
-        <h3>Dentista</h3>
-        <p><strong>Nome:</strong> {{ selectedAppointment.dentist.name }}</p>
-        <p><strong>Especialidade:</strong> {{ selectedAppointment.dentist.speciality }}</p>
-        <p><strong>Registro:</strong> {{ selectedAppointment.dentist.registrationNumber }}</p>
-        <p><strong>Nota:</strong> {{ selectedAppointment.dentist.score }}</p>
-
-        <hr />
-
-        <h3>Paciente</h3>
-        <p><strong>Nome:</strong> {{ selectedAppointment.patient.name }}</p>
-        <p><strong>Telefone:</strong> {{ selectedAppointment.patient.phone | phone }}</p>
-        <p><strong>Histórico Médico:</strong> {{ selectedAppointment.patient.medicalHistory }}</p>
-      </div>
-      <hr />
-      <div class="modal-actions">
-        <button type="button" class="btn btn-secondary" (click)="closeModal()">Fechar</button>
-      </div>
-    </div>
-  </div>
-</div>
+<app-appointment-details-modal
+  *ngIf="showAppointmentDetailsModal && selectedAppointment"
+  [appointment]="selectedAppointment"
+  (close)="closeModal()"
+></app-appointment-details-modal>
 
 <!-- EDIT APPOINTMENT MODAL -->
 <div class="modal-backdrop" *ngIf="showEditAppointmentModal" (click)="closeEditModal()"></div>

@@ -13,6 +13,7 @@ import { AppointmentStatus } from '../../model/enum/appointment-status.enum';
 import { UserRole } from '../../model/enum/user-role.enum';
 import { Page } from '../../model/page.model';
 import { IUpdateAppointment } from '../../model/update-appointment-model';
+import { AppointmentDetailsModalComponent } from '../../shared/components/appointment-details-modal/appointment-details-modal.component';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
 import { AppointmentStatusPipe } from '../../shared/pipes/appointment-status.pipe';
 import { PhonePipe } from '../../shared/pipes/phone.pipe';
@@ -27,6 +28,7 @@ import { PhonePipe } from '../../shared/pipes/phone.pipe';
     MatNativeDateModule,
     FormsModule,
     PhonePipe,
+    AppointmentDetailsModalComponent,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
