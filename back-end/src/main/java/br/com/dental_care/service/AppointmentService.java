@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.dental_care.dto.AppointmentDTO;
 import br.com.dental_care.dto.AppointmentUpdateDTO;
+import br.com.dental_care.exception.ForbiddenException;
 import br.com.dental_care.exception.ResourceNotFoundException;
 import br.com.dental_care.exception.ScheduleConflictException;
 import br.com.dental_care.mapper.AppointmentMapper;
@@ -119,7 +120,9 @@ public class AppointmentService {
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Appointment not found! ID: " + id));
 
-        authService.validateSelfOrAdmin(appointment.getPatient().getId());
+        if (!isAppointmentOwner(appointment)) {
+            throw new ForbiddenException("Access denied: You do not have permission to perform this action");
+        }
         logger.info("Appointment found, id: {}", id);
         return AppointmentMapper.toDTO(appointment);
     }
@@ -156,6 +159,24 @@ public class AppointmentService {
         deleteSchedule(appointment);
         logger.info("Appointment canceled, id: {}", appointment.getId());
         return AppointmentMapper.toDTO(appointment);
+    }
+
+    private boolean isAppointmentOwner(Appointment appointment) {
+        User user = userService.authenticated();
+        boolean isPatient = user.getId() == appointment.getPatient().getId();
+        boolean isDentist = user.getId() == appointment.getDentist().getId();
+
+        if (isPatient) {
+            authService.validateSelfOrAdmin(appointment.getPatient().getId());
+            return true;
+        }
+
+        if (isDentist) {
+            authService.validateSelfOrAdmin(appointment.getDentist().getId());
+            return true;
+        }
+
+        return false;
     }
 
     private Dentist validateDentist(Long id) {

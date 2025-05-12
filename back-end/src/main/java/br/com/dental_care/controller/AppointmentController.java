@@ -62,7 +62,7 @@ public class AppointmentController {
     }
 
     @GetMapping(path = "/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PATIENT')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PATIENT', 'ROLE_DENTIST')")
     public ResponseEntity<AppointmentDTO> findById(@PathVariable Long id) {
         logger.info("Searching appointment with id: {}", id);
         AppointmentDTO dto = appointmentService.findById(id);
