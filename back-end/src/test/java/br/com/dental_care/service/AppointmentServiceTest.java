@@ -31,6 +31,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.mail.MailException;
 
 import br.com.dental_care.dto.AppointmentDTO;
+import br.com.dental_care.dto.AppointmentUpdateDTO;
 import br.com.dental_care.exception.ResourceNotFoundException;
 import br.com.dental_care.exception.ScheduleConflictException;
 import br.com.dental_care.factory.AppointmentFactory;
@@ -311,9 +312,9 @@ class AppointmentServiceTest {
     @Test
     void updateAppointmentDateTime_Should_updateDate_When_ValidAppointmentData() {
 
-        AppointmentDTO updatedDTO = AppointmentFactory.createUpdatedAppointmentDTO();
-        appointment.setStatus(AppointmentStatus.SCHEDULED);
-        appointment.setDate(LocalDateTime.parse("2027-05-10T10:00:00"));
+        AppointmentUpdateDTO updatedDTO = AppointmentUpdateDTO.builder()
+                .date(LocalDateTime.parse("2027-05-10T10:00:00"))
+                .build();
 
         when(appointmentRepository.findById(validId)).thenReturn(Optional.of(appointment));
         when(dentistRepository.findById(validId)).thenReturn(Optional.of(dentist));

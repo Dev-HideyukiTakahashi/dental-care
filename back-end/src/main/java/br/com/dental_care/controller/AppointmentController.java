@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.dental_care.dto.AppointmentDTO;
+import br.com.dental_care.dto.AppointmentUpdateDTO;
 import br.com.dental_care.service.AppointmentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -88,9 +89,9 @@ public class AppointmentController {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PATIENT')")
     public ResponseEntity<AppointmentDTO> updateAppointmentDateTime(
             @PathVariable Long id,
-            @Valid @RequestBody AppointmentDTO dto) {
+            @Valid @RequestBody AppointmentUpdateDTO dto) {
         logger.info("Starting update date/time process for appointment id: {}", id);
-        dto = appointmentService.updateAppointmentDateTime(id, dto);
-        return ResponseEntity.ok(dto);
+        AppointmentDTO response = appointmentService.updateAppointmentDateTime(id, dto);
+        return ResponseEntity.ok(response);
     }
 }

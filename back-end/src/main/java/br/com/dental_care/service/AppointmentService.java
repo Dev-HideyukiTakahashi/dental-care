@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.dental_care.dto.AppointmentDTO;
+import br.com.dental_care.dto.AppointmentUpdateDTO;
 import br.com.dental_care.exception.ResourceNotFoundException;
 import br.com.dental_care.exception.ScheduleConflictException;
 import br.com.dental_care.mapper.AppointmentMapper;
@@ -132,7 +133,7 @@ public class AppointmentService {
     }
 
     @Transactional
-    public AppointmentDTO updateAppointmentDateTime(Long id, AppointmentDTO dto) {
+    public AppointmentDTO updateAppointmentDateTime(Long id, AppointmentUpdateDTO dto) {
         Appointment appointment = validateAppointment(id);
         validatePatient(appointment.getPatient().getId());
 
