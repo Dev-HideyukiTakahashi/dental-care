@@ -278,19 +278,6 @@ public class AppointmentControllerTest extends BaseIntegrationTest {
   }
 
   @Test
-  void findById_Should_return403_When_dentistLogged() {
-
-    given()
-        .header("Authorization", "Bearer " + dentistToken)
-        .contentType(ContentType.JSON)
-        .accept(ContentType.JSON)
-        .when()
-        .get("/api/v1/appointments/1")
-        .then()
-        .statusCode(HttpStatus.FORBIDDEN.value());
-  }
-
-  @Test
   void cancelAppointment_Should_return200_When_appointmentExistsAndPatientLogged() {
 
     Long existingAppointmentId = 3L;

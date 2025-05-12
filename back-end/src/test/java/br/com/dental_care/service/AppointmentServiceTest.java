@@ -296,8 +296,11 @@ class AppointmentServiceTest {
     @Test
     void findById_Should_returnAppointmentDto_When_appointmentExists() {
 
+        User user = new User();
+        user.setId(validId);
+
         when(appointmentRepository.findById(validId)).thenReturn(Optional.of(appointment));
-        doNothing().when(authService).validateSelfOrAdmin(any());
+        when(userService.authenticated()).thenReturn(user);
 
         AppointmentDTO dto = appointmentService.findById(validId);
 
@@ -305,7 +308,6 @@ class AppointmentServiceTest {
         assertEquals(validId, dto.getId());
         assertEquals(appointment.getStatus(), dto.getStatus());
         assertEquals(appointment.getPatient().getId(), dto.getPatientMinDTO().getId());
-        verify(authService).validateSelfOrAdmin(any());
         verify(appointmentRepository, times(1)).findById(validId);
     }
 
