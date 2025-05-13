@@ -4,8 +4,10 @@ import { Component } from '@angular/core';
   selector: 'app-dashboard',
   imports: [],
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.scss'
+  styleUrl: './dashboard.component.scss',
 })
 export class DashboardComponent {
-
+  totalPacientes = 0;
+  totalConsultas = 0;
+  totalDentistas = 0;
 }

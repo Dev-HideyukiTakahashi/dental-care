@@ -1,1 +1,32 @@
-<p>dashboard works!</p>
+<div class="container mt-4">
+  <h2>Dashboard Administrativo</h2>
+
+  <div class="row mt-4">
+    <div class="col-md-4">
+      <div class="card text-white bg-primary mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Pacientes</h5>
+          <p class="card-text fs-2">{{ totalPacientes }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card text-white bg-success mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Consultas</h5>
+          <p class="card-text fs-2">{{ totalConsultas }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card text-white bg-info mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Dentistas</h5>
+          <p class="card-text fs-2">{{ totalDentistas }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
