@@ -1,17 +1,17 @@
 package br.com.dental_care.service;
 
-import br.com.dental_care.dto.DentistDTO;
-import br.com.dental_care.dto.DentistMinDTO;
-import br.com.dental_care.exception.DatabaseException;
-import br.com.dental_care.exception.ResourceNotFoundException;
-import br.com.dental_care.factory.DentistFactory;
-import br.com.dental_care.factory.UserFactory;
-import br.com.dental_care.model.Dentist;
-import br.com.dental_care.model.User;
-import br.com.dental_care.repository.DentistRepository;
-import br.com.dental_care.repository.RoleRepository;
-import br.com.dental_care.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,11 +25,19 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import br.com.dental_care.dto.DentistDTO;
+import br.com.dental_care.dto.DentistMinDTO;
+import br.com.dental_care.dto.UpdateDentistDTO;
+import br.com.dental_care.exception.DatabaseException;
+import br.com.dental_care.exception.ResourceNotFoundException;
+import br.com.dental_care.factory.DentistFactory;
+import br.com.dental_care.factory.UserFactory;
+import br.com.dental_care.model.Dentist;
+import br.com.dental_care.model.User;
+import br.com.dental_care.repository.DentistRepository;
+import br.com.dental_care.repository.RoleRepository;
+import br.com.dental_care.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 class DentistServiceTest {
@@ -51,6 +59,7 @@ class DentistServiceTest {
 
     private Dentist dentist;
     private DentistDTO dentistDTO;
+    private UpdateDentistDTO updateDentistDTO;
     private User user;
     private Long validId;
     private Long invalidId;
@@ -60,6 +69,7 @@ class DentistServiceTest {
     void setUp() {
         dentist = DentistFactory.createValidDentist();
         dentistDTO = DentistFactory.createValidDentistDTO();
+        updateDentistDTO = DentistFactory.createValidUpdateDentistDTO();
         user = UserFactory.createValidUser();
         validId = 1L;
         dependentId = 2L;
@@ -86,8 +96,7 @@ class DentistServiceTest {
 
         when(dentistRepository.findById(invalidId)).thenReturn(Optional.empty());
 
-        Exception exception = assertThrows(ResourceNotFoundException.class, ()
-                -> dentistService.findById(invalidId));
+        Exception exception = assertThrows(ResourceNotFoundException.class, () -> dentistService.findById(invalidId));
 
         assertEquals("Dentist not found! ID: " + invalidId, exception.getMessage());
     }
@@ -114,7 +123,6 @@ class DentistServiceTest {
 
         when(userRepository.findByEmail(dentistDTO.getEmail())).thenReturn(Optional.empty());
         when(passwordEncoder.encode(dentistDTO.getPassword())).thenReturn("encodedPassword");
-        when(roleRepository.existsById(3L)).thenReturn(true);
         when(dentistRepository.save(any(Dentist.class))).thenReturn(dentist);
 
         DentistDTO dto = dentistService.save(dentistDTO);
@@ -123,7 +131,6 @@ class DentistServiceTest {
         assertEquals("Dr. John Doe", dto.getName());
         verify(userRepository, times(1)).findByEmail(dentistDTO.getEmail());
         verify(passwordEncoder, times(1)).encode(dentistDTO.getPassword());
-        verify(roleRepository, times(1)).existsById(anyLong());
         verify(dentistRepository, times(1)).save(any(Dentist.class));
     }
 
@@ -131,9 +138,9 @@ class DentistServiceTest {
     void save_ShouldThrowException_WhenEmailAlreadyExists() {
 
         when(userRepository.findByEmail(dentistDTO.getEmail())).thenReturn(Optional.of(new User()));
+        when(userRepository.findByEmail(dentistDTO.getEmail())).thenReturn(Optional.of(user));
 
-        Exception exception = assertThrows(DatabaseException.class, ()
-                -> dentistService.save(dentistDTO));
+        Exception exception = assertThrows(DatabaseException.class, () -> dentistService.save(dentistDTO));
 
         assertEquals("Email already exists.", exception.getMessage());
 
@@ -144,18 +151,15 @@ class DentistServiceTest {
     void update_ShouldReturnUpdatedDTO_WhenSuccessful() {
 
         when(dentistRepository.getReferenceById(validId)).thenReturn(dentist);
-        when(userRepository.findByEmail(dentistDTO.getEmail())).thenReturn(Optional.of(dentist));
-        when(passwordEncoder.encode(dentistDTO.getPassword())).thenReturn("encodedPassword");
-        when(roleRepository.existsById(3L)).thenReturn(true);
+        when(passwordEncoder.encode(updateDentistDTO.getPassword())).thenReturn("encodedPassword");
         when(dentistRepository.save(any(Dentist.class))).thenReturn(dentist);
 
-        DentistDTO result = dentistService.update(dentistDTO, validId);
+        DentistDTO result = dentistService.update(updateDentistDTO, validId);
 
         assertNotNull(result);
         verify(dentistRepository, times(1)).getReferenceById(validId);
-        verify(userRepository, times(1)).findByEmail(dentistDTO.getEmail());
-        verify(passwordEncoder, times(1)).encode(dentistDTO.getPassword());
-        verify(roleRepository, times(1)).existsById(anyLong());
+        verify(userRepository, times(1)).findByEmail(updateDentistDTO.getEmail());
+        verify(passwordEncoder, times(1)).encode(updateDentistDTO.getPassword());
         verify(dentistRepository, times(1)).save(any(Dentist.class));
         verify(dentistRepository, times(1)).save(any(Dentist.class));
     }
@@ -165,8 +169,8 @@ class DentistServiceTest {
 
         when(dentistRepository.getReferenceById(invalidId)).thenThrow(EntityNotFoundException.class);
 
-        Exception exception = assertThrows(ResourceNotFoundException.class, ()
-                -> dentistService.update(dentistDTO, invalidId));
+        Exception exception = assertThrows(ResourceNotFoundException.class,
+                () -> dentistService.update(updateDentistDTO, invalidId));
 
         assertEquals("Dentist not found! ID: " + invalidId, exception.getMessage());
 
@@ -181,8 +185,8 @@ class DentistServiceTest {
         when(dentistRepository.getReferenceById(validId)).thenReturn(dentist);
         when(userRepository.findByEmail(dentistDTO.getEmail())).thenReturn(Optional.of(user));
 
-        Exception exception = assertThrows(DatabaseException.class, ()
-                -> dentistService.update(dentistDTO, validId));
+        Exception exception = assertThrows(DatabaseException.class,
+                () -> dentistService.update(updateDentistDTO, validId));
 
         assertEquals("Email already exists.", exception.getMessage());
         verify(dentistRepository, times(1)).getReferenceById(validId);
@@ -205,8 +209,7 @@ class DentistServiceTest {
 
         when(dentistRepository.existsById(invalidId)).thenReturn(false);
 
-        Exception exception = assertThrows(ResourceNotFoundException.class, ()
-                -> dentistService.deleteById(invalidId));
+        Exception exception = assertThrows(ResourceNotFoundException.class, () -> dentistService.deleteById(invalidId));
 
         verify(dentistRepository, times(1)).existsById(invalidId);
         assertEquals("Dentist not found! ID: " + invalidId, exception.getMessage());
@@ -219,11 +222,9 @@ class DentistServiceTest {
 
         doThrow(DataIntegrityViolationException.class).when(dentistRepository).deleteById(dependentId);
 
-        Exception exception = assertThrows(DatabaseException.class, ()
-                -> dentistService.deleteById(dependentId));
+        Exception exception = assertThrows(DatabaseException.class, () -> dentistService.deleteById(dependentId));
 
         verify(dentistRepository, times(1)).existsById(dependentId);
         assertEquals("Database error: Data integrity rules were violated.", exception.getMessage());
     }
 }
-

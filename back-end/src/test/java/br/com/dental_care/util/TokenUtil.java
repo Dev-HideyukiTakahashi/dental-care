@@ -1,10 +1,11 @@
 package br.com.dental_care.util;
 
-import io.restassured.path.json.JsonPath;
-import io.restassured.response.Response;
+import static io.restassured.RestAssured.given;
+
 import org.json.JSONException;
 
-import static io.restassured.RestAssured.given;
+import io.restassured.path.json.JsonPath;
+import io.restassured.response.Response;
 
 public class TokenUtil {
 

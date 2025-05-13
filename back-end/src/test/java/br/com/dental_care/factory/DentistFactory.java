@@ -2,6 +2,7 @@ package br.com.dental_care.factory;
 
 import br.com.dental_care.dto.DentistDTO;
 import br.com.dental_care.dto.DentistMinDTO;
+import br.com.dental_care.dto.UpdateDentistDTO;
 import br.com.dental_care.model.Dentist;
 import lombok.experimental.UtilityClass;
 
@@ -54,6 +55,19 @@ public class DentistFactory {
     public DentistMinDTO createInvalidDentistMinDTO() {
         return DentistMinDTO.builder()
                 .id(999L)
+                .build();
+    }
+
+    public static UpdateDentistDTO createValidUpdateDentistDTO() {
+        return UpdateDentistDTO.builder()
+                .id(1L)
+                .name("Dr. John Doe")
+                .email("john.doe@example.com")
+                .password("#Password123")
+                .phone("(11) 99710-2376")
+                .speciality("Orthodontics")
+                .registrationNumber("DR12345")
+                .score(8)
                 .build();
     }
 }
