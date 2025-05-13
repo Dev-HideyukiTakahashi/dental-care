@@ -1,0 +1,160 @@
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border-radius: 8px;
+  display: block;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-width: 50vw;
+  max-height: 75vh;
+  overflow-y: auto;
+
+  .modal-content {
+    padding: 1.5rem;
+
+    h2 {
+      margin-top: 0;
+      color: #343a40;
+      font-size: 1.5rem;
+      border-bottom: 1px solid #dee2e6;
+      padding-bottom: 1rem;
+    }
+  }
+}
+
+.modal-body {
+  padding: 1rem 0;
+
+  .form-group {
+    margin-bottom: 1.5rem;
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #495057;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+      font-size: 1rem;
+      transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+      &:focus {
+        border-color: #86b7fe;
+        outline: 0;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+      }
+    }
+  }
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid #dee2e6;
+
+  .btn {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease-in-out;
+
+    &-secondary {
+      background-color: #6c757d;
+      color: white;
+      border: none;
+
+      &:hover {
+        background-color: #5a6268;
+      }
+    }
+
+    &-primary {
+      background-color: #0d6efd;
+      color: white;
+      border: none;
+
+      &:hover {
+        background-color: #0b5ed7;
+      }
+
+      &:disabled {
+        background-color: #86b7fe;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+.password-input {
+  position: relative;
+
+  .toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 0.5rem;
+
+    &:hover {
+      color: #495057;
+    }
+  }
+}
+
+input[type='password'],
+input[type='text'] {
+  padding-right: 40px !important;
+}
+
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+  border-width: 0.2em;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 576px) {
+  .modal {
+    width: 95%;
+    margin: 0 auto;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+
+    .btn {
+      width: 100%;
+    }
+  }
+}

@@ -1,0 +1,129 @@
+<div class="modal-backdrop">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-content">
+      <h2>{{ isEditMode ? 'Editar Dentista' : 'Adicionar Dentista' }}</h2>
+
+      <form #dentistForm="ngForm" (ngSubmit)="onSubmit()">
+        <div class="modal-body">
+          <!-- Nome -->
+          <div class="form-group">
+            <label for="name">Nome Completo</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              [(ngModel)]="formData.name"
+              required
+              class="form-control"
+            />
+          </div>
+
+          <!-- Especialidade -->
+          <div class="form-group">
+            <label for="speciality">Especialidade</label>
+            <input
+              type="text"
+              id="speciality"
+              name="speciality"
+              [(ngModel)]="formData.speciality"
+              required
+              class="form-control"
+            />
+          </div>
+
+          <!-- Registro -->
+          <div class="form-group">
+            <label for="registrationNumber">Registro Profissional</label>
+            <input
+              type="text"
+              id="registrationNumber"
+              name="registrationNumber"
+              [(ngModel)]="formData.registrationNumber"
+              required
+              class="form-control"
+            />
+          </div>
+
+          <!-- Email -->
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              [(ngModel)]="formData.email"
+              required
+              class="form-control"
+            />
+          </div>
+
+          <!-- Telefone -->
+          <div class="form-group">
+            <label for="phone">Telefone</label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              [(ngModel)]="formData.phone"
+              required
+              class="form-control"
+              placeholder="(00) 00000-0000"
+            />
+          </div>
+
+          <!-- Senha (só mostra campo se for novo ou se quiser alterar) -->
+          @if(!isEditMode) {
+          <div class="form-group">
+            <label for="password">Senha</label>
+            <div class="password-input">
+              <input
+                [type]="showPassword ? 'text' : 'password'"
+                id="password"
+                name="password"
+                [(ngModel)]="formData.password"
+                [required]="!isEditMode"
+                class="form-control"
+              />
+              <button type="button" class="toggle-password" (click)="togglePasswordVisibility()">
+                <i class="fas {{ showPassword ? 'fa-eye-slash' : 'fa-eye' }}"></i>
+              </button>
+            </div>
+          </div>
+          } @else {
+          <div class="form-group">
+            <label for="password">Nova Senha (opcional)</label>
+            <div class="password-input">
+              <input
+                [type]="showPassword ? 'text' : 'password'"
+                id="password"
+                name="password"
+                [(ngModel)]="formData.password"
+                class="form-control"
+                placeholder="Use sua senha para manter a atual"
+              />
+              <button type="button" class="toggle-password" (click)="togglePasswordVisibility()">
+                <i class="fas {{ showPassword ? 'fa-eye-slash' : 'fa-eye' }}"></i>
+              </button>
+            </div>
+          </div>
+          }
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" (click)="onClose()">Cancelar</button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="!dentistForm.valid || isSubmitting"
+          >
+            @if(isSubmitting) {
+            <span class="spinner-border spinner-border-sm"></span>
+            Salvando... } @else {
+            <span>{{ isEditMode ? 'Atualizar' : 'Cadastrar' }}</span>
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
