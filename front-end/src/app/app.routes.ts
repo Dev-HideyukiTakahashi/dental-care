@@ -4,6 +4,7 @@ import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterComponent } from './features/auth/register/register.component';
 import { ResetPasswordComponent } from './features/auth/reset-password/reset-password.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
+import { DentistListComponent } from './features/dentist-list/dentist-list.component';
 import { HomeComponent } from './features/home/home.component';
 import { MainComponent } from './features/main/main.component';
 
@@ -21,6 +22,12 @@ export const routes: Routes = [
       {
         path: 'dashboard',
         component: DashboardComponent,
+        canActivate: [authGuard],
+        data: { roles: ['admin'] },
+      },
+      {
+        path: 'dentists',
+        component: DentistListComponent,
         canActivate: [authGuard],
         data: { roles: ['admin'] },
       },

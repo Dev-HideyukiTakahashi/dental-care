@@ -14,4 +14,20 @@ export class DentistService {
   getDentistsWithRatings(): Observable<Page<IDentistMin>> {
     return this.http.get<Page<IDentistMin>>(`${this.API}/dentists?sort=score,desc`);
   }
+
+  findAll(page: number, size: number): Observable<Page<IDentistMin>> {
+    return this.http.get<Page<IDentistMin>>(`${this.API}/dentists?page=${page}&size=${size}`);
+  }
+
+  updateDentist(): any {
+    return null;
+  }
+
+  createDentist(): any {
+    return null;
+  }
+
+  deleteDentist(): any {
+    return null;
+  }
 }
