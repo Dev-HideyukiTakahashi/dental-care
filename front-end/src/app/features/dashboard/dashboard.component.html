@@ -1,31 +1,45 @@
-<div class="container mt-4">
-  <h2>Dashboard Administrativo</h2>
+<div class="dashboard">
+  <div class="dashboard__header">
+    <div class="dashboard__header-left">
+      <h1 class="dashboard__title">Dashboard Administrativo</h1>
+      <p class="dashboard__subtitle">Avaliação dos dentistas</p>
+    </div>
+  </div>
 
-  <div class="row mt-4">
-    <div class="col-md-4">
-      <div class="card text-white bg-primary mb-3">
-        <div class="card-body">
-          <h5 class="card-title">Pacientes</h5>
-          <p class="card-text fs-2">{{ totalPacientes }}</p>
+  <div class="dashboard__content">
+    <div class="dashboard__metrics">
+      <div class="dashboard__metric-card">
+        <div class="dashboard__metric-content">
+          <h3 class="dashboard__metric-title">Pacientes</h3>
+          <p class="dashboard__metric-value">{{ totalPatients }}</p>
+          <p class="dashboard__metric-description">Cadastrados no sistema</p>
+        </div>
+      </div>
+
+      <div class="dashboard__metric-card">
+        <div class="dashboard__metric-content">
+          <h3 class="dashboard__metric-title">Consultas</h3>
+          <p class="dashboard__metric-value">{{ totalAppointments }}</p>
+          <p class="dashboard__metric-description">Realizadas</p>
+        </div>
+      </div>
+
+      <div class="dashboard__metric-card">
+        <div class="dashboard__metric-content">
+          <h3 class="dashboard__metric-title">Dentistas</h3>
+          <p class="dashboard__metric-value">{{ totalDentists }}</p>
+          <p class="dashboard__metric-description">Profissionais ativos</p>
         </div>
       </div>
     </div>
 
-    <div class="col-md-4">
-      <div class="card text-white bg-success mb-3">
-        <div class="card-body">
-          <h5 class="card-title">Consultas</h5>
-          <p class="card-text fs-2">{{ totalConsultas }}</p>
-        </div>
+    <div class="dashboard__chart-section">
+      <div class="dashboard__chart-header">
+        <h3 class="dashboard__chart-title">Avaliação dos Dentistas</h3>
+        <p class="dashboard__chart-subtitle">Escala de 1 a 10 (média por paciente)</p>
       </div>
-    </div>
-
-    <div class="col-md-4">
-      <div class="card text-white bg-info mb-3">
-        <div class="card-body">
-          <h5 class="card-title">Dentistas</h5>
-          <p class="card-text fs-2">{{ totalDentistas }}</p>
-        </div>
+      <div class="dashboard__chart-container">
+        <canvas baseChart [type]="chartType" [data]="chartData" [options]="chartOptions"> </canvas>
       </div>
     </div>
   </div>

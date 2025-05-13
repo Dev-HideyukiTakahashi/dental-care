@@ -1,0 +1,143 @@
+.dashboard {
+  padding: 2rem;
+  background-color: #dee2e6;
+  color: #f8f9fa;
+  min-height: 100vh;
+
+  &__header {
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+
+  &__header-left {
+    flex: 1;
+  }
+
+  &__title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #343a40;
+    margin: 0;
+  }
+
+  &__subtitle {
+    font-size: 1rem;
+    color: #343a40;
+    margin: 0.5rem 0 0;
+  }
+
+  &__metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  &__metric-card {
+    background-color: #343a40;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+    border: 1px solid #495057;
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  &__metric-title {
+    font-size: 1rem;
+    color: #adb5bd;
+    margin: 0 0 0.5rem;
+  }
+
+  &__metric-value {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0;
+  }
+
+  &__metric-description {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin: 0.25rem 0 0;
+  }
+
+  &__chart-section {
+    background-color: #343a40;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 1.5rem;
+    border: 1px solid #495057;
+  }
+
+  &__chart-header {
+    margin-bottom: 1.5rem;
+  }
+
+  &__chart-title {
+    font-size: 1.25rem;
+    color: #ffffff;
+    margin: 0 0 0.5rem;
+    font-weight: 600;
+  }
+
+  &__chart-subtitle {
+    font-size: 0.875rem;
+    color: #adb5bd;
+    margin: 0;
+  }
+
+  &__chart-container {
+    width: 100%;
+    height: 400px;
+    position: relative;
+  }
+}
+
+canvas {
+  width: 100% !important;
+  height: 100% !important;
+  background-color: transparent !important;
+}
+
+::ng-deep {
+  .chartjs-grid-line {
+    stroke: #495057 !important;
+  }
+  .chartjs-tick {
+    color: #adb5bd !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 1.5rem;
+  }
+
+  .dashboard__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dashboard__metrics {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 576px) {
+  .dashboard {
+    padding: 1rem;
+  }
+
+  .dashboard__title {
+    font-size: 1.5rem;
+  }
+}
