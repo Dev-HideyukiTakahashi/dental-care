@@ -3,15 +3,15 @@ import { IRole } from './role.model';
 import { ISchedule } from './schedule.model';
 
 export interface IDentist {
-  id: number;
+  id?: number;
   speciality: string;
   registrationNumber: string;
-  score: number;
+  score?: number;
   name: string;
   email: string;
-  password: string;
+  password?: string;
   phone: string;
-  roles: IRole[];
-  ratings: IRating[];
-  schedules: ISchedule[];
+  roles?: IRole[];
+  ratings?: IRating[];
+  schedules?: ISchedule[];
 }

@@ -6,10 +6,11 @@ import { DentistService } from '../../core/service/dentist.service';
 import { IDentistMin } from '../../model/dentist-min.model';
 import { IDentist } from '../../model/dentist.model';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
+import { DentistFormModalComponent } from '../../shared/components/dentist-form-modal/dentist-form-modal.component';
 
 @Component({
   selector: 'app-dentist-list',
-  imports: [CommonModule],
+  imports: [CommonModule, DentistFormModalComponent],
   templateUrl: './dentist-list.component.html',
   styleUrl: './dentist-list.component.scss',
 })
@@ -19,6 +20,7 @@ export class DentistListComponent implements OnInit {
   dentists$!: Observable<IDentistMin[]>;
   showDentistModal = false;
   selectedDentist: IDentist | null = null;
+  formErrorMessage: string | null = null;
 
   constructor(private dialog: MatDialog) {}
 
@@ -33,12 +35,17 @@ export class DentistListComponent implements OnInit {
   }
 
   openAddDentistModal(): void {
-    this.selectedDentist = null;
+    this.selectedDentist = this.selectedDentist;
     this.showDentistModal = true;
   }
 
   openEditModal(number: number): void {
-    this.showDentistModal = true;
+    this.formErrorMessage = '';
+    this.dentistService.findById(number).subscribe({
+      next: (response) => {
+        (this.selectedDentist = response), (this.showDentistModal = true);
+      },
+    });
   }
 
   closeModal(): void {
@@ -48,19 +55,32 @@ export class DentistListComponent implements OnInit {
 
   handleSave(dentist: IDentist): void {
     if (dentist.id) {
-      // Atualizar existente
-      this.dentistService.updateDentist().subscribe({
-        next: () => this.loadDentists(),
-        error: (err: any) => console.error(err),
+      // UPDATE
+      this.dentistService.updateDentist(dentist).subscribe({
+        next: () => {
+          this.loadDentists();
+          setTimeout(() => this.closeModal(), 1000);
+        },
+        error: (err: any) => this.handleFormError(err),
       });
     } else {
-      // Criar novo
+      // CREATE
       this.dentistService.createDentist().subscribe({
-        next: () => this.loadDentists(),
-        error: (err: any) => console.error(err),
+        next: () => {
+          this.loadDentists();
+          setTimeout(() => this.closeModal(), 1000);
+        },
+        error: (err: any) => this.handleFormError(err),
       });
     }
-    this.closeModal();
+  }
+
+  handleFormError(err: any): void {
+    if (err.status === 409) {
+      this.formErrorMessage = 'O e-mail informado já está em uso.';
+    } else {
+      this.formErrorMessage = 'Erro ao salvar os dados. Tente novamente.';
+    }
   }
 
   confirmDelete(id: number): void {

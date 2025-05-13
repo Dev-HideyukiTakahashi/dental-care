@@ -1,112 +1,107 @@
 <div class="modal-backdrop">
   <div class="modal" (click)="$event.stopPropagation()">
     <div class="modal-content">
+      <div *ngIf="formErrorMessage" class="alert alert-danger">
+        {{ formErrorMessage }}
+      </div>
       <h2>{{ isEditMode ? 'Editar Dentista' : 'Adicionar Dentista' }}</h2>
 
-      <form #dentistForm="ngForm" (ngSubmit)="onSubmit()">
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
         <div class="modal-body">
-          <!-- Nome -->
+          <!-- NAME -->
           <div class="form-group">
             <label for="name">Nome Completo</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              [(ngModel)]="formData.name"
-              required
-              class="form-control"
-            />
+            <input type="text" id="name" formControlName="name" class="form-control" />
+            <small
+              *ngIf="registerForm.get('name')?.touched && registerForm.get('name')?.invalid"
+              class="text-danger"
+            >
+              Nome é obrigatório
+            </small>
           </div>
 
-          <!-- Especialidade -->
+          <!-- SPECIALITY -->
           <div class="form-group">
             <label for="speciality">Especialidade</label>
-            <input
-              type="text"
-              id="speciality"
-              name="speciality"
-              [(ngModel)]="formData.speciality"
-              required
-              class="form-control"
-            />
+            <input type="text" id="speciality" formControlName="speciality" class="form-control" />
+            <small
+              *ngIf="
+                registerForm.get('speciality')?.touched && registerForm.get('speciality')?.invalid
+              "
+              class="text-danger"
+            >
+              Especialidade é obrigatória
+            </small>
           </div>
 
-          <!-- Registro -->
+          <!-- REGISTRATION -->
           <div class="form-group">
             <label for="registrationNumber">Registro Profissional</label>
             <input
               type="text"
               id="registrationNumber"
-              name="registrationNumber"
-              [(ngModel)]="formData.registrationNumber"
-              required
+              formControlName="registrationNumber"
               class="form-control"
             />
+            <small
+              *ngIf="
+                registerForm.get('registrationNumber')?.touched &&
+                registerForm.get('registrationNumber')?.invalid
+              "
+              class="text-danger"
+            >
+              Registro profissional é obrigatório
+            </small>
           </div>
 
-          <!-- Email -->
+          <!-- EMAIL -->
           <div class="form-group">
             <label for="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              [(ngModel)]="formData.email"
-              required
-              class="form-control"
-            />
+            <input type="email" id="email" formControlName="email" class="form-control" />
+            <small
+              class="text-danger"
+              *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid"
+            >
+              <span *ngIf="registerForm.get('email')?.errors?.['required']"
+                >Email é obrigatório.</span
+              >
+              <span *ngIf="registerForm.get('email')?.errors?.['email']">Email inválido.</span>
+            </small>
           </div>
 
-          <!-- Telefone -->
+          <!-- PHONE -->
           <div class="form-group">
             <label for="phone">Telefone</label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              [(ngModel)]="formData.phone"
-              required
-              class="form-control"
-              placeholder="(00) 00000-0000"
-            />
+            <input type="tel" id="phone" formControlName="phone" class="form-control" />
+            <small
+              *ngIf="registerForm.get('phone')?.touched && registerForm.get('phone')?.invalid"
+              class="text-danger"
+            >
+              <span *ngIf="registerForm.get('phone')?.errors?.['required']"
+                >Telefone é obrigatório.</span
+              >
+              <span *ngIf="registerForm.get('phone')?.errors?.['pattern']">Telefone inválido.</span>
+            </small>
           </div>
 
-          <!-- Senha (só mostra campo se for novo ou se quiser alterar) -->
-          @if(!isEditMode) {
-          <div class="form-group">
+          <!-- PASSWORD -->
+          <div class="form-group" *ngIf="!isEditMode">
             <label for="password">Senha</label>
             <div class="password-input">
               <input
                 [type]="showPassword ? 'text' : 'password'"
                 id="password"
-                name="password"
-                [(ngModel)]="formData.password"
-                [required]="!isEditMode"
+                formControlName="password"
                 class="form-control"
               />
               <button type="button" class="toggle-password" (click)="togglePasswordVisibility()">
                 <i class="fas {{ showPassword ? 'fa-eye-slash' : 'fa-eye' }}"></i>
               </button>
             </div>
+            <small class="text-danger" *ngFor="let error of getPasswordErrors()">
+              {{ error }}
+            </small>
           </div>
-          } @else {
-          <div class="form-group">
-            <label for="password">Nova Senha (opcional)</label>
-            <div class="password-input">
-              <input
-                [type]="showPassword ? 'text' : 'password'"
-                id="password"
-                name="password"
-                [(ngModel)]="formData.password"
-                class="form-control"
-                placeholder="Use sua senha para manter a atual"
-              />
-              <button type="button" class="toggle-password" (click)="togglePasswordVisibility()">
-                <i class="fas {{ showPassword ? 'fa-eye-slash' : 'fa-eye' }}"></i>
-              </button>
-            </div>
-          </div>
-          }
         </div>
 
         <div class="modal-actions">
@@ -114,13 +109,10 @@
           <button
             type="submit"
             class="btn btn-primary"
-            [disabled]="!dentistForm.valid || isSubmitting"
+            [disabled]="registerForm.invalid || isSubmitting"
           >
-            @if(isSubmitting) {
-            <span class="spinner-border spinner-border-sm"></span>
-            Salvando... } @else {
-            <span>{{ isEditMode ? 'Atualizar' : 'Cadastrar' }}</span>
-            }
+            <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm"></span>
+            <span *ngIf="!isSubmitting">{{ isEditMode ? 'Atualizar' : 'Cadastrar' }}</span>
           </button>
         </div>
       </form>

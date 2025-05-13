@@ -12,8 +12,8 @@
   display: block;
   padding: 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  max-width: 50vw;
-  max-height: 75vh;
+  max-width: 60vw;
+  max-height: 85vh;
   overflow-y: auto;
 
   .modal-content {
@@ -146,8 +146,7 @@ input[type='text'] {
 
 @media (max-width: 576px) {
   .modal {
-    width: 95%;
-    margin: 0 auto;
+    max-width: 90vw;
   }
 
   .modal-actions {

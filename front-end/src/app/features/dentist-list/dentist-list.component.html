@@ -1,5 +1,5 @@
 <div class="dentist-container">
-  <!-- Cabeçalho -->
+  <!-- HEADER -->
   <div class="dentist-header">
     <div class="header-left">
       <h2 class="title">Gerenciamento de Dentistas</h2>
@@ -10,7 +10,7 @@
     </button>
   </div>
 
-  <!-- Lista de Dentistas -->
+  <!-- DENTIST LIST -->
   <div class="dentist-grid">
     @for (dentist of dentists$ | async; track dentist.id) {
     <div class="dentist-card">
@@ -33,14 +33,14 @@
     </div>
     }
   </div>
-
-  <!-- Modal de Adição/Edição -->
-  <!-- @if(showDentistModal) {
-  <app-dentist-form-modal
-    [dentist]="selectedDentist"
-    (save)="handleSave($event)"
-    (close)="closeModal()"
-  ></app-dentist-form-modal>
-  }
-</div> -->
 </div>
+
+<!-- EDIT DENTIST MODAL -->
+@if(showDentistModal) {
+<app-dentist-form-modal
+  [dentist]="selectedDentist"
+  [formErrorMessage]="formErrorMessage"
+  (save)="handleSave($event)"
+  (close)="closeModal()"
+></app-dentist-form-modal>
+}
