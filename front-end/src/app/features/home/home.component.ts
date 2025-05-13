@@ -120,12 +120,9 @@ export class HomeComponent {
     setTimeout(() => {
       this.editMessage = null;
       this.closeEditModal();
-    }, 3000);
+    }, 1500);
   }
 
-  //  ************************************************
-  //  ******** Cancel Appointment ********************
-  //  ************************************************
   onCancelAppointment(appointmentId: number) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: 'Tem certeza que deseja cancelar a consulta?',
