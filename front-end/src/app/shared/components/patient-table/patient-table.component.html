@@ -1,0 +1,39 @@
+<div class="patient-table-wrapper">
+  <table class="patient-table">
+    <thead class="patient-table__header">
+      <tr>
+        <th class="patient-table__th">Nome</th>
+        <th class="patient-table__th">CPF</th>
+        <th class="patient-table__th">Telefone</th>
+        <th class="patient-table__th">Ações</th>
+      </tr>
+    </thead>
+    <tbody class="patient-table__body">
+      <tr class="patient-table__row" *ngFor="let patient of patients">
+        <td class="patient-table__cell">{{ patient.name }}</td>
+        <td class="patient-table__cell">{{ patient.name }}</td>
+        <td class="patient-table__cell">{{ patient.name }}</td>
+        <td class="patient-table__cell">
+          <div class="patient-table__actions">
+            <button class="patient-btn patient-btn--view" (click)="viewDetails.emit(patient.id)">
+              Ver
+            </button>
+            <button class="patient-btn patient-btn--edit" (click)="editPatient.emit(patient.id)">
+              Alterar
+            </button>
+            <button
+              class="patient-btn patient-btn--delete"
+              (click)="deletePatient.emit(patient.id)"
+            >
+              Excluir
+            </button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  @if(patients.length === 0) {
+  <div class="patient-table__empty">Nenhum paciente encontrado.</div>
+  }
+</div>

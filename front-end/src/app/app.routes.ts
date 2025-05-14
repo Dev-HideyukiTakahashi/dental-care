@@ -7,6 +7,7 @@ import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { DentistListComponent } from './features/dentist-list/dentist-list.component';
 import { HomeComponent } from './features/home/home.component';
 import { MainComponent } from './features/main/main.component';
+import { PatientListComponent } from './features/patient-list/patient-list.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -28,6 +29,12 @@ export const routes: Routes = [
       {
         path: 'dentists',
         component: DentistListComponent,
+        canActivate: [authGuard],
+        data: { roles: ['admin'] },
+      },
+      {
+        path: 'patients',
+        component: PatientListComponent,
         canActivate: [authGuard],
         data: { roles: ['admin'] },
       },

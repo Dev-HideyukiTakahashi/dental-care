@@ -53,7 +53,7 @@ export class DashboardComponent {
   }
 
   private loadPatients() {
-    this.patientService.findAll().subscribe({
+    this.patientService.findAll(0, 10).subscribe({
       next: (patients) => {
         this.totalPatients = patients.page.totalElements;
       },
@@ -61,7 +61,7 @@ export class DashboardComponent {
   }
 
   private loadAppointments() {
-    this.appointmentService.findAll(10, 0).subscribe({
+    this.appointmentService.findAll(0, 10).subscribe({
       next: (appointments) => {
         this.totalAppointments = appointments.page.totalElements;
       },

@@ -45,6 +45,15 @@
       }
     }
 
+    &--edit {
+      background-color: #efefef;
+      color: #212529;
+
+      &:hover {
+        background-color: #bcbbb9;
+      }
+    }
+
     &--cancel {
       background-color: #dc3545;
       color: #fff;
