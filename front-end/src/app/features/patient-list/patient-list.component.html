@@ -1,0 +1,43 @@
+<div class="patient-container">
+  <div class="patient-container__header">
+    <div class="patient-container__header-left">
+      <h1 class="title">Pacientes Cadastrados</h1>
+      <p class="subtitle">Lista completa de pacientes do sistema</p>
+    </div>
+    <button class="add-button" (click)="openAddPatientModal()">
+      <i class="fas fa-plus"></i> Adicionar Paciente
+    </button>
+  </div>
+  <div *ngIf="deleteErrorMessage" class="alert alert-danger">
+    {{ deleteErrorMessage }}
+  </div>
+
+  <app-patient-table
+    [patients]="(patients$ | async) || []"
+    (viewDetails)="openPatientDetails($event)"
+    (editPatient)="openEditModal($event)"
+    (deletePatient)="onDeletePatient($event)"
+  ></app-patient-table>
+
+  <app-pagination
+    [currentPage]="pageInfo.page.number"
+    [totalPages]="pageInfo.page.totalPages"
+    (pageChange)="loadPatients($event)"
+    *ngIf="pageInfo.page.totalPages > 1"
+  ></app-pagination>
+
+  <app-patient-details
+    *ngIf="showPatientDetailsModal && selectedPatient"
+    [patient]="selectedPatient"
+    (close)="closeDetailsModal()"
+  ></app-patient-details>
+
+  <!-- <app-patient-form-modal
+    *ngIf="showEditModal"
+    [patient]="editedPatient"
+    [message]="editMessage"
+    [isSuccess]="editSuccess"
+    (save)="updatePatient($event)"
+    (close)="closeEditModal()"
+  ></app-patient-form-modal> -->
+</div>

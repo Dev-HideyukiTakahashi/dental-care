@@ -1,0 +1,41 @@
+<div class="modal-backdrop" (click)="close.emit()"></div>
+
+<div class="modal-overlay" (click)="$event.stopPropagation()">
+  <div class="modal">
+    <div class="modal-content">
+      <h2>Detalhes da Consulta</h2>
+
+      <!-- MODAL BODY -->
+      <div class="modal-body" *ngIf="patient">
+        <p><strong>Nome:</strong> {{ patient.name }}</p>
+        <p><strong>Email:</strong> {{ patient.email }}</p>
+        <p><strong>Telefone:</strong> {{ patient.phone | phone }}</p>
+
+        <hr />
+
+        @if(patient.appointments.length > 0){
+        <h3>Última Consulta</h3>
+        <p>
+          <strong>Data:</strong>
+          {{ patient.appointments[patient.appointments.length - 1]!.date | date : 'dd/MM/yyyy' }}
+        </p>
+        <p>
+          <strong>Dentista:</strong>
+          {{ patient.appointments[patient.appointments.length - 1]!.dentist }}
+        </p>
+        <p>
+          <strong>Descrição:</strong>
+          {{ patient.appointments[patient.appointments.length - 1]!.description }}
+        </p>
+        <p>
+          <strong>Status:</strong>
+          {{ patient.appointments[patient.appointments.length - 1]!.status | appointmentStatus }}
+        </p>
+        }
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" (click)="close.emit()">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
