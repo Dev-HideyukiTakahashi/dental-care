@@ -1,9 +1,6 @@
 <div class="modal-backdrop">
   <div class="modal" (click)="$event.stopPropagation()">
     <div class="modal-content">
-      <div *ngIf="formErrorMessage" class="alert alert-danger">
-        {{ formErrorMessage }}
-      </div>
       <h2>{{ isEditMode ? 'Editar Dentista' : 'Adicionar Dentista' }}</h2>
 
       <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
@@ -103,7 +100,9 @@
             </small>
           </div>
         </div>
-
+        <div *ngIf="formErrorMessage" class="alert alert-danger mt-3 text-center">
+          {{ formErrorMessage }}
+        </div>
         <div class="modal-actions">
           <button type="button" class="btn btn-secondary" (click)="onClose()">Cancelar</button>
           <button

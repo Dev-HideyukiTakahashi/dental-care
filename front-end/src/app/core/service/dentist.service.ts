@@ -28,8 +28,8 @@ export class DentistService {
     return this.http.put<IDentist>(`${this.API}/dentists/${dentist.id}`, dentist);
   }
 
-  createDentist(): any {
-    return null;
+  createDentist(dentist: IDentist): Observable<IDentist> {
+    return this.http.post<IDentist>(`${this.API}/dentists`, dentist);
   }
 
   deleteDentist(id: number): Observable<void> {

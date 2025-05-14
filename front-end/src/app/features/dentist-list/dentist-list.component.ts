@@ -36,6 +36,7 @@ export class DentistListComponent implements OnInit {
   }
 
   openAddDentistModal(): void {
+    this.formErrorMessage = '';
     this.selectedDentist = this.selectedDentist;
     this.showDentistModal = true;
   }
@@ -66,7 +67,7 @@ export class DentistListComponent implements OnInit {
       });
     } else {
       // CREATE
-      this.dentistService.createDentist().subscribe({
+      this.dentistService.createDentist(dentist).subscribe({
         next: () => {
           this.loadDentists();
           setTimeout(() => this.closeModal(), 1000);
