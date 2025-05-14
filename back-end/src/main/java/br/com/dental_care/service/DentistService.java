@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.dental_care.dto.CreateDentistDTO;
 import br.com.dental_care.dto.DentistDTO;
 import br.com.dental_care.dto.DentistMinDTO;
 import br.com.dental_care.dto.UpdateDentistDTO;
@@ -51,7 +52,7 @@ public class DentistService {
     }
 
     @Transactional
-    public DentistDTO save(DentistDTO dto) {
+    public DentistDTO save(CreateDentistDTO dto) {
         Dentist dentist = new Dentist();
         validateEmail(dto.getEmail(), dentist.getId());
         copyToEntity(dentist, dto);
@@ -90,7 +91,7 @@ public class DentistService {
         }
     }
 
-    public void copyToEntity(Dentist dentist, DentistDTO dto) {
+    public void copyToEntity(Dentist dentist, CreateDentistDTO dto) {
         dentist.setName(dto.getName());
         dentist.setPassword(passwordEncoder.encode(dto.getPassword()));
         dentist.setEmail(dto.getEmail());

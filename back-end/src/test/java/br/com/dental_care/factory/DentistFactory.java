@@ -1,5 +1,6 @@
 package br.com.dental_care.factory;
 
+import br.com.dental_care.dto.CreateDentistDTO;
 import br.com.dental_care.dto.DentistDTO;
 import br.com.dental_care.dto.DentistMinDTO;
 import br.com.dental_care.dto.UpdateDentistDTO;
@@ -26,6 +27,23 @@ public class DentistFactory {
 
     public DentistDTO createValidDentistDTO() {
         DentistDTO dto = DentistDTO.builder()
+                .id(1L)
+                .name("Dr. John Doe")
+                .email("john.doe@example.com")
+                .phone("(11) 99710-2376")
+                .speciality("Orthodontics")
+                .registrationNumber("DR12345")
+                .score(8)
+                .build();
+
+        dto.addRole(RoleFactory.createDentistRoleDTO());
+        dto.addSchedule(ScheduleFactory.createValidScheduleDTO());
+        dto.addRating(RatingFactory.createValidRatingDTO());
+        return dto;
+    }
+
+    public CreateDentistDTO createValidNewDentistDTO() {
+        CreateDentistDTO dto = CreateDentistDTO.builder()
                 .id(1L)
                 .name("Dr. John Doe")
                 .email("john.doe@example.com")

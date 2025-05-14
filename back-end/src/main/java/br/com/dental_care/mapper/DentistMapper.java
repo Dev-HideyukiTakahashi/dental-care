@@ -12,7 +12,6 @@ public class DentistMapper {
                 .id(entity.getId())
                 .name(entity.getName())
                 .email(entity.getEmail())
-                .password("**********")
                 .phone(entity.getPhone())
                 .speciality(entity.getSpeciality())
                 .registrationNumber(entity.getRegistrationNumber())

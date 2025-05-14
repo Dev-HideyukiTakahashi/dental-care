@@ -63,6 +63,8 @@ export class DentistFormModalComponent {
     if (this.isEditMode && !formValue.password) {
       formValue.id = this.dentist?.id;
       formValue.password = this.dentist?.password ?? '';
+
+      delete formValue.password; // remove this attribute in payload
     }
 
     // CREATE MODAL

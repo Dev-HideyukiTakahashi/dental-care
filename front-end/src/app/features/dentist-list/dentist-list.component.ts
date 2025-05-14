@@ -37,7 +37,6 @@ export class DentistListComponent implements OnInit {
 
   openAddDentistModal(): void {
     this.formErrorMessage = '';
-    this.selectedDentist = this.selectedDentist;
     this.showDentistModal = true;
   }
 

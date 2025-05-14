@@ -25,6 +25,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import br.com.dental_care.dto.CreateDentistDTO;
 import br.com.dental_care.dto.DentistDTO;
 import br.com.dental_care.dto.DentistMinDTO;
 import br.com.dental_care.dto.UpdateDentistDTO;
@@ -60,6 +61,7 @@ class DentistServiceTest {
     private Dentist dentist;
     private DentistDTO dentistDTO;
     private UpdateDentistDTO updateDentistDTO;
+    private CreateDentistDTO createDentistDTO;
     private User user;
     private Long validId;
     private Long invalidId;
@@ -70,6 +72,7 @@ class DentistServiceTest {
         dentist = DentistFactory.createValidDentist();
         dentistDTO = DentistFactory.createValidDentistDTO();
         updateDentistDTO = DentistFactory.createValidUpdateDentistDTO();
+        createDentistDTO = DentistFactory.createValidNewDentistDTO();
         user = UserFactory.createValidUser();
         validId = 1L;
         dependentId = 2L;
@@ -122,15 +125,15 @@ class DentistServiceTest {
     void save_ShouldReturnDentistDTO_WhenSuccessful() {
 
         when(userRepository.findByEmail(dentistDTO.getEmail())).thenReturn(Optional.empty());
-        when(passwordEncoder.encode(dentistDTO.getPassword())).thenReturn("encodedPassword");
+        when(passwordEncoder.encode(createDentistDTO.getPassword())).thenReturn("encodedPassword");
         when(dentistRepository.save(any(Dentist.class))).thenReturn(dentist);
 
-        DentistDTO dto = dentistService.save(dentistDTO);
+        DentistDTO dto = dentistService.save(createDentistDTO);
 
         assertNotNull(dto);
         assertEquals("Dr. John Doe", dto.getName());
         verify(userRepository, times(1)).findByEmail(dentistDTO.getEmail());
-        verify(passwordEncoder, times(1)).encode(dentistDTO.getPassword());
+        verify(passwordEncoder, times(1)).encode(createDentistDTO.getPassword());
         verify(dentistRepository, times(1)).save(any(Dentist.class));
     }
 
@@ -140,7 +143,7 @@ class DentistServiceTest {
         when(userRepository.findByEmail(dentistDTO.getEmail())).thenReturn(Optional.of(new User()));
         when(userRepository.findByEmail(dentistDTO.getEmail())).thenReturn(Optional.of(user));
 
-        Exception exception = assertThrows(DatabaseException.class, () -> dentistService.save(dentistDTO));
+        Exception exception = assertThrows(DatabaseException.class, () -> dentistService.save(createDentistDTO));
 
         assertEquals("Email already exists.", exception.getMessage());
 

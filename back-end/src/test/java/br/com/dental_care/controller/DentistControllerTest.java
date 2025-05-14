@@ -6,7 +6,8 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
-import br.com.dental_care.dto.DentistDTO;
+import br.com.dental_care.dto.CreateDentistDTO;
+import br.com.dental_care.dto.UpdateDentistDTO;
 import br.com.dental_care.util.TokenUtil;
 import io.restassured.http.ContentType;
 
@@ -102,7 +103,7 @@ public class DentistControllerTest extends BaseIntegrationTest {
   void insert_Should_return201_When_adminLoggedAndValidData() throws Exception {
     String accessToken = TokenUtil.obtainAccessToken("elias.warrior@example.com", "123456");
 
-    DentistDTO dto = DentistDTO.builder()
+    CreateDentistDTO dto = CreateDentistDTO.builder()
         .name("Dr. Teste")
         .email("dr.teste@example.com")
         .speciality("Orthodontics")
@@ -128,7 +129,7 @@ public class DentistControllerTest extends BaseIntegrationTest {
   void insert_Should_return422_When_adminLoggedAndInvalidData() throws Exception {
     String accessToken = TokenUtil.obtainAccessToken("elias.warrior@example.com", "123456");
 
-    DentistDTO dto = DentistDTO.builder()
+    CreateDentistDTO dto = CreateDentistDTO.builder()
         .name("Dr. Teste")
         .email("")
         .speciality("")
@@ -152,7 +153,7 @@ public class DentistControllerTest extends BaseIntegrationTest {
   void insert_Should_return403_When_dentistLogged() throws Exception {
     String accessToken = TokenUtil.obtainAccessToken("victor.dent@example.com", "123456");
 
-    DentistDTO dto = DentistDTO.builder()
+    CreateDentistDTO dto = CreateDentistDTO.builder()
         .name("Dr. Teste")
         .email("dr.teste@example.com")
         .speciality("Orthodontics")
@@ -176,7 +177,7 @@ public class DentistControllerTest extends BaseIntegrationTest {
   void update_Should_return200_When_adminLoggedAndValidData() throws Exception {
     String accessToken = TokenUtil.obtainAccessToken("elias.warrior@example.com", "123456");
 
-    DentistDTO dto = DentistDTO.builder()
+    UpdateDentistDTO dto = UpdateDentistDTO.builder()
         .name("Dr. Updated")
         .email("dr.updated@example.com")
         .speciality("Orthodontics")
@@ -202,7 +203,7 @@ public class DentistControllerTest extends BaseIntegrationTest {
   void update_Should_return200_When_dentistLogged() throws Exception {
     String accessToken = TokenUtil.obtainAccessToken("victor.dent@example.com", "123456");
 
-    DentistDTO dto = DentistDTO.builder()
+    UpdateDentistDTO dto = UpdateDentistDTO.builder()
         .name("Dr. Updated")
         .email("dr.updated@example.com")
         .speciality("Orthodontics")
@@ -228,7 +229,7 @@ public class DentistControllerTest extends BaseIntegrationTest {
   void update_Should_return422_When_adminLoggedAndInvalidData() throws Exception {
     String accessToken = TokenUtil.obtainAccessToken("elias.warrior@example.com", "123456");
 
-    DentistDTO dto = DentistDTO.builder()
+    UpdateDentistDTO dto = UpdateDentistDTO.builder()
         .name("Dr. Updated")
         .email("")
         .speciality("Orthodontics")
@@ -252,12 +253,12 @@ public class DentistControllerTest extends BaseIntegrationTest {
   void deleteById_Should_return204_When_adminDeletesDentistWithoutDependencies() throws Exception {
     String accessToken = TokenUtil.obtainAccessToken("elias.warrior@example.com", "123456");
 
-    DentistDTO newDentist = DentistDTO.builder()
+    CreateDentistDTO newDentist = CreateDentistDTO.builder()
         .name("Dr. Teste")
         .email("dr.teste2@example.com")
         .speciality("Orthodontics")
-        .password("#Newpassword123")
         .registrationNumber("123456")
+        .password("#Minhasenha123")
         .phone("11999998888")
         .build();
 
