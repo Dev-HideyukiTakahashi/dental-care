@@ -21,6 +21,7 @@ export class DentistListComponent implements OnInit {
   showDentistModal = false;
   selectedDentist: IDentist | null = null;
   formErrorMessage: string | null = null;
+  deleteErrorMessage: string | null = null;
 
   constructor(private dialog: MatDialog) {}
 
@@ -90,9 +91,14 @@ export class DentistListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.dentistService.deleteDentist().subscribe({
+        this.dentistService.deleteDentist(id).subscribe({
           next: () => this.loadDentists(),
-          error: (err: any) => console.error(err),
+          error: () => {
+            this.deleteErrorMessage = 'Dentista associado a registros não pode ser excluído.';
+            setTimeout(() => {
+              this.deleteErrorMessage = '';
+            }, 3000);
+          },
         });
       }
     });

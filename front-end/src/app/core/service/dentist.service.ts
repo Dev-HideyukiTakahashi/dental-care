@@ -32,7 +32,7 @@ export class DentistService {
     return null;
   }
 
-  deleteDentist(): any {
-    return null;
+  deleteDentist(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.API}/dentists/${id}`);
   }
 }
