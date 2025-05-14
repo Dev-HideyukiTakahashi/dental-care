@@ -9,11 +9,18 @@ import { IPatient } from '../../model/patient-model';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
 import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
 import { PatientDetailsComponent } from '../../shared/components/patient-details/patient-details.component';
+import { PatientFormModalComponent } from '../../shared/components/patient-form-modal/patient-form-modal.component';
 import { PatientTableComponent } from '../../shared/components/patient-table/patient-table.component';
 
 @Component({
   selector: 'app-patient-list',
-  imports: [PaginationComponent, PatientTableComponent, CommonModule, PatientDetailsComponent],
+  imports: [
+    PaginationComponent,
+    PatientTableComponent,
+    CommonModule,
+    PatientDetailsComponent,
+    PatientFormModalComponent,
+  ],
   templateUrl: './patient-list.component.html',
   styleUrl: './patient-list.component.scss',
 })
@@ -26,12 +33,10 @@ export class PatientListComponent implements OnInit {
   };
 
   patients$!: Observable<IPatientMin[]>;
-  selectedPatient: IPatient | null = null;
+  showPatientModal = false;
   showPatientDetailsModal = false;
-  showEditModal = false;
-  editedPatient!: IPatient;
-  editMessage: string | null = null;
-  editSuccess = false;
+  selectedPatient: IPatient | null = null;
+  formErrorMessage: string | null = null;
   deleteErrorMessage: string | null = null;
 
   constructor(private dialog: MatDialog) {}
@@ -46,7 +51,6 @@ export class PatientListComponent implements OnInit {
         this.pageInfo = response;
         this.patients$ = of(response.content);
       },
-      error: (err: any) => console.error(err),
     });
   }
 
@@ -65,32 +69,53 @@ export class PatientListComponent implements OnInit {
   }
 
   openEditModal(id: number): void {
-    // this.editedPatient =
-    // TODO
-    this.showEditModal = true;
-    this.editMessage = null;
-    this.editSuccess = false;
-  }
-
-  closeEditModal(): void {
-    this.showEditModal = false;
-  }
-
-  openAddPatientModal() {}
-
-  updatePatient(updateData: IPatient): void {
-    this.patientService.updatePatient(updateData).subscribe({
-      next: () => {
-        this.editMessage = 'Paciente atualizado com sucesso!';
-        this.editSuccess = true;
-        this.loadPatients(this.pageInfo.page.number);
-        setTimeout(() => this.closeEditModal(), 2000);
-      },
-      error: (err: any) => {
-        this.editMessage = 'Erro ao atualizar paciente';
-        console.error(err);
+    this.formErrorMessage = '';
+    this.patientService.findById(id).subscribe({
+      next: (response) => {
+        this.selectedPatient = response;
+        this.showPatientModal = true;
       },
     });
+  }
+
+  closeModal(): void {
+    this.showPatientModal = false;
+    this.selectedPatient = null;
+  }
+
+  handleSave(patient: IPatient): void {
+    if (patient.id) {
+      // UPDATE
+      this.patientService.updatePatient(patient).subscribe({
+        next: () => {
+          this.loadPatients(0);
+          setTimeout(() => this.closeModal(), 1000);
+        },
+        error: (err: any) => this.handleFormError(err),
+      });
+    } else {
+      // CREATE
+      this.patientService.createPatient(patient).subscribe({
+        next: () => {
+          this.loadPatients(0);
+          setTimeout(() => this.closeModal(), 1000);
+        },
+        error: (err: any) => this.handleFormError(err),
+      });
+    }
+  }
+
+  openAddPatientModal() {
+    this.formErrorMessage = '';
+    this.showPatientModal = true;
+  }
+
+  handleFormError(err: any): void {
+    if (err.status === 409) {
+      this.formErrorMessage = 'O e-mail informado já está em uso.';
+    } else {
+      this.formErrorMessage = 'Erro ao salvar os dados. Tente novamente.';
+    }
   }
 
   onDeletePatient(patientId: number): void {

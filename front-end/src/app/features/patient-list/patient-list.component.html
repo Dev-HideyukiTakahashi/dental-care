@@ -32,12 +32,11 @@
     (close)="closeDetailsModal()"
   ></app-patient-details>
 
-  <!-- <app-patient-form-modal
-    *ngIf="showEditModal"
-    [patient]="editedPatient"
-    [message]="editMessage"
-    [isSuccess]="editSuccess"
-    (save)="updatePatient($event)"
-    (close)="closeEditModal()"
-  ></app-patient-form-modal> -->
+  <app-patient-form-modal
+    *ngIf="showPatientModal"
+    [patient]="selectedPatient"
+    [formErrorMessage]="formErrorMessage"
+    (save)="handleSave($event)"
+    (close)="closeModal()"
+  ></app-patient-form-modal>
 </div>
