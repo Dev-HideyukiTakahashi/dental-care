@@ -1,16 +1,21 @@
 package br.com.dental_care.service;
 
-import br.com.dental_care.dto.PatientDTO;
-import br.com.dental_care.dto.PatientMinDTO;
-import br.com.dental_care.exception.DatabaseException;
-import br.com.dental_care.exception.ResourceNotFoundException;
-import br.com.dental_care.factory.PatientFactory;
-import br.com.dental_care.factory.UserFactory;
-import br.com.dental_care.model.Patient;
-import br.com.dental_care.model.User;
-import br.com.dental_care.repository.PatientRepository;
-import br.com.dental_care.repository.RoleRepository;
-import br.com.dental_care.repository.UserRepository;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,11 +28,19 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import br.com.dental_care.dto.CreatePatientDTO;
+import br.com.dental_care.dto.PatientDTO;
+import br.com.dental_care.dto.PatientMinDTO;
+import br.com.dental_care.dto.UpdatePatientDTO;
+import br.com.dental_care.exception.DatabaseException;
+import br.com.dental_care.exception.ResourceNotFoundException;
+import br.com.dental_care.factory.PatientFactory;
+import br.com.dental_care.factory.UserFactory;
+import br.com.dental_care.model.Patient;
+import br.com.dental_care.model.User;
+import br.com.dental_care.repository.PatientRepository;
+import br.com.dental_care.repository.RoleRepository;
+import br.com.dental_care.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class PatientServiceTest {
@@ -51,6 +64,8 @@ public class PatientServiceTest {
     private UserRepository userRepository;
 
     private PatientDTO patientDTO;
+    private CreatePatientDTO createPatientDTO;
+    private UpdatePatientDTO updatePatientDTO;
     private Patient patient;
     private Long validId;
     private Long dependentId;
@@ -62,6 +77,8 @@ public class PatientServiceTest {
     @BeforeEach
     void setUp() {
         patientDTO = PatientFactory.createValidPatientDTO();
+        createPatientDTO = PatientFactory.createValidNewPatientDTO();
+        updatePatientDTO = PatientFactory.createValidUpdatePatientDTO();
         patient = PatientFactory.createValidPatient();
         validId = 1L;
         dependentId = 2L;
@@ -125,10 +142,9 @@ public class PatientServiceTest {
 
         when(userRepository.findByEmail(validEmail)).thenReturn(Optional.empty());
         when(patientRepository.save(any(Patient.class))).thenReturn(patient);
-        when(passwordEncoder.encode(patientDTO.getPassword())).thenReturn("encodedPassword");
-        when(roleRepository.existsById(2L)).thenReturn(true);
+        when(passwordEncoder.encode(createPatientDTO.getPassword())).thenReturn("encodedPassword");
 
-        patientDTO = patientService.save(patientDTO);
+        patientDTO = patientService.save(createPatientDTO);
 
         assertNotNull(patientDTO);
         assertEquals(1L, patientDTO.getId());
@@ -141,7 +157,6 @@ public class PatientServiceTest {
 
         verify(userRepository, times(1)).findByEmail(validEmail);
         verify(patientRepository, times(1)).save(any(Patient.class));
-        verify(roleRepository, times(1)).existsById(2L);
     }
 
     @Test
@@ -150,7 +165,7 @@ public class PatientServiceTest {
         when(userRepository.findByEmail(validEmail)).thenReturn(Optional.of(user));
 
         Exception exception = assertThrows(DatabaseException.class, () -> {
-            patientService.save(patientDTO);
+            patientService.save(createPatientDTO);
         });
 
         assertEquals("Email already exists.", exception.getMessage());
@@ -165,11 +180,10 @@ public class PatientServiceTest {
         when(patientRepository.getReferenceById(validId)).thenReturn(patient);
         when(userRepository.findByEmail(validEmail)).thenReturn(Optional.empty());
         when(patientRepository.save(any(Patient.class))).thenReturn(patient);
-        when(passwordEncoder.encode(patientDTO.getPassword())).thenReturn("encodedPassword");
-        when(roleRepository.existsById(2L)).thenReturn(true);
+        when(passwordEncoder.encode(updatePatientDTO.getPassword())).thenReturn("encodedPassword");
         doNothing().when(authService).validateSelfOrAdmin(validId);
 
-        PatientDTO updatedDTO = patientService.update(patientDTO, validId);
+        PatientDTO updatedDTO = patientService.update(updatePatientDTO, validId);
 
         assertNotNull(updatedDTO);
         assertNotNull(updatedDTO.getId());
@@ -180,7 +194,6 @@ public class PatientServiceTest {
 
         verify(patientRepository).getReferenceById(validId);
         verify(userRepository).findByEmail(validEmail);
-        verify(roleRepository).existsById(2L);
         verify(patientRepository).save(any(Patient.class));
         verify(authService).validateSelfOrAdmin(validId);
     }
@@ -191,8 +204,8 @@ public class PatientServiceTest {
         when(patientRepository.getReferenceById(invalidId))
                 .thenThrow(new ResourceNotFoundException("Patient not found! ID: " + invalidId));
 
-        Exception exception = assertThrows(ResourceNotFoundException.class, () ->{
-            patientService.update(patientDTO, invalidId);
+        Exception exception = assertThrows(ResourceNotFoundException.class, () -> {
+            patientService.update(updatePatientDTO, invalidId);
         });
 
         assertEquals("Patient not found! ID: " + invalidId, exception.getMessage());
@@ -207,8 +220,8 @@ public class PatientServiceTest {
         when(patientRepository.getReferenceById(validId)).thenReturn(patient);
         when(userRepository.findByEmail(existingEmail)).thenReturn(Optional.of(user));
 
-        Exception exception = assertThrows(DatabaseException.class, () ->{
-            patientService.update(patientDTO, validId);
+        Exception exception = assertThrows(DatabaseException.class, () -> {
+            patientService.update(updatePatientDTO, validId);
         });
 
         assertEquals("Email already exists.", exception.getMessage());
@@ -262,7 +275,7 @@ public class PatientServiceTest {
 
         when(passwordEncoder.encode("#Password123")).thenReturn("encodedPassword");
 
-        PatientDTO dto = PatientDTO.builder()
+        CreatePatientDTO dto = CreatePatientDTO.builder()
                 .name("John Doe")
                 .email("john@example.com")
                 .phone("123456789")
@@ -279,4 +292,4 @@ public class PatientServiceTest {
         assertEquals(dto.getPhone(), entity.getPhone());
         assertEquals(dto.getMedicalHistory(), entity.getMedicalHistory());
     }
-  }
+}

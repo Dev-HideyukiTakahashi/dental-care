@@ -6,16 +6,16 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
+import br.com.dental_care.dto.CreatePatientDTO;
 import br.com.dental_care.dto.EmailDTO;
 import br.com.dental_care.dto.NewPasswordDTO;
-import br.com.dental_care.dto.PatientDTO;
 import io.restassured.http.ContentType;
 
 public class AuthControllerTest extends BaseIntegrationTest {
 
     @Test
     void registerPatient_Should_return201_When_dataIsValid() throws Exception {
-        PatientDTO dto = PatientDTO.builder()
+        CreatePatientDTO dto = CreatePatientDTO.builder()
                 .name("John Doe")
                 .email("new.patient@example.com")
                 .password("#Password123")
@@ -36,7 +36,7 @@ public class AuthControllerTest extends BaseIntegrationTest {
 
     @Test
     void registerPatient_Should_return422_When_dataIsInvalid() throws Exception {
-        PatientDTO dto = PatientDTO.builder()
+        CreatePatientDTO dto = CreatePatientDTO.builder()
                 .name("John Doe")
                 .email("")
                 .password("#Password123")
@@ -55,7 +55,7 @@ public class AuthControllerTest extends BaseIntegrationTest {
 
     @Test
     void registerPatient_Should_return409_When_emailAlreadyRegistered() throws Exception {
-        PatientDTO dto = PatientDTO.builder()
+        CreatePatientDTO dto = CreatePatientDTO.builder()
                 .name("John Doe")
                 .email("leonardo.smile@example.com")
                 .password("#Password123")

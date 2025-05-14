@@ -1,19 +1,7 @@
 package br.com.dental_care.service;
 
-import br.com.dental_care.dto.PatientDTO;
-import br.com.dental_care.dto.PatientMinDTO;
-import br.com.dental_care.dto.RoleDTO;
-import br.com.dental_care.exception.DatabaseException;
-import br.com.dental_care.exception.ResourceNotFoundException;
-import br.com.dental_care.mapper.PatientMapper;
-import br.com.dental_care.mapper.RoleMapper;
-import br.com.dental_care.model.Patient;
-import br.com.dental_care.model.User;
-import br.com.dental_care.repository.PatientRepository;
-import br.com.dental_care.repository.RoleRepository;
-import br.com.dental_care.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
-import lombok.RequiredArgsConstructor;
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -24,14 +12,26 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import br.com.dental_care.dto.CreatePatientDTO;
+import br.com.dental_care.dto.PatientDTO;
+import br.com.dental_care.dto.PatientMinDTO;
+import br.com.dental_care.dto.UpdatePatientDTO;
+import br.com.dental_care.exception.DatabaseException;
+import br.com.dental_care.exception.ResourceNotFoundException;
+import br.com.dental_care.mapper.PatientMapper;
+import br.com.dental_care.model.Patient;
+import br.com.dental_care.model.Role;
+import br.com.dental_care.model.User;
+import br.com.dental_care.repository.PatientRepository;
+import br.com.dental_care.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class PatientService {
 
     private final PatientRepository patientRepository;
-    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthService authService;
     private final Logger logger = LoggerFactory.getLogger(PatientService.class);
@@ -53,11 +53,12 @@ public class PatientService {
     }
 
     @Transactional
-    public PatientDTO save(PatientDTO dto) {
+    public PatientDTO save(CreatePatientDTO dto) {
         Patient patient = new Patient();
         userRepository.findByEmail(dto.getEmail()).ifPresent(user -> {
             throw new DatabaseException("Email already exists.");
         });
+
         copyToEntity(patient, dto);
         patient = patientRepository.save(patient);
         logger.info("New patient has been created with id: {}", patient.getId());
@@ -65,57 +66,59 @@ public class PatientService {
     }
 
     @Transactional
-    public PatientDTO update(PatientDTO dto, Long id) {
+    public PatientDTO update(UpdatePatientDTO dto, Long id) {
         try {
             Patient patient = patientRepository.getReferenceById(id);
-            validateEmail(dto, patient.getId());
+            validateEmail(dto.getEmail(), patient.getId());
             authService.validateSelfOrAdmin(patient.getId());
-            copyToEntity(patient, dto);
+            copyToUpdateEntity(patient, dto);
             patient = patientRepository.save(patient);
             logger.info("Patient updated successfully, id: {}", patient.getId());
             return PatientMapper.toDTO(patient);
-        } catch(EntityNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException("Patient not found! ID: " + id);
-        } catch(DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException e) {
             throw new DatabaseException("Email already exists.");
         }
     }
 
     @Transactional(propagation = Propagation.SUPPORTS)
     public void deleteById(Long id) {
-        if(!patientRepository.existsById(id))
+        if (!patientRepository.existsById(id))
             throw new ResourceNotFoundException("Patient not found! ID: " + id);
         try {
             patientRepository.deleteById(id);
             logger.info("Patient deleted, id: {}", id);
-        } catch(DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException e) {
             throw new DatabaseException("Database error: Data integrity rules were violated.");
         }
     }
 
-    public void copyToEntity(Patient patient, PatientDTO dto) {
+    public void copyToEntity(Patient patient, CreatePatientDTO dto) {
         patient.setName(dto.getName());
         patient.setPassword(passwordEncoder.encode(dto.getPassword()));
         patient.setEmail(dto.getEmail());
         patient.setPhone(dto.getPhone());
         patient.setMedicalHistory(dto.getMedicalHistory());
         patient.getRoles().clear();
-        checkRoles(patient, dto);
+        patient.getRoles().add(new Role(2L, "ROLE_PATIENT"));
     }
 
-    private void validateEmail(PatientDTO dto, Long patientId) {
-        Optional<User> existingUser = userRepository.findByEmail(dto.getEmail());
-        if(existingUser.isPresent() && !existingUser.get().getId().equals(patientId))
-            throw new DatabaseException("Email already exists.");
-    }
-
-    private void checkRoles(Patient patient, PatientDTO dto) {
-        for(RoleDTO role : dto.getRoles()) {
-            if(!roleRepository.existsById(role.getId())) {
-                logger.warn("Attempted to create a patient with a non-existent role");
-                throw new ResourceNotFoundException("Role does not exist, id: " + role.getId());
-            }
-            patient.getRoles().add(RoleMapper.toEntity(role));
+    public void copyToUpdateEntity(Patient patient, UpdatePatientDTO dto) {
+        patient.setName(dto.getName());
+        if (dto.getPassword() != null) {
+            patient.setPassword(passwordEncoder.encode(dto.getPassword()));
         }
+        patient.setEmail(dto.getEmail());
+        patient.setPhone(dto.getPhone());
+        patient.setMedicalHistory(dto.getMedicalHistory());
+        patient.getRoles().clear();
+        patient.getRoles().add(new Role(2L, "ROLE_PATIENT"));
+    }
+
+    private void validateEmail(String email, Long patientId) {
+        Optional<User> existingUser = userRepository.findByEmail(email);
+        if (existingUser.isPresent() && !existingUser.get().getId().equals(patientId))
+            throw new DatabaseException("Email already exists.");
     }
 }

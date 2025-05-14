@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.dental_care.dto.CreatePatientDTO;
 import br.com.dental_care.dto.EmailDTO;
 import br.com.dental_care.dto.NewPasswordDTO;
 import br.com.dental_care.dto.PatientDTO;
@@ -26,10 +27,10 @@ public class AuthController {
     private final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @PostMapping("/signup")
-    public ResponseEntity<PatientDTO> registerPatient(@Valid @RequestBody PatientDTO dto) {
+    public ResponseEntity<PatientDTO> registerPatient(@Valid @RequestBody CreatePatientDTO dto) {
         logger.info("Initiating patient registration process");
-        dto = authService.registerPatient(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
+        PatientDTO response = authService.registerPatient(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PostMapping("/recover-token")

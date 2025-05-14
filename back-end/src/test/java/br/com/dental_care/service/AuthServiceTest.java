@@ -1,5 +1,27 @@
 package br.com.dental_care.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.lang.reflect.Field;
+import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import br.com.dental_care.dto.CreatePatientDTO;
 import br.com.dental_care.dto.EmailDTO;
 import br.com.dental_care.dto.PatientDTO;
 import br.com.dental_care.exception.ForbiddenException;
@@ -15,21 +37,6 @@ import br.com.dental_care.model.User;
 import br.com.dental_care.repository.PasswordRecoverRepository;
 import br.com.dental_care.repository.PatientRepository;
 import br.com.dental_care.repository.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.lang.reflect.Field;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class AuthServiceTest {
@@ -56,6 +63,7 @@ public class AuthServiceTest {
     private EmailService emailService;
 
     private PatientDTO patientDTO;
+    private CreatePatientDTO createPatientDTO;
     private EmailDTO emailDTO;
     private User user;
     private User loggedUser;
@@ -65,6 +73,7 @@ public class AuthServiceTest {
     @BeforeEach
     void setup() throws NoSuchFieldException, IllegalAccessException {
         patientDTO = PatientFactory.createValidPatientDTO();
+        createPatientDTO = PatientFactory.createValidNewPatientDTO();
         user = UserFactory.createValidUser();
         loggedUser = UserFactory.createValidUser();
         patient = PatientFactory.createValidPatient();
@@ -81,10 +90,10 @@ public class AuthServiceTest {
     void registerPatient_Should_register_When_emailIsValid() {
 
         when(userRepository.findByEmail(patientDTO.getEmail())).thenReturn(Optional.empty());
-        when(passwordEncoder.encode(patientDTO.getPassword())).thenReturn("encodedPwd");
+        when(passwordEncoder.encode(createPatientDTO.getPassword())).thenReturn("encodedPwd");
         when(patientRepository.save(any(Patient.class))).thenReturn(patient);
 
-        PatientDTO result = authService.registerPatient(patientDTO);
+        PatientDTO result = authService.registerPatient(createPatientDTO);
 
         assertEquals(patientDTO.getEmail(), result.getEmail());
         verify(patientRepository, times(1)).save(any(Patient.class));
@@ -95,8 +104,8 @@ public class AuthServiceTest {
 
         when(userRepository.findByEmail(patientDTO.getEmail())).thenReturn(Optional.of(user));
 
-        Exception exception = assertThrows(RegistrationDataException.class, ()
-                -> authService.registerPatient(patientDTO));
+        Exception exception = assertThrows(RegistrationDataException.class,
+                () -> authService.registerPatient(createPatientDTO));
 
         assertEquals("Email already registered.", exception.getMessage());
         verify(patientRepository, never()).save(any());
@@ -118,8 +127,8 @@ public class AuthServiceTest {
 
         when(userRepository.findByEmail(emailDTO.getEmail())).thenReturn(Optional.empty());
 
-        Exception exception = assertThrows(ResourceNotFoundException.class, ()
-                -> authService.createRecoverToken(emailDTO));
+        Exception exception = assertThrows(ResourceNotFoundException.class,
+                () -> authService.createRecoverToken(emailDTO));
 
         assertEquals("Email not found.", exception.getMessage());
         verify(passwordRecoverRepository, never()).save(any());
@@ -132,8 +141,7 @@ public class AuthServiceTest {
 
         when(userService.authenticated()).thenReturn(loggedUser);
 
-        Exception exception = assertThrows(ForbiddenException.class, ()
-                -> authService.validateSelfOrAdmin(1L));
+        Exception exception = assertThrows(ForbiddenException.class, () -> authService.validateSelfOrAdmin(1L));
 
         assertEquals("Access denied: You do not have permission to perform this action", exception.getMessage());
     }

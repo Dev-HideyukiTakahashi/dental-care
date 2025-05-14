@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.dental_care.dto.CreatePatientDTO;
 import br.com.dental_care.dto.EmailDTO;
 import br.com.dental_care.dto.NewPasswordDTO;
 import br.com.dental_care.dto.PatientDTO;
@@ -43,7 +44,7 @@ public class AuthService {
     private final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
     @Transactional
-    public PatientDTO registerPatient(PatientDTO dto) {
+    public PatientDTO registerPatient(CreatePatientDTO dto) {
         validateEmail(dto.getEmail());
 
         Patient patient = buildPatientFromDTO(dto);
@@ -91,7 +92,7 @@ public class AuthService {
         }
     }
 
-    private Patient buildPatientFromDTO(PatientDTO dto) {
+    private Patient buildPatientFromDTO(CreatePatientDTO dto) {
         Patient patient = new Patient();
 
         patient.setName(dto.getName());
