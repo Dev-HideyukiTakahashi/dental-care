@@ -18,12 +18,12 @@ Este sistema de agendamento odontológico facilita a marcação de consultas, o 
 
 ## Funcionalidades
 
-- **Cadastro e Login**: Pacientes, dentistas e administradores podem se registrar e acessar suas contas.
-- **Agendamento de Consultas**: Pacientes podem agendar, remarcar ou cancelar consultas com dentistas.
+- **Cadastro e Login**: Pacientes podem se registrar, acessar suas contas e recuperar a senha via email. Administradores registram dentistas, que podem alterar sua senha.
+- **Agendamento de Consultas**: Pacientes e administradores podem agendar, remarcar ou cancelar consultas com dentistas.
 - **Gestão de Agenda**: Dentistas podem definir, atualizar e bloquear horários para consultas.
 - **Avaliações**: Pacientes podem avaliar dentistas após o atendimento.
-- **Notificações**: Envio de lembretes de consulta para pacientes e dentistas.
-- **Relatórios e Estatísticas**: Administradores podem visualizar dados sobre consultas realizadas e feedbacks.
+- **Notificações**: Envio de lembretes de consulta para pacientes via email 24h antes da consulta.
+- **Relatórios e Estatísticas**: Administradores podem visualizar estatísticas do negócio.
 - **Gerenciamento de Usuários**: Administradores podem cadastrar, editar e excluir contas de pacientes e dentistas.
 
 ---
@@ -73,8 +73,6 @@ Este sistema de agendamento odontológico facilita a marcação de consultas, o 
 ```bash
 git clone https://github.com/Dev-HideyukiTakahashi/dental-care.git
 ```
-
----
 
 2. Backend - navegue até o diretório do projeto:
 
@@ -131,12 +129,6 @@ git clone https://github.com/Dev-HideyukiTakahashi/dental-care.git
 ## Endpoints da API
 
 - A documentação completa da API está disponível em: `http://localhost:8080/swagger-ui/index.html`
-
-## Casos de Uso
-
-- **Paciente**: Agendar consultas, atualizar horário, cancelar, avaliar dentistas, receber notificações.
-- **Dentista**: Gerenciar horários, definir afastamentos.
-- **Administrador**: Gerenciar usuários, cadastrar dentistas, visualizar relatórios de consultas e estatísticas.
 
 ## Licença
 
