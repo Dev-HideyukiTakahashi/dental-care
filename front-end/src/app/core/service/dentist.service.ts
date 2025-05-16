@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { IDentistChangePassword } from '../../model/dentist-change-password.modal';
 import { IDentistMin } from '../../model/dentist-min.model';
 import { IDentist } from '../../model/dentist.model';
 import { Page } from '../../model/page.model';
@@ -36,7 +37,7 @@ export class DentistService {
     return this.http.delete<void>(`${this.API}/dentists/${id}`);
   }
 
-  changePassword(currentPassword: string, newPassword: string): Observable<void> {
-    return this.http.delete<void>(`${this.API}/dentists`);
+  changePassword(body: IDentistChangePassword): Observable<void> {
+    return this.http.put<void>(`${this.API}/dentists/change-password`, body);
   }
 }

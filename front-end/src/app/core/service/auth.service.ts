@@ -96,6 +96,13 @@ export class AuthService {
     }
   }
 
+  getUsername(): string | null {
+    const decoded = this.getDecodedToken();
+    if (!decoded || !decoded.username) return null;
+
+    return String(decoded.username);
+  }
+
   getRole(): UserRole | null {
     if (this.isAdmin()) return UserRole.Admin;
     if (this.isDentist()) return UserRole.Dentist;
