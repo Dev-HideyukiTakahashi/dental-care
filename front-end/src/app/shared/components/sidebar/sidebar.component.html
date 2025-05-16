@@ -34,7 +34,12 @@
         Agenda
       </a>
 
-      }
+      @if(role === 'dentist' ){
+      <a class="nav-link" routerLink="dentist/update-password">
+        <div class="sb-nav-link-icon"><i class="fa-solid fa-key"></i></div>
+        Alterar Senha
+      </a>
+      } }
       <!-- PATIENT  -->
       @if(role === 'patient' || role === 'admin'){
 

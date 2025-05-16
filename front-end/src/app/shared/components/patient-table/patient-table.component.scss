@@ -87,13 +87,6 @@
 
 @media (max-width: 768px) {
   .patient-table {
-    &__th:nth-child(3),
-    &__cell:nth-child(3),
-    &__th:nth-child(4),
-    &__cell:nth-child(4) {
-      display: none;
-    }
-
     &__actions {
       flex-direction: column;
       gap: 0.25rem;

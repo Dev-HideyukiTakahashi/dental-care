@@ -35,4 +35,8 @@ export class DentistService {
   deleteDentist(id: number): Observable<void> {
     return this.http.delete<void>(`${this.API}/dentists/${id}`);
   }
+
+  changePassword(currentPassword: string, newPassword: string): Observable<void> {
+    return this.http.delete<void>(`${this.API}/dentists`);
+  }
 }

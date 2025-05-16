@@ -55,7 +55,7 @@ Este sistema de agendamento odontológico facilita a marcação de consultas, o 
 
 - **GitHub** para versionamento e colaboração.
 - **GitHub Actions** com cobertura de testes e SonarQube para análise de qualidade de código e monitoramento de cobertura de testes no backend.
-- **Trello** para gestão de projeto.
+- **Trello e Notion** para gestão de projeto.
 
 ## Como Rodar o Projeto
 
