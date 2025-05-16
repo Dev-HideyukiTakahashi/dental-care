@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -26,10 +27,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import br.com.dental_care.dto.CreateDentistDTO;
+import br.com.dental_care.dto.DentistChangePasswordDTO;
 import br.com.dental_care.dto.DentistDTO;
 import br.com.dental_care.dto.DentistMinDTO;
 import br.com.dental_care.dto.UpdateDentistDTO;
 import br.com.dental_care.exception.DatabaseException;
+import br.com.dental_care.exception.ForbiddenException;
+import br.com.dental_care.exception.RegistrationDataException;
 import br.com.dental_care.exception.ResourceNotFoundException;
 import br.com.dental_care.factory.DentistFactory;
 import br.com.dental_care.factory.UserFactory;
@@ -58,10 +62,14 @@ class DentistServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private AuthService authService;
+
     private Dentist dentist;
     private DentistDTO dentistDTO;
     private UpdateDentistDTO updateDentistDTO;
     private CreateDentistDTO createDentistDTO;
+    private DentistChangePasswordDTO dentistChangePasswordDTO;
     private User user;
     private Long validId;
     private Long invalidId;
@@ -73,6 +81,7 @@ class DentistServiceTest {
         dentistDTO = DentistFactory.createValidDentistDTO();
         updateDentistDTO = DentistFactory.createValidUpdateDentistDTO();
         createDentistDTO = DentistFactory.createValidNewDentistDTO();
+        dentistChangePasswordDTO = DentistFactory.createValidDentistChangePasswordDTO();
         user = UserFactory.createValidUser();
         validId = 1L;
         dependentId = 2L;
@@ -230,4 +239,62 @@ class DentistServiceTest {
         verify(dentistRepository, times(1)).existsById(dependentId);
         assertEquals("Database error: Data integrity rules were violated.", exception.getMessage());
     }
+
+    @Test
+    void changePassword_ShouldUpdatePasswordSuccessfully() {
+        DentistChangePasswordDTO dto = DentistFactory.createValidDentistChangePasswordDTO();
+
+        String encodedCurrentPassword = passwordEncoder.encode(dto.getPassword());
+        dentist.setPassword(encodedCurrentPassword);
+
+        when(dentistRepository.findByEmail(dto.getUsername())).thenReturn(dentist);
+        when(passwordEncoder.matches(dto.getPassword(), dentist.getPassword())).thenReturn(true);
+        when(passwordEncoder.encode(dto.getNewPassword())).thenReturn("encodedNewPassword");
+
+        dentistService.changePassword(dto);
+
+        verify(authService, times(1)).validateSelfOrAdmin(dentist.getId());
+        verify(passwordEncoder, times(1)).encode(dto.getNewPassword());
+        verify(dentistRepository, times(1)).findByEmail(dto.getUsername());
+
+        assertEquals("encodedNewPassword", dentist.getPassword());
+    }
+
+    @Test
+    void changePassword_ShouldThrowException_WhenNotAuthorized() {
+        doThrow(new ForbiddenException("Access denied: You do not have permission to perform this action"))
+                .when(authService).validateSelfOrAdmin(dentist.getId());
+        when(dentistRepository.findByEmail(any())).thenReturn(dentist);
+
+        assertThrows(ForbiddenException.class, () -> {
+            dentistService.changePassword(dentistChangePasswordDTO);
+        });
+
+        verify(authService, times(1)).validateSelfOrAdmin(dentist.getId());
+        verifyNoInteractions(passwordEncoder);
+    }
+
+    @Test
+    void changePassword_ShouldThrowException_WhenCurrentPasswordIsIncorrect() {
+        DentistChangePasswordDTO dto = DentistChangePasswordDTO.builder()
+                .username("email@example.com")
+                .password("wrongCurrentPassword")
+                .newPassword("newPassword123")
+                .confirmPassword("newPassword123")
+                .build();
+
+        String encodedPassword = passwordEncoder.encode("correctPassword");
+        dentist.setPassword(encodedPassword);
+
+        when(dentistRepository.findByEmail(dto.getUsername())).thenReturn(dentist);
+        when(passwordEncoder.matches(dto.getPassword(), encodedPassword)).thenReturn(false);
+
+        assertThrows(RegistrationDataException.class, () -> {
+            dentistService.changePassword(dto);
+        });
+
+        verify(passwordEncoder, times(1)).matches(dto.getPassword(), encodedPassword);
+        verify(dentistRepository, times(1)).findByEmail(dto.getUsername());
+    }
+
 }

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.dental_care.dto.CreateDentistDTO;
+import br.com.dental_care.dto.DentistChangePasswordDTO;
 import br.com.dental_care.dto.DentistDTO;
 import br.com.dental_care.dto.DentistMinDTO;
 import br.com.dental_care.dto.UpdateDentistDTO;
@@ -70,6 +71,15 @@ public class DentistController {
         logger.info("Updating dentist with id: {}, email: {}", id, dto.getEmail());
         DentistDTO response = dentistService.update(dto, id);
         return ResponseEntity.ok(response);
+    }
+
+    @PutMapping(path = "/change-password")
+    @PreAuthorize("hasRole('ROLE_DENTIST')")
+    public ResponseEntity<Void> changePassword(@RequestBody DentistChangePasswordDTO dto) {
+        logger.info("Updating dentist password with id: {}", dto.getUsername());
+        dentistService.changePassword(dto);
+
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping(path = "/{id}")

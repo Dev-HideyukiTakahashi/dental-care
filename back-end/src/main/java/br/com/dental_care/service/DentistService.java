@@ -13,10 +13,12 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.dental_care.dto.CreateDentistDTO;
+import br.com.dental_care.dto.DentistChangePasswordDTO;
 import br.com.dental_care.dto.DentistDTO;
 import br.com.dental_care.dto.DentistMinDTO;
 import br.com.dental_care.dto.UpdateDentistDTO;
 import br.com.dental_care.exception.DatabaseException;
+import br.com.dental_care.exception.RegistrationDataException;
 import br.com.dental_care.exception.ResourceNotFoundException;
 import br.com.dental_care.mapper.DentistMapper;
 import br.com.dental_care.model.Dentist;
@@ -34,6 +36,7 @@ public class DentistService {
     private final DentistRepository dentistRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final AuthService authService;
     private final Logger logger = LoggerFactory.getLogger(DentistService.class);
 
     @Transactional(readOnly = true)
@@ -79,6 +82,16 @@ public class DentistService {
         }
     }
 
+    @Transactional
+    public void changePassword(DentistChangePasswordDTO dto) {
+        Dentist dentist = dentistRepository.findByEmail(dto.getUsername());
+        authService.validateSelfOrAdmin(dentist.getId());
+        validatePassword(dto, dentist);
+
+        logger.info("Dentist updated password successfully, id: {}", dentist.getId());
+        dentist.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+    }
+
     @Transactional(propagation = Propagation.SUPPORTS)
     public void deleteById(Long id) {
         if (!dentistRepository.existsById(id))
@@ -89,6 +102,14 @@ public class DentistService {
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseException("Database error: Data integrity rules were violated.");
         }
+    }
+
+    private void validatePassword(DentistChangePasswordDTO dto, Dentist dentist) {
+        if (!passwordEncoder.matches(dto.getPassword(), dentist.getPassword()))
+            throw new RegistrationDataException("The current password is incorrect.");
+
+        if (!dto.getNewPassword().equals(dto.getConfirmPassword()))
+            throw new RegistrationDataException("New password and confirmation password do not match.");
     }
 
     public void copyToEntity(Dentist dentist, CreateDentistDTO dto) {

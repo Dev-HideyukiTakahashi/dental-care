@@ -1,6 +1,7 @@
 package br.com.dental_care.factory;
 
 import br.com.dental_care.dto.CreateDentistDTO;
+import br.com.dental_care.dto.DentistChangePasswordDTO;
 import br.com.dental_care.dto.DentistDTO;
 import br.com.dental_care.dto.DentistMinDTO;
 import br.com.dental_care.dto.UpdateDentistDTO;
@@ -88,4 +89,14 @@ public class DentistFactory {
                 .score(8)
                 .build();
     }
+
+    public static DentistChangePasswordDTO createValidDentistChangePasswordDTO() {
+        return DentistChangePasswordDTO.builder()
+                .username("victor.dent@example.com")
+                .password("#Password123")
+                .newPassword("#NewPassword123")
+                .confirmPassword("#NewPassword123")
+                .build();
+    }
+
 }
