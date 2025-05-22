@@ -12,11 +12,15 @@
 
       <div class="sb-sidenav-menu-heading">Admin</div>
       <a class="nav-link" routerLink="/dashboard">
-        <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+        <div class="sb-nav-link-icon">
+          <i class="fas fa-tachometer-alt"></i>
+        </div>
         Dashboard
       </a>
       <a class="nav-link" routerLink="/dentists">
-        <div class="sb-nav-link-icon"><i class="fa-solid fa-user-doctor"></i></div>
+        <div class="sb-nav-link-icon">
+          <i class="fa-solid fa-user-doctor"></i>
+        </div>
         Dentistas
       </a>
       <a class="nav-link" routerLink="/patients">
@@ -29,8 +33,10 @@
       @if(role === 'dentist' || role === 'admin'){
 
       <div class="sb-sidenav-menu-heading">Dentistas</div>
-      <a class="nav-link" href="#">
-        <div class="sb-nav-link-icon"><i class="fa-solid fa-calendar-days"></i></div>
+      <a class="nav-link" routerLink="/schedule">
+        <div class="sb-nav-link-icon">
+          <i class="fa-solid fa-calendar-days"></i>
+        </div>
         Agenda
       </a>
 
@@ -62,6 +68,6 @@
     <div class="small">
       {{ currentDate | date : "EEEE, 'dia' d" }}
     </div>
-    {{ currentDate | date : 'HH:mm:ss' }}
+    {{ currentDate | date : "HH:mm:ss" }}
   </div>
 </nav>

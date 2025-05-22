@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { AbsenceScheduleComponent } from './features/absence-schedule/absence-schedule.component';
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterComponent } from './features/auth/register/register.component';
 import { ResetPasswordComponent } from './features/auth/reset-password/reset-password.component';
@@ -37,6 +38,12 @@ export const routes: Routes = [
         component: PatientListComponent,
         canActivate: [authGuard],
         data: { roles: ['admin'] },
+      },
+      {
+        path: 'schedule',
+        component: AbsenceScheduleComponent,
+        canActivate: [authGuard],
+        data: { roles: ['admin', 'dentist'] },
       },
     ],
   },
