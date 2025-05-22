@@ -1,5 +1,13 @@
 package br.com.dental_care.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import br.com.dental_care.dto.AbsenceDTO;
 import br.com.dental_care.dto.AbsenceRequestDTO;
 import br.com.dental_care.exception.InvalidDateRangeException;
@@ -12,12 +20,6 @@ import br.com.dental_care.model.User;
 import br.com.dental_care.repository.DentistRepository;
 import br.com.dental_care.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -29,12 +31,18 @@ public class ScheduleService {
     private final UserService userService;
 
     @Transactional
-    public AbsenceDTO createDentistAbsence(Long dentistId, AbsenceRequestDTO dto) {
+    public AbsenceDTO findSelfAbsence() {
+        Dentist dentist = buildLoggedDentist();
+        logger.info("Dentist absence successfully retrieved.");
+        return buildAbsenceDTO(dentist);
+    }
 
-        Dentist dentist = getDentistById(dentistId);
-        validateDentistOwnership(dentistId);
+    @Transactional
+    public AbsenceDTO createDentistAbsence(AbsenceRequestDTO dto) {
+
+        Dentist dentist = buildLoggedDentist();
         validateAbsenceDates(dto.getAbsenceStart(), dto.getAbsenceEnd());
-        validateNoExistingAbsence(dentist, dto.getAbsenceStart(), dto.getAbsenceEnd());
+        validateNoExistingAbsence(dentist);
         validateNoAppointmentsDuringAbsence(dentist, dto.getAbsenceStart(), dto.getAbsenceEnd());
 
         Schedule scheduleAbsence = buildAbsenceSchedule(dentist, dto.getAbsenceStart(), dto.getAbsenceEnd());
@@ -46,27 +54,62 @@ public class ScheduleService {
     }
 
     @Transactional
-    public void removeDentistAbsence(Long id) {
-        Schedule schedule = scheduleRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Schedule not found! ID: " + id));
+    public void removeDentistAbsence() {
+        Dentist dentist = buildLoggedDentist();
+        Long scheduleId = findActiveAbsenceScheduleId(dentist);
 
-        validateDentistAbsence(schedule);
-        validateAbsenceEndNotInPast(schedule);
+        if (scheduleId != null) {
+            scheduleRepository.deleteById(scheduleId);
 
-        scheduleRepository.deleteById(id);
+            logger.info("Successfully deleted schedule ID: {}", scheduleId);
+        } else {
+            throw new ResourceNotFoundException("No active absence period found for deletion.");
+        }
 
-        logger.info("Successfully deleted schedule ID: {}", id);
     }
 
-    private void validateDentistOwnership(Long dentistId) {
+    private Long findActiveAbsenceScheduleId(Dentist dentist) {
+        List<Schedule> schedules = dentist.getSchedules();
+        LocalDateTime now = LocalDateTime.now();
+
+        for (int i = schedules.size() - 1; i >= 0; i--) {
+            Schedule schedule = schedules.get(i);
+            LocalDateTime absenceEnd = schedule.getAbsenceEnd();
+
+            if (absenceEnd != null) {
+                if (absenceEnd.isBefore(now)) {
+                    throw new ScheduleConflictException("Cannot remove an absence period that has already ended.");
+                }
+
+                if (absenceEnd.isAfter(now)) {
+                    return schedule.getId();
+                }
+            }
+        }
+        return null;
+    }
+
+    private AbsenceDTO buildAbsenceDTO(Dentist dentist) {
+        LocalDateTime now = LocalDateTime.now();
+
+        for (Schedule schedule : dentist.getSchedules()) {
+            LocalDateTime absenceEnd = schedule.getAbsenceEnd();
+
+            if (absenceEnd != null && absenceEnd.isAfter(now)) {
+                return AbsenceDTO.builder()
+                        .absenceStart(schedule.getAbsenceStart())
+                        .absenceEnd(schedule.getAbsenceEnd())
+                        .build();
+            }
+        }
+
+        return null;
+    }
+
+    private Dentist buildLoggedDentist() {
         User user = userService.authenticated();
-        if (!user.getId().equals(dentistId))
-            throw new ScheduleConflictException("You are not allowed to create an absence for another dentist.");
-    }
-
-    private Dentist getDentistById(Long dentistId) {
-        return dentistRepository.findById(dentistId)
-                .orElseThrow(() -> new ResourceNotFoundException("Dentist not found! ID: " + dentistId));
+        return dentistRepository.findById(user.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Dentist not found! ID: " + user.getId()));
     }
 
     private void validateAbsenceDates(LocalDateTime start, LocalDateTime end) {
@@ -74,34 +117,36 @@ public class ScheduleService {
             throw new InvalidDateRangeException("The end date and time cannot be before the start date and time.");
     }
 
-    private void validateNoExistingAbsence(Dentist dentist, LocalDateTime start, LocalDateTime end) {
+    private void validateNoExistingAbsence(Dentist dentist) {
 
         for (Schedule schedule : dentist.getSchedules()) {
-            LocalDateTime absenceStart = schedule.getAbsenceStart();
+            LocalDateTime now = LocalDateTime.now();
             LocalDateTime absenceEnd = schedule.getAbsenceEnd();
 
-            if (absenceStart == null) continue; // No absence scheduled for this schedule entry, skip
-
-            if (absenceStart.isBefore(end) && absenceEnd.isAfter(start))
-                throw new ScheduleConflictException("Dentist already absent in this period.");
+            if (absenceEnd != null && absenceEnd.isAfter(now)) {
+                throw new ScheduleConflictException("The dentist already has an active or scheduled leave period.");
+            }
         }
     }
 
-    private void validateNoAppointmentsDuringAbsence(Dentist dentist, LocalDateTime absenceStart, LocalDateTime absenceEnd) {
+    private void validateNoAppointmentsDuringAbsence(Dentist dentist, LocalDateTime absenceStart,
+            LocalDateTime absenceEnd) {
 
         for (Schedule schedule : dentist.getSchedules()) {
             LocalDateTime appointmentStart = schedule.getUnavailableTimeSlot();
 
-            if (appointmentStart == null) continue; // No appointment scheduled for this time slot, skip
+            if (appointmentStart == null)
+                continue; // No appointment scheduled for this time slot, skip
 
             LocalDateTime appointmentEnd = appointmentStart.plusHours(1); // Assuming fixed 1-hour appointment duration
 
             // Check if the absence period overlaps with the scheduled appointment
-            boolean isAbsenceDuringAppointment = absenceStart.isBefore(appointmentEnd) && absenceEnd.isAfter(appointmentStart);
+            boolean isAbsenceDuringAppointment = absenceStart.isBefore(appointmentEnd)
+                    && absenceEnd.isAfter(appointmentStart);
 
             if (isAbsenceDuringAppointment)
-                throw new ScheduleConflictException
-                        ("The dentist cannot be on leave during this period, as there is already an appointment scheduled.");
+                throw new ScheduleConflictException(
+                        "The dentist cannot be on leave during this period, as there is already an appointment scheduled.");
         }
     }
 
@@ -111,15 +156,5 @@ public class ScheduleService {
         schedule.setAbsenceStart(start);
         schedule.setAbsenceEnd(end);
         return schedule;
-    }
-
-    private void validateDentistAbsence(Schedule schedule) {
-        if (schedule.getUnavailableTimeSlot() != null)
-            throw new ScheduleConflictException("Dentist is not absent during this period.");
-    }
-
-    private void validateAbsenceEndNotInPast(Schedule schedule) {
-        if (schedule.getAbsenceEnd().isBefore(LocalDateTime.now()))
-            throw new InvalidDateRangeException("Cannot remove an absence period that has already ended.");
     }
 }

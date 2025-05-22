@@ -105,8 +105,8 @@ public class PatientControllerTest extends BaseIntegrationTest {
                 String accessToken = TokenUtil.obtainAccessToken("elias.warrior@example.com", "123456");
 
                 CreatePatientDTO patientDTO = CreatePatientDTO.builder()
-                                .name("John Doe")
-                                .email("john.doe@example.com")
+                                .name("John Doe Silva")
+                                .email("john.doe.silva@example.com")
                                 .password("#Newpassword123")
                                 .build();
 
@@ -120,7 +120,7 @@ public class PatientControllerTest extends BaseIntegrationTest {
                                 .then()
                                 .statusCode(HttpStatus.CREATED.value())
                                 .body("id", Matchers.greaterThan(0))
-                                .body("email", Matchers.equalTo("john.doe@example.com"));
+                                .body("email", Matchers.equalTo("john.doe.silva@example.com"));
         }
 
         @Test
