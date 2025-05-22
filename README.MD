@@ -83,7 +83,6 @@ git clone https://github.com/Dev-HideyukiTakahashi/dental-care.git
    Opcional Docker:
 
    - Caso preferir Docker, execute o comando **`docker-compose up`** dentro da pasta back-end para subir um banco postgreSQL já configurado.
-   - Altere a porta para 5433 no `application-dev.properties`: spring.datasource.url=jdbc:postgresql://localhost:**5433**/dental_care
 
 4. Configuração de envio de e-mails(**não obrigatório**)
    Para que o sistema possa enviar e-mails (como confirmações de agendamento, recuperação de senha), defina as seguintes variáveis de ambiente no seu sistema, IDE ou no terminal:
