@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -7,17 +7,14 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { DateAdapter, MatNativeDateModule } from '@angular/material/core';
+import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-
-interface LeavePeriod {
-  start: Date;
-  end: Date;
-}
+import { ScheduleService } from '../../core/service/schedule.service';
+import { IAbsence } from '../../model/absence.model';
 
 @Component({
   selector: 'app-absence-schedule',
@@ -35,18 +32,17 @@ interface LeavePeriod {
   templateUrl: './absence-schedule.component.html',
   styleUrl: './absence-schedule.component.scss',
 })
-export class AbsenceScheduleComponent {
+export class AbsenceScheduleComponent implements OnInit {
+  private readonly scheduleService = inject(ScheduleService);
+
   leaveForm: FormGroup;
-  currentLeave: LeavePeriod | null = null;
+  currentLeave: IAbsence | null = null;
   isOnLeave = false;
 
   constructor(
-    private fb: FormBuilder,
-    private dateAdapter: DateAdapter<Date>,
-    private snackBar: MatSnackBar
+    private readonly fb: FormBuilder,
+    private readonly snackBar: MatSnackBar
   ) {
-    this.dateAdapter.setLocale('pt-BR');
-
     this.leaveForm = this.fb.group(
       {
         startDate: ['', Validators.required],
@@ -54,6 +50,21 @@ export class AbsenceScheduleComponent {
       },
       { validator: this.dateRangeValidator }
     );
+  }
+
+  ngOnInit(): void {
+    this.scheduleService.findSelfAbsence().subscribe({
+      next: (absence) => {
+        if (absence?.absenceStart && absence?.absenceEnd) {
+          this.currentLeave = {
+            absenceStart: new Date(absence.absenceStart),
+            absenceEnd: new Date(absence.absenceEnd),
+          };
+
+          this.isOnLeave = true;
+        }
+      },
+    });
   }
 
   dateRangeValidator(form: FormGroup) {
@@ -67,17 +78,14 @@ export class AbsenceScheduleComponent {
   }
 
   scheduleLeave() {
-    if (this.leaveForm.invalid) {
-      return;
-    }
+    if (this.leaveForm.invalid) return;
 
     this.currentLeave = {
-      start: this.leaveForm.value.startDate,
-      end: this.leaveForm.value.endDate,
+      absenceStart: this.leaveForm.value.startDate,
+      absenceEnd: this.leaveForm.value.endDate,
     };
 
     this.isOnLeave = true;
-    this.leaveForm.reset();
 
     this.snackBar.open('Afastamento agendado com sucesso!', 'Fechar', {
       duration: 3000,

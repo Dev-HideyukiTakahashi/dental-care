@@ -17,8 +17,8 @@
       </p>
       <p class="absence__status-text" *ngIf="isOnLeave">
         <mat-icon class="absence__status-icon">event_busy</mat-icon>
-        Afastado de {{ currentLeave?.start | date : "dd/MM/yyyy" }} até
-        {{ currentLeave?.end | date : "dd/MM/yyyy" }}
+        Afastado de {{ currentLeave?.absenceStart | date : "dd/MM/yyyy" }} até
+        {{ currentLeave?.absenceEnd | date : "dd/MM/yyyy" }}
       </p>
     </div>
 
@@ -70,10 +70,11 @@
       </div>
 
       <button
-        mat-raised-button
+        mat-stroked-button
         color="primary"
         class="absence__button"
         type="submit"
+        [disabled]="isOnLeave"
       >
         <mat-icon>event_available</mat-icon>
         Agendar Afastamento
