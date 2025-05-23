@@ -40,19 +40,17 @@ export class AbsenceScheduleComponent implements OnInit {
   leaveForm: FormGroup;
   currentLeave: IAbsence | null = null;
   isOnLeave = false;
+  errorMessage: string = '';
 
   constructor(
     private readonly fb: FormBuilder,
     private readonly snackBar: MatSnackBar,
     private readonly dialog: MatDialog
   ) {
-    this.leaveForm = this.fb.group(
-      {
-        startDate: ['', Validators.required],
-        endDate: ['', Validators.required],
-      },
-      { validator: this.dateRangeValidator }
-    );
+    this.leaveForm = this.fb.group({
+      startDate: ['', Validators.required],
+      endDate: ['', Validators.required],
+    });
   }
 
   ngOnInit(): void {
@@ -70,16 +68,6 @@ export class AbsenceScheduleComponent implements OnInit {
     });
   }
 
-  dateRangeValidator(form: FormGroup) {
-    const start = form.get('startDate')?.value;
-    const end = form.get('endDate')?.value;
-
-    if (start && end && start > end) {
-      return { endBeforeStart: true };
-    }
-    return null;
-  }
-
   scheduleLeave() {
     if (this.leaveForm.invalid) return;
 
@@ -91,10 +79,17 @@ export class AbsenceScheduleComponent implements OnInit {
     this.scheduleService.createAbsence(this.currentLeave).subscribe({
       next: (schedule) => {
         this.isOnLeave = true;
+        this.errorMessage = '';
         this.snackBar.open('Afastamento agendado com sucesso!', 'Fechar', {
           duration: 3000,
           panelClass: ['success-snackbar'],
         });
+      },
+      error: (err) => {
+        err.error.error ===
+        'The dentist cannot be on leave during this period, as there is already an appointment scheduled.'
+          ? (this.errorMessage = 'Existe uma consulta marcada nesse período.')
+          : (this.errorMessage = 'Erro nos campos de data');
       },
     });
   }

@@ -13,23 +13,31 @@
 
         <hr />
 
-        @if(patient.appointments.length > 0){
+        @if(patient.appointments!.length > 0){
         <h3>Última Consulta</h3>
         <p>
           <strong>Data:</strong>
-          {{ patient.appointments[patient.appointments.length - 1]!.date | date : 'dd/MM/yyyy' }}
+          {{
+            patient.appointments![patient.appointments!.length - 1]!.date
+              | date : "dd/MM/yyyy"
+          }}
         </p>
         <p>
           <strong>Dentista:</strong>
-          {{ patient.appointments[patient.appointments.length - 1]!.dentist }}
+          {{ patient.appointments![patient.appointments!.length - 1]!.dentist }}
         </p>
         <p>
           <strong>Descrição:</strong>
-          {{ patient.appointments[patient.appointments.length - 1]!.description }}
+          {{
+            patient.appointments![patient.appointments!.length - 1]!.description
+          }}
         </p>
         <p>
           <strong>Status:</strong>
-          {{ patient.appointments[patient.appointments.length - 1]!.status | appointmentStatus }}
+          {{
+            patient.appointments![patient.appointments!.length - 1]!.status
+              | appointmentStatus
+          }}
         </p>
         }
       </div>

@@ -2,27 +2,7 @@
   <div class="absence">
     <h1 class="absence__title">Minha Agenda de Afastamento</h1>
 
-    <!-- Card de Status -->
-    <div
-      class="absence__status-card"
-      [ngClass]="{
-        'absence__status-card--active': !isOnLeave,
-        'absence__status-card--inactive': isOnLeave
-      }"
-    >
-      <h3 class="absence__status-title">Status Atual</h3>
-      <p class="absence__status-text" *ngIf="!isOnLeave">
-        <mat-icon class="absence__status-icon">check_circle</mat-icon>
-        Dentista disponível para atendimento
-      </p>
-      <p class="absence__status-text" *ngIf="isOnLeave">
-        <mat-icon class="absence__status-icon">event_busy</mat-icon>
-        Afastado de {{ currentLeave?.absenceStart | date : "dd/MM/yyyy" }} até
-        {{ currentLeave?.absenceEnd | date : "dd/MM/yyyy" }}
-      </p>
-    </div>
-
-    <!-- Formulário de Agendamento -->
+    <!-- Forms -->
     <form
       class="absence__form"
       [formGroup]="leaveForm"
@@ -92,5 +72,30 @@
         Cancelar Afastamento
       </button>
     </form>
+
+    <!-- Card Status -->
+    <div
+      class="absence__status-card"
+      [ngClass]="{
+        'absence__status-card--active': !isOnLeave,
+        'absence__status-card--inactive': isOnLeave
+      }"
+    >
+      <h3 class="absence__status-title">Status Atual</h3>
+      <p class="absence__status-text" *ngIf="!isOnLeave">
+        <mat-icon class="absence__status-icon">check_circle</mat-icon>
+        Dentista disponível para atendimento
+      </p>
+      <p class="absence__status-text" *ngIf="isOnLeave">
+        <mat-icon class="absence__status-icon">event_busy</mat-icon>
+        Afastado de {{ currentLeave?.absenceStart | date : "dd/MM/yyyy" }} até
+        {{ currentLeave?.absenceEnd | date : "dd/MM/yyyy" }}
+      </p>
+    </div>
+    <!-- Error message -->
+    <p class="absence__error-message" *ngIf="errorMessage">
+      <mat-icon color="warn">error</mat-icon>
+      {{ errorMessage }}
+    </p>
   </div>
 </div>
