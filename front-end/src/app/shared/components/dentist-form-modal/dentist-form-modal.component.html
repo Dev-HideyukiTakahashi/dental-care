@@ -1,16 +1,24 @@
 <div class="modal-backdrop">
   <div class="modal" (click)="$event.stopPropagation()">
     <div class="modal-content">
-      <h2>{{ isEditMode ? 'Editar Dentista' : 'Adicionar Dentista' }}</h2>
+      <h2>{{ isEditMode ? "Editar Dentista" : "Adicionar Dentista" }}</h2>
 
       <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
         <div class="modal-body">
           <!-- NAME -->
           <div class="form-group">
             <label for="name">Nome Completo</label>
-            <input type="text" id="name" formControlName="name" class="form-control" />
+            <input
+              type="text"
+              id="name"
+              formControlName="name"
+              class="form-control"
+            />
             <small
-              *ngIf="registerForm.get('name')?.touched && registerForm.get('name')?.invalid"
+              *ngIf="
+                registerForm.get('name')?.touched &&
+                registerForm.get('name')?.invalid
+              "
               class="text-danger"
             >
               Nome é obrigatório
@@ -20,10 +28,16 @@
           <!-- SPECIALITY -->
           <div class="form-group">
             <label for="speciality">Especialidade</label>
-            <input type="text" id="speciality" formControlName="speciality" class="form-control" />
+            <input
+              type="text"
+              id="speciality"
+              formControlName="speciality"
+              class="form-control"
+            />
             <small
               *ngIf="
-                registerForm.get('speciality')?.touched && registerForm.get('speciality')?.invalid
+                registerForm.get('speciality')?.touched &&
+                registerForm.get('speciality')?.invalid
               "
               class="text-danger"
             >
@@ -54,30 +68,53 @@
           <!-- EMAIL -->
           <div class="form-group">
             <label for="email">Email</label>
-            <input type="email" id="email" formControlName="email" class="form-control" />
+            <input
+              [readOnly]="isEditMode"
+              type="email"
+              id="email"
+              formControlName="email"
+              class="form-control"
+            />
             <small
               class="text-danger"
-              *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid"
+              *ngIf="
+                registerForm.get('email')?.touched &&
+                registerForm.get('email')?.invalid
+              "
             >
               <span *ngIf="registerForm.get('email')?.errors?.['required']"
                 >Email é obrigatório.</span
               >
-              <span *ngIf="registerForm.get('email')?.errors?.['email']">Email inválido.</span>
+              <span *ngIf="registerForm.get('email')?.errors?.['email']"
+                >Email inválido.</span
+              >
             </small>
           </div>
 
           <!-- PHONE -->
           <div class="form-group">
             <label for="phone">Telefone</label>
-            <input type="tel" id="phone" formControlName="phone" class="form-control" />
+            <input
+              (input)="formatPhoneNumber($event)"
+              placeholder="(XX) XXXXX-XXXX"
+              type="tel"
+              id="phone"
+              formControlName="phone"
+              class="form-control"
+            />
             <small
-              *ngIf="registerForm.get('phone')?.touched && registerForm.get('phone')?.invalid"
+              *ngIf="
+                registerForm.get('phone')?.touched &&
+                registerForm.get('phone')?.invalid
+              "
               class="text-danger"
             >
               <span *ngIf="registerForm.get('phone')?.errors?.['required']"
                 >Telefone é obrigatório.</span
               >
-              <span *ngIf="registerForm.get('phone')?.errors?.['pattern']">Telefone inválido.</span>
+              <span *ngIf="registerForm.get('phone')?.errors?.['pattern']"
+                >Formato inválido. Use (XX) XXXXX-XXXX</span
+              >
             </small>
           </div>
 
@@ -91,27 +128,46 @@
                 formControlName="password"
                 class="form-control"
               />
-              <button type="button" class="toggle-password" (click)="togglePasswordVisibility()">
-                <i class="fas {{ showPassword ? 'fa-eye-slash' : 'fa-eye' }}"></i>
+              <button
+                type="button"
+                class="toggle-password"
+                (click)="togglePasswordVisibility()"
+              >
+                <i
+                  class="fas {{ showPassword ? 'fa-eye-slash' : 'fa-eye' }}"
+                ></i>
               </button>
             </div>
-            <small class="text-danger" *ngFor="let error of getPasswordErrors()">
+            <small
+              class="text-danger"
+              *ngFor="let error of getPasswordErrors()"
+            >
               {{ error }}
             </small>
           </div>
         </div>
-        <div *ngIf="formErrorMessage" class="alert alert-danger mt-3 text-center">
+        <div
+          *ngIf="formErrorMessage"
+          class="alert alert-danger mt-3 text-center"
+        >
           {{ formErrorMessage }}
         </div>
         <div class="modal-actions">
-          <button type="button" class="btn btn-secondary" (click)="onClose()">Cancelar</button>
+          <button type="button" class="btn btn-secondary" (click)="onClose()">
+            Cancelar
+          </button>
           <button
             type="submit"
             class="btn btn-primary"
             [disabled]="registerForm.invalid || isSubmitting"
           >
-            <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm"></span>
-            <span *ngIf="!isSubmitting">{{ isEditMode ? 'Atualizar' : 'Cadastrar' }}</span>
+            <span
+              *ngIf="isSubmitting"
+              class="spinner-border spinner-border-sm"
+            ></span>
+            <span *ngIf="!isSubmitting">{{
+              isEditMode ? "Atualizar" : "Cadastrar"
+            }}</span>
           </button>
         </div>
       </form>

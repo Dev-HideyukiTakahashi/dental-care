@@ -8,6 +8,7 @@ import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { DentistListComponent } from './features/dentist-list/dentist-list.component';
 import { HomeComponent } from './features/home/home.component';
 import { MainComponent } from './features/main/main.component';
+import { PatientEditComponent } from './features/patient-edit/patient-edit.component';
 import { PatientListComponent } from './features/patient-list/patient-list.component';
 
 export const routes: Routes = [
@@ -44,6 +45,12 @@ export const routes: Routes = [
         component: AbsenceScheduleComponent,
         canActivate: [authGuard],
         data: { roles: ['admin', 'dentist'] },
+      },
+      {
+        path: 'edit-patient',
+        component: PatientEditComponent,
+        canActivate: [authGuard],
+        data: { roles: ['patient'] },
       },
     ],
   },

@@ -8,6 +8,6 @@ export interface IPatient {
   email: string;
   password?: string;
   phone: string;
-  roles: IRole[];
-  appointments: IAppointment[];
+  roles?: IRole[];
+  appointments?: IAppointment[];
 }

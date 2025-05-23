@@ -1,0 +1,124 @@
+<div class="patient-container">
+  <!-- HEADER -->
+  <div class="patient-header">
+    <div class="header-left">
+      <h2 class="title">Editar Meus Dados</h2>
+      <p class="subtitle">Atualize suas informações pessoais</p>
+    </div>
+  </div>
+
+  <!-- EDIT FORM -->
+  <div class="patient-edit-card">
+    <form class="edit-form" [formGroup]="editForm" (ngSubmit)="onSubmit()">
+      <!-- Medical History -->
+      <div class="form-group">
+        <label for="medicalHistory">Histórico Médico</label>
+        <input
+          type="text"
+          id="medicalHistory"
+          formControlName="medicalHistory"
+          readonly
+          class="readonly-field"
+        />
+      </div>
+
+      <!-- Full Name -->
+      <div class="form-group">
+        <label for="name">Nome Completo</label>
+        <input
+          type="text"
+          id="name"
+          formControlName="name"
+          required
+          [class.invalid]="
+            editForm.get('name')?.invalid && editForm.get('name')?.touched
+          "
+        />
+        <span
+          class="error-message"
+          *ngIf="
+            editForm.get('name')?.hasError('required') &&
+            editForm.get('name')?.touched
+          "
+        >
+          Nome é obrigatório
+        </span>
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">E-mail</label>
+        <input
+          type="email"
+          id="email"
+          formControlName="email"
+          required
+          [class.invalid]="
+            editForm.get('email')?.invalid && editForm.get('email')?.touched
+          "
+        />
+        <span
+          class="error-message"
+          *ngIf="
+            editForm.get('email')?.hasError('required') &&
+            editForm.get('email')?.touched
+          "
+        >
+          E-mail é obrigatório
+        </span>
+        <span
+          class="error-message"
+          *ngIf="
+            editForm.get('email')?.hasError('email') &&
+            editForm.get('email')?.touched
+          "
+        >
+          Por favor, insira um e-mail válido
+        </span>
+      </div>
+
+      <!-- Phone -->
+      <div class="form-group">
+        <label for="phone">Telefone</label>
+        <input
+          type="tel"
+          id="phone"
+          formControlName="phone"
+          required
+          placeholder="(XX) XXXXX-XXXX"
+          (input)="formatPhoneNumber($event)"
+          [class.invalid]="
+            editForm.get('phone')?.invalid && editForm.get('phone')?.touched
+          "
+        />
+        <span
+          class="error-message"
+          *ngIf="
+            editForm.get('phone')?.hasError('required') &&
+            editForm.get('phone')?.touched
+          "
+        >
+          Telefone é obrigatório
+        </span>
+        <span
+          class="error-message"
+          *ngIf="
+            editForm.get('phone')?.hasError('pattern') &&
+            editForm.get('phone')?.touched
+          "
+        >
+          Formato inválido. Use (XX) XXXXX-XXXX
+        </span>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" routerLink="/">
+          <i class="fas fa-times"></i> Cancelar
+        </button>
+        <button type="submit" class="btn-save" [disabled]="editForm.invalid">
+          <i class="fas fa-save"></i> Salvar Alterações
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
