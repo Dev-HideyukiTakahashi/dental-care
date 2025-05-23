@@ -18,9 +18,7 @@ export class ScheduleService {
     return this.http.post<IAbsence>(`${this.API}/patients`, body);
   }
 
-  deleteAbsence(id: number): Observable<void> {
-    return this.http.delete<void>(
-      `${this.API}/schedules/absences/dentist/${id}`
-    );
+  deleteAbsence(): Observable<void> {
+    return this.http.delete<void>(`${this.API}/schedules`);
   }
 }

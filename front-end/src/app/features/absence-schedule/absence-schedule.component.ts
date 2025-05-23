@@ -9,12 +9,14 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ScheduleService } from '../../core/service/schedule.service';
 import { IAbsence } from '../../model/absence.model';
+import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-absence-schedule',
@@ -41,7 +43,8 @@ export class AbsenceScheduleComponent implements OnInit {
 
   constructor(
     private readonly fb: FormBuilder,
-    private readonly snackBar: MatSnackBar
+    private readonly snackBar: MatSnackBar,
+    private readonly dialog: MatDialog
   ) {
     this.leaveForm = this.fb.group(
       {
@@ -94,12 +97,23 @@ export class AbsenceScheduleComponent implements OnInit {
   }
 
   cancelLeave() {
-    this.currentLeave = null;
-    this.isOnLeave = false;
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: 'Tem certeza que deseja cancelar o afastamento?',
+    });
 
-    this.snackBar.open('Afastamento cancelado com sucesso!', 'Fechar', {
-      duration: 3000,
-      panelClass: ['success-snackbar'],
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.scheduleService.deleteAbsence().subscribe({
+          next: () => {
+            this.currentLeave = null;
+            this.isOnLeave = false;
+            this.snackBar.open('Afastamento cancelado com sucesso!', 'Fechar', {
+              duration: 3000,
+              panelClass: ['success-snackbar'],
+            });
+          },
+        });
+      }
     });
   }
 }
