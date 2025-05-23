@@ -49,6 +49,8 @@
       <div class="form-group">
         <label for="email">E-mail</label>
         <input
+          readonly
+          class="readonly-field"
           type="email"
           id="email"
           formControlName="email"
@@ -83,6 +85,7 @@
         <input
           type="tel"
           id="phone"
+          [value]="editForm.get('phone')?.value | phone"
           formControlName="phone"
           required
           placeholder="(XX) XXXXX-XXXX"

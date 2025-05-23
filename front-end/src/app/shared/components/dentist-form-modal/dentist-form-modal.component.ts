@@ -42,8 +42,10 @@ export class DentistFormModalComponent {
   ngOnInit(): void {
     if (this.dentist) {
       this.isEditMode = true;
+
       this.registerForm.patchValue({
         ...this.dentist,
+        phone: this.formatPhone(this.dentist.phone),
         password: '',
       });
 
@@ -91,6 +93,17 @@ export class DentistFormModalComponent {
 
   get field() {
     return this.registerForm.controls;
+  }
+
+  private formatPhone(phone: string): string {
+    const digits = phone.replace(/\D/g, '');
+    if (digits.length === 11) {
+      return `(${digits.substring(0, 2)}) ${digits.substring(
+        2,
+        7
+      )}-${digits.substring(7, 11)}`;
+    }
+    return phone;
   }
 
   formatPhoneNumber(event: Event): void {

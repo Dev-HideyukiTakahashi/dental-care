@@ -14,6 +14,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, RouterModule } from '@angular/router';
 import { PatientService } from '../../core/service/patient.service';
 import { IPatient } from '../../model/patient-model';
+import { PhonePipe } from '../../shared/pipes/phone.pipe';
 import { ValidatorsUtil } from '../../shared/utils/validator-utils';
 @Component({
   selector: 'app-patient-edit',
@@ -25,6 +26,7 @@ import { ValidatorsUtil } from '../../shared/utils/validator-utils';
     MatInputModule,
     MatButtonModule,
     MatIconModule,
+    PhonePipe,
   ],
   templateUrl: './patient-edit.component.html',
   styleUrl: './patient-edit.component.scss',
@@ -63,7 +65,7 @@ export class PatientEditComponent implements OnInit {
           medicalHistory: patient.medicalHistory,
           name: patient.name,
           email: patient.email,
-          phone: patient.phone,
+          phone: this.formatPhone(patient.phone),
         });
         this.isLoading = false;
       },
@@ -75,6 +77,17 @@ export class PatientEditComponent implements OnInit {
         this.router.navigate(['/patient/profile']);
       },
     });
+  }
+
+  private formatPhone(phone: string): string {
+    const digits = phone.replace(/\D/g, '');
+    if (digits.length === 11) {
+      return `(${digits.substring(0, 2)}) ${digits.substring(
+        2,
+        7
+      )}-${digits.substring(7, 11)}`;
+    }
+    return phone;
   }
 
   formatPhoneNumber(event: Event): void {
