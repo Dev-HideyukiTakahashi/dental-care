@@ -88,11 +88,14 @@ export class AbsenceScheduleComponent implements OnInit {
       absenceEnd: this.leaveForm.value.endDate,
     };
 
-    this.isOnLeave = true;
-
-    this.snackBar.open('Afastamento agendado com sucesso!', 'Fechar', {
-      duration: 3000,
-      panelClass: ['success-snackbar'],
+    this.scheduleService.createAbsence(this.currentLeave).subscribe({
+      next: (schedule) => {
+        this.isOnLeave = true;
+        this.snackBar.open('Afastamento agendado com sucesso!', 'Fechar', {
+          duration: 3000,
+          panelClass: ['success-snackbar'],
+        });
+      },
     });
   }
 

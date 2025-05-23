@@ -15,7 +15,7 @@ export class ScheduleService {
   }
 
   createAbsence(body: IAbsence): Observable<IAbsence> {
-    return this.http.post<IAbsence>(`${this.API}/patients`, body);
+    return this.http.post<IAbsence>(`${this.API}/schedules`, body);
   }
 
   deleteAbsence(): Observable<void> {
