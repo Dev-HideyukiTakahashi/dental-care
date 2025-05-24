@@ -10,6 +10,7 @@ import { HomeComponent } from './features/home/home.component';
 import { MainComponent } from './features/main/main.component';
 import { PatientEditComponent } from './features/patient-edit/patient-edit.component';
 import { PatientListComponent } from './features/patient-list/patient-list.component';
+import { RatingsComponent } from './features/rating/rating.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -49,6 +50,12 @@ export const routes: Routes = [
       {
         path: 'edit-patient',
         component: PatientEditComponent,
+        canActivate: [authGuard],
+        data: { roles: ['patient'] },
+      },
+      {
+        path: 'rating',
+        component: RatingsComponent,
         canActivate: [authGuard],
         data: { roles: ['patient'] },
       },

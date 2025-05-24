@@ -1,4 +1,5 @@
 import { IAppointment } from './appointment.model';
+import { IRating } from './rating.model';
 import { IRole } from './role.model';
 
 export interface IPatient {
@@ -10,4 +11,5 @@ export interface IPatient {
   phone: string;
   roles?: IRole[];
   appointments?: IAppointment[];
+  ratings?: IRating[];
 }

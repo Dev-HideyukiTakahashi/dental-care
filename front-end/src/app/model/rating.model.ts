@@ -1,10 +1,10 @@
 export interface IRating {
-  id: number;
+  id?: number;
   score: number;
   comment: string;
-  date: string;
+  date?: string;
   patientId: number;
   dentistId: number;
   appointmentId: number;
-  rated: boolean;
+  rated?: boolean;
 }

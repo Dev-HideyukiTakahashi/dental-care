@@ -1,4 +1,5 @@
 import { AppointmentStatus } from './enum/appointment-status.enum';
+import { IRating } from './rating.model';
 
 interface DentistMin {
   id: number;
@@ -23,4 +24,5 @@ export interface IAppointment {
   dentist: DentistMin;
   patient: PatientMin;
   message?: string | null;
+  rating?: IRating;
 }
