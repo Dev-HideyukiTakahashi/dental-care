@@ -1,9 +1,7 @@
 package br.com.dental_care.controller;
 
-import br.com.dental_care.dto.RatingDTO;
-import br.com.dental_care.service.RatingService;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import java.net.URI;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
+import br.com.dental_care.dto.RatingDTO;
+import br.com.dental_care.service.RatingService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/v1/ratings")

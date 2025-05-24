@@ -1,15 +1,16 @@
 package br.com.dental_care.dto;
 
-import br.com.dental_care.model.enums.AppointmentStatus;
+import java.time.LocalDateTime;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import br.com.dental_care.model.enums.AppointmentStatus;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Builder(toBuilder = true)
@@ -30,6 +31,9 @@ public class AppointmentDTO {
 
     @JsonProperty("patient")
     private PatientMinDTO patientMinDTO;
+
+    @JsonProperty("rating")
+    private RatingDTO ratingDTO;
 
     @Setter
     private String message;

@@ -17,6 +17,7 @@ public class AppointmentMapper {
                 .description(entity.getDescription())
                 .patientMinDTO(PatientMapper.toMinDTO(entity.getPatient()))
                 .dentistMinDTO(DentistMapper.toMinDTO(entity.getDentist()))
+                .ratingDTO(entity.getRating() != null ? RatingMapper.toDTO(entity.getRating()) : null)
                 .build();
     }
 
