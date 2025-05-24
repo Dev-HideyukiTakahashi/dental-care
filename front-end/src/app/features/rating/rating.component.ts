@@ -30,7 +30,8 @@ export class RatingsComponent {
   ratedAppointments: IAppointment[] = [];
   notRatedAppointments: IAppointment[] = [];
 
-  tempRatings: { [appointmentId: number]: Partial<IRatingCreate> } = {};
+  tempRatings: { [appointmentId: number]: Partial<IRatingCreate> | undefined } =
+    {};
 
   constructor(
     private readonly appointmentService: AppointmentService,
