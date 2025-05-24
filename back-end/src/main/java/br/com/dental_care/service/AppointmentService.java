@@ -228,8 +228,10 @@ public class AppointmentService {
     private void deleteSchedule(Appointment appointment) {
         logger.info("Initiating schedule deletion process.");
         List<Schedule> dentistSchedules = appointment.getDentist().getSchedules();
+
         for (Schedule schedule : dentistSchedules) {
-            if (schedule.getUnavailableTimeSlot().isEqual(appointment.getDate())) {
+            if (schedule.getUnavailableTimeSlot() != null
+                    && schedule.getUnavailableTimeSlot().isEqual(appointment.getDate())) {
                 scheduleRepository.deleteById(schedule.getId());
                 logger.info("Schedule deleted, id: {}", schedule.getId());
                 break;
