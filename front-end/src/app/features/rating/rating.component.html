@@ -28,7 +28,7 @@
             <span
               *ngFor="let star of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
               (click)="setRating(appointment, star)"
-              [class.active]="tempRatings[appointment.id] >= star"
+              [class.active]="(tempRatings[appointment.id]?.score ?? 0) >= star"
             >
               <mat-icon>star</mat-icon>
             </span>
@@ -38,7 +38,8 @@
             <mat-label>Comentário (opcional)</mat-label>
             <textarea
               matInput
-              [(ngModel)]="tempComments[appointment.id]"
+              [ngModel]="tempRatings[appointment.id]?.comment || ''"
+              (ngModelChange)="updateComment(appointment, $event)"
             ></textarea>
           </mat-form-field>
 
@@ -46,7 +47,7 @@
             mat-raised-button
             color="primary"
             (click)="submitRating(appointment)"
-            [disabled]="!tempRatings[appointment.id]"
+            [disabled]="!tempRatings[appointment.id]?.score"
           >
             Enviar Avaliação
           </button>

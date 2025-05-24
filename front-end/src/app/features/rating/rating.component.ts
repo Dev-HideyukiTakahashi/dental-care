@@ -10,7 +10,7 @@ import { AppointmentService } from '../../core/service/appointment.service';
 import { RatingService } from '../../core/service/rating.service';
 import { IAppointment } from '../../model/appointment.model';
 import { AppointmentStatus } from '../../model/enum/appointment-status.enum';
-import { IRating } from '../../model/rating.model';
+import { IRatingCreate } from '../../model/rating.model';
 
 @Component({
   selector: 'app-rating',
@@ -30,18 +30,12 @@ export class RatingsComponent {
   ratedAppointments: IAppointment[] = [];
   notRatedAppointments: IAppointment[] = [];
 
-  // tempRatings: { [key: number]: number } = {};
-  // tempComments: { [key: number]: string } = {};
-  tempRating: Partial<IRating> = {
-    score: undefined,
-    comment: '',
-    appointmentId: undefined,
-  };
+  tempRatings: { [appointmentId: number]: Partial<IRatingCreate> } = {};
 
   constructor(
-    private appointmentService: AppointmentService,
-    private ratingService: RatingService,
-    private snackBar: MatSnackBar
+    private readonly appointmentService: AppointmentService,
+    private readonly ratingService: RatingService,
+    private readonly snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -66,47 +60,79 @@ export class RatingsComponent {
 
   buildRatedAppointments(appointments: IAppointment[]) {
     this.ratedAppointments = appointments.filter(
-      (a) =>
-        a.status === AppointmentStatus.COMPLETED &&
-        a.rating !== null &&
-        a.rating?.rated
+      (a) => a.status === AppointmentStatus.COMPLETED && a.rating
     );
   }
 
   buildNotRatedAppointments(appointments: IAppointment[]) {
     this.notRatedAppointments = appointments.filter(
-      (a) => a.status === AppointmentStatus.COMPLETED && a.rating !== null
+      (a) => a.status === AppointmentStatus.COMPLETED && !a.rating
     );
-    console.log(appointments);
   }
 
-  setRating(appointment: any, rating: number): void {
-    this.tempRatings[appointment.id] = rating;
+  setRating(appointment: IAppointment, score: number): void {
+    this.tempRatings[appointment.id] = {
+      ...(this.tempRatings[appointment.id] || {}),
+      score: score,
+      appointmentId: appointment.id,
+      patientId: appointment.patient.id,
+      dentistId: appointment.dentist.id,
+    };
   }
 
-  submitRating(appointment: any): void {
-    const ratingData: IRating = {
-      score: this.tempRatings[appointment.id],
-      comment: this.tempComments[appointment.id] || '',
-      patientId: appointment.patientId,
-      dentistId: appointment.dentistId,
+  submitRating(appointment: IAppointment): void {
+    const tempRating = this.tempRatings[appointment.id];
+
+    if (!tempRating?.score || !tempRating.appointmentId) {
+      this.showError('Por favor, selecione uma avaliação');
+      return;
+    }
+
+    const ratingData: IRatingCreate = {
+      score: tempRating.score,
+      comment: tempRating.comment || '',
+      patientId: appointment.patient.id,
+      dentistId: appointment.dentist.id,
       appointmentId: appointment.id,
     };
 
     this.ratingService.submitRating(ratingData).subscribe({
-      next: (response) => {
-        this.snackBar.open('Avaliação enviada com sucesso!', 'Fechar', {
-          duration: 3000,
-          panelClass: ['success-snackbar'],
-        });
+      next: () => {
+        this.showSuccess('Avaliação enviada com sucesso!');
+        this.resetTempRating(appointment.id);
         this.loadAppointments();
       },
       error: () => {
-        this.snackBar.open('Erro ao enviar avaliação', 'Fechar', {
-          duration: 3000,
-          panelClass: ['error-snackbar'],
-        });
+        this.showError('Erro ao enviar avaliação');
       },
+    });
+  }
+
+  updateComment(appointment: IAppointment, comment: string): void {
+    this.tempRatings[appointment.id] = {
+      ...(this.tempRatings[appointment.id] || {}),
+      comment: comment,
+      appointmentId: appointment.id,
+      patientId: appointment.patient.id,
+      dentistId: appointment.dentist.id,
+    };
+  }
+
+  private resetTempRating(appointmentId: number): void {
+    delete this.tempRatings[appointmentId];
+  }
+
+  private showSuccess(message: string): void {
+    this.snackBar.open(message, 'Fechar', {
+      duration: 3000,
+      panelClass: ['success-snackbar'],
+    });
+  }
+
+  private showError(message: string): void {
+    this.snackBar.open(message, 'Fechar', {
+      duration: 3000,
+      panelClass: ['error-snackbar'],
     });
   }
 }

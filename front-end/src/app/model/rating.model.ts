@@ -8,3 +8,11 @@ export interface IRating {
   appointmentId: number;
   rated?: boolean;
 }
+
+export interface IRatingCreate {
+  score: number;
+  comment: string;
+  patientId: number;
+  dentistId: number;
+  appointmentId: number;
+}

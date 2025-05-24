@@ -17,7 +17,7 @@ interface PatientMin {
 }
 
 export interface IAppointment {
-  id?: number;
+  id: number;
   date: string;
   status: AppointmentStatus;
   description: string;
