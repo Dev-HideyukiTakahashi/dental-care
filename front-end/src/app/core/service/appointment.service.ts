@@ -1,7 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { IAppointment } from '../../model/appointment.model';
+import {
+  IAppointment,
+  IAppointmentCreate,
+} from '../../model/appointment.model';
 import { Page } from '../../model/page.model';
 import { IUpdateAppointment } from '../../model/update-appointment-model';
 
@@ -15,13 +18,17 @@ export class AppointmentService {
 
   findAll(page: number, size: number): Observable<Page<IAppointment>> {
     return this.http.get<Page<IAppointment>>(
-      `${this.API}/appointments?page=${page}&size=${size}&sort=date,desc`,
+      `${this.API}/appointments?page=${page}&size=${size}&sort=date,desc`
     );
   }
 
-  findByDate(page: number, size: number, date: string): Observable<Page<IAppointment>> {
+  findByDate(
+    page: number,
+    size: number,
+    date: string
+  ): Observable<Page<IAppointment>> {
     return this.http.get<Page<IAppointment>>(
-      `${this.API}/appointments/date?date=${date}&page=${page}&size=${size}&sort=date,desc`,
+      `${this.API}/appointments/date?date=${date}&page=${page}&size=${size}&sort=date,desc`
     );
   }
 
@@ -29,11 +36,21 @@ export class AppointmentService {
     return this.http.get<IAppointment>(`${this.API}/appointments/${id}`);
   }
 
-  updateAppointment(id: number, body: IUpdateAppointment): Observable<IAppointment> {
+  updateAppointment(
+    id: number,
+    body: IUpdateAppointment
+  ): Observable<IAppointment> {
     return this.http.put<IAppointment>(`${this.API}/appointments/${id}`, body);
   }
 
+  create(body: IAppointmentCreate): Observable<IAppointmentCreate> {
+    return this.http.post<IAppointmentCreate>(`${this.API}/appointments`, body);
+  }
+
   cancelAppointment(id: number): Observable<IAppointment> {
-    return this.http.put<IAppointment>(`${this.API}/appointments/${id}/cancel`, null);
+    return this.http.put<IAppointment>(
+      `${this.API}/appointments/${id}/cancel`,
+      null
+    );
   }
 }

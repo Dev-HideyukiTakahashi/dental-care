@@ -1,28 +1,23 @@
+import { IDentistMin } from './dentist-min.model';
 import { AppointmentStatus } from './enum/appointment-status.enum';
+import { IPatientMin } from './patient-min.model';
 import { IRating } from './rating.model';
-
-interface DentistMin {
-  id: number;
-  speciality: string;
-  name: string;
-  registrationNumber: string;
-  score: number;
-}
-
-interface PatientMin {
-  id: number;
-  medicalHistory: string;
-  name: string;
-  phone: string;
-}
 
 export interface IAppointment {
   id: number;
   date: string;
   status: AppointmentStatus;
   description: string;
-  dentist: DentistMin;
-  patient: PatientMin;
+  dentist: IDentistMin;
+  patient: IPatientMin;
   message?: string | null;
   rating?: IRating;
+}
+
+export interface IAppointmentCreate {
+  date: string;
+  status: string;
+  description: string;
+  dentist: { id: number };
+  patient: { id: number } | null;
 }

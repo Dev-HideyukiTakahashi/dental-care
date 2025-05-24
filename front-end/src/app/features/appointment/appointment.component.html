@@ -1,0 +1,157 @@
+<div class="patient-container">
+  <!-- HEADER -->
+  <div class="patient-header">
+    <div class="header-left">
+      <h2 class="title">Agendar Nova Consulta</h2>
+      <p class="subtitle">Preencha os dados para agendar uma nova consulta</p>
+    </div>
+  </div>
+
+  <!-- EDIT FORM -->
+  <div class="patient-edit-card">
+    <form
+      class="edit-form"
+      [formGroup]="appointmentForm"
+      (ngSubmit)="onSubmit()"
+    >
+      @if(isAdmin){
+      <!-- Patient -->
+      <div class="form-group">
+        <label for="patient">Paciente</label>
+        <select
+          id="patient"
+          formControlName="patient"
+          required
+          [class.invalid]="
+            appointmentForm.get('patient')?.invalid &&
+            appointmentForm.get('patient')?.touched
+          "
+        >
+          <option value="" disabled selected>Selecione um paciente</option>
+          <option *ngFor="let patient of patients" [value]="patient.id">
+            {{ patient.name }}
+          </option>
+        </select>
+        <span
+          class="error-message"
+          *ngIf="
+            appointmentForm.get('patient')?.hasError('required') &&
+            appointmentForm.get('patient')?.touched
+          "
+        >
+          Paciente é obrigatório
+        </span>
+      </div>
+      }
+
+      <!-- Dentist -->
+      <div class="form-group">
+        <label for="dentist">Dentista</label>
+        <select
+          id="dentist"
+          formControlName="dentist"
+          required
+          (change)="onDentistSelect()"
+          [class.invalid]="
+            appointmentForm.get('dentist')?.invalid &&
+            appointmentForm.get('dentist')?.touched
+          "
+        >
+          <option value="" disabled selected>Selecione um dentista</option>
+          <option *ngFor="let dentist of dentists" [value]="dentist.id">
+            Dr. {{ dentist.name }} - {{ dentist.speciality }}
+          </option>
+        </select>
+        <span
+          class="error-message"
+          *ngIf="
+            appointmentForm.get('dentist')?.hasError('required') &&
+            appointmentForm.get('dentist')?.touched
+          "
+        >
+          Dentista é obrigatório
+        </span>
+      </div>
+
+      <!-- Dentist Score -->
+      <div class="form-group">
+        <label for="score">Avaliação do Dentista</label>
+        <input
+          type="text"
+          id="score"
+          [value]="selectedDentistScore"
+          readonly
+          class="readonly-field"
+        />
+      </div>
+      <!-- Date -->
+      <div class="form-group">
+        <label for="date">Data e Hora</label>
+        <input
+          type="datetime-local"
+          id="date"
+          formControlName="date"
+          required
+          step="1800"
+          [class.invalid]="
+            appointmentForm.get('date')?.invalid &&
+            appointmentForm.get('date')?.touched
+          "
+        />
+        <span
+          class="error-message"
+          *ngIf="
+            appointmentForm.get('date')?.hasError('required') &&
+            appointmentForm.get('date')?.touched
+          "
+        >
+          Data e hora são obrigatórios
+        </span>
+      </div>
+
+      <!-- Description -->
+      <div class="form-group">
+        <label for="description">Procedimento</label>
+        <textarea
+          id="description"
+          formControlName="description"
+          required
+          [class.invalid]="
+            appointmentForm.get('description')?.invalid &&
+            appointmentForm.get('description')?.touched
+          "
+        ></textarea>
+        <span
+          class="error-message"
+          *ngIf="
+            appointmentForm.get('description')?.hasError('required') &&
+            appointmentForm.get('description')?.touched
+          "
+        >
+          Descrição do procedimento é obrigatória
+        </span>
+      </div>
+
+      <!-- Error Message -->
+      <div class="form-error-message" *ngIf="errorMessage">
+        <i class="fas fa-exclamation-triangle"></i>
+        {{ errorMessage }}
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" routerLink="/">
+          <i class="fas fa-times"></i> Cancelar
+        </button>
+        <button
+          type="submit"
+          class="btn-save"
+          [disabled]="appointmentForm.invalid || dentistLoading"
+        >
+          <i class="fas fa-save"></i>
+          <span *ngIf="!dentistLoading">Agendar Consulta</span>
+          <span *ngIf="dentistLoading">Aguarde...</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

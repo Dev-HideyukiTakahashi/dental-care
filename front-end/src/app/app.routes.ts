@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { AbsenceScheduleComponent } from './features/absence-schedule/absence-schedule.component';
+import { AppointmentComponent } from './features/appointment/appointment.component';
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterComponent } from './features/auth/register/register.component';
 import { ResetPasswordComponent } from './features/auth/reset-password/reset-password.component';
@@ -58,6 +59,12 @@ export const routes: Routes = [
         component: RatingsComponent,
         canActivate: [authGuard],
         data: { roles: ['patient'] },
+      },
+      {
+        path: 'appointment',
+        component: AppointmentComponent,
+        canActivate: [authGuard],
+        data: { roles: ['patient', 'admin'] },
       },
     ],
   },

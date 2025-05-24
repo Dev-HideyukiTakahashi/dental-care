@@ -51,9 +51,11 @@ public class AppointmentService {
     public AppointmentDTO createAppointment(AppointmentDTO dto) {
 
         Dentist dentist = validateDentist(dto.getDentistMinDTO().getId());
-        User user = userService.authenticated();
-        Patient patient = validatePatient(user.getId());
-        authService.validateSelfOrAdmin(patient.getId());
+
+        Long patientId = (dto.getPatientMinDTO() != null) ? dto.getPatientMinDTO().getId()
+                : userService.authenticated().getId();
+        Patient patient = validatePatient(patientId);
+
         validateWorkingHours(dto.getDate());
 
         if (checkDentistAvailability(dentist, dto.getDate())) {
@@ -182,6 +184,7 @@ public class AppointmentService {
     }
 
     private Patient validatePatient(Long id) {
+
         return patientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found! ID: " + id));
     }
