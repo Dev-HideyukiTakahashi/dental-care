@@ -7,31 +7,14 @@
     id="sidebarToggle"
     (click)="toggleSidebar()"
   >
-    <i class="fas" [class.fa-bars]="sidebarCollapsed" [class.fa-times]="!sidebarCollapsed"></i>
+    <i
+      class="fas"
+      [class.fa-bars]="sidebarCollapsed"
+      [class.fa-times]="!sidebarCollapsed"
+    ></i>
   </button>
 
   <div class="d-flex ms-auto align-items-center">
-    <ng-container *ngIf="role === 'admin'">
-      <!-- Navbar Search-->
-      <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
-        <div class="input-group">
-          <input
-            class="form-control"
-            type="text"
-            placeholder="Buscar paciente"
-            aria-describedby="btnNavbarSearch"
-          />
-          <button
-            class="btn btn-primary"
-            id="btnNavbarSearch"
-            type="button"
-            (click)="onButtonSearch()"
-          >
-            <i class="fas fa-search"></i>
-          </button>
-        </div>
-      </form>
-    </ng-container>
     <!-- Navbar-->
     <ul class="navbar-nav me-3 me-lg-4">
       <li class="nav-item dropdown">
@@ -44,8 +27,13 @@
           aria-expanded="false"
           ><i class="fas fa-user fa-fw"></i
         ></a>
-        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-          <li><a class="dropdown-item" (click)="openLogoutModal()">Logout</a></li>
+        <ul
+          class="dropdown-menu dropdown-menu-end"
+          aria-labelledby="navbarDropdown"
+        >
+          <li>
+            <a class="dropdown-item" (click)="openLogoutModal()">Logout</a>
+          </li>
         </ul>
       </li>
     </ul>
@@ -53,7 +41,11 @@
 </nav>
 
 <!-- Logout Confirmation Modal -->
-<div class="modal-backdrop" *ngIf="showLogoutModal" (click)="closeModal()"></div>
+<div
+  class="modal-backdrop"
+  *ngIf="showLogoutModal"
+  (click)="closeModal()"
+></div>
 <div *ngIf="showLogoutModal" class="modal-overlay">
   <div class="modal" (click)="$event.stopPropagation()">
     <div class="modal-content">
@@ -61,8 +53,12 @@
         <p>Você realmente deseja sair?</p>
       </div>
       <div class="modal-actions">
-        <button type="button" class="btn btn-primary" (click)="logout()">Sair</button>
-        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
+        <button type="button" class="btn btn-primary" (click)="logout()">
+          Sair
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">
+          Cancelar
+        </button>
       </div>
     </div>
   </div>

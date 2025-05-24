@@ -15,16 +15,11 @@ export class HeaderComponent {
   showLogoutModal = false;
   isAdmin = false;
 
-  @Output() searchEvent = new EventEmitter<void>();
   @Output() toggleSidebarEvent = new EventEmitter<void>();
   sidebarCollapsed: boolean = false;
 
   get role(): UserRole | null {
     return this.authService.getRole();
-  }
-
-  onButtonSearch() {
-    this.searchEvent.emit();
   }
 
   toggleSidebar() {
