@@ -53,4 +53,11 @@ export class AppointmentService {
       null
     );
   }
+
+  completeAppointment(id: number): Observable<IAppointment> {
+    return this.http.put<IAppointment>(
+      `${this.API}/appointments/${id}/complete`,
+      null
+    );
+  }
 }
