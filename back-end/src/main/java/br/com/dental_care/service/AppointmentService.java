@@ -51,7 +51,8 @@ public class AppointmentService {
     public AppointmentDTO createAppointment(AppointmentDTO dto) {
 
         Dentist dentist = validateDentist(dto.getDentistMinDTO().getId());
-        Patient patient = validatePatient(dto.getPatientMinDTO().getId());
+        User user = userService.authenticated();
+        Patient patient = validatePatient(user.getId());
         authService.validateSelfOrAdmin(patient.getId());
         validateWorkingHours(dto.getDate());
 
