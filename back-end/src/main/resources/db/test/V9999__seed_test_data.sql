@@ -17,6 +17,10 @@ VALUES ('elias.warrior@example.com', 'Elias Warrior', '$2b$12$.rYCnS9Yx5BPr8N6uG
        ('victor.dent@example.com', 'Victor Dent', '$2b$12$.rYCnS9Yx5BPr8N6uGhY0etPuXhCqTGuJ7GpnNzMYsl6RwvqrIDRe',
         '6155556789'),
        ('henry.surge@example.com', 'Henry Surge', '$2b$12$.rYCnS9Yx5BPr8N6uGhY0etPuXhCqTGuJ7GpnNzMYsl6RwvqrIDRe',
+        '8155558901'),
+        ('john.doe@example.com', 'John Doe', '$2b$12$.rYCnS9Yx5BPr8N6uGhY0etPuXhCqTGuJ7GpnNzMYsl6RwvqrIDRe',
+        '8155558901'),
+        ('alex.green@example.com', 'Alex Green', '$2b$12$.rYCnS9Yx5BPr8N6uGhY0etPuXhCqTGuJ7GpnNzMYsl6RwvqrIDRe',
         '8155558901');
 
 -- Admin 
@@ -31,13 +35,15 @@ VALUES (2, 'Limpeza dentária'),
 -- Dentist
 INSERT INTO tb_dentist (id, registration_number, speciality, score)
 VALUES (4, 'DR12345', 'Ortodontia', 9),
-       (5, 'DR23456', 'Periodontia', 7);
+       (5, 'DR23256', 'Periodontia', 7),
+       (6, 'DR95256', 'Endodontia', 6),
+       (7, 'DR11456', 'Odontopediatria', 10);
 
 -- Association User - Role
 -- Admin (ROLE_ADMIN)
 INSERT INTO tb_user_role (role_id, user_id)
 VALUES ((SELECT id FROM tb_role WHERE authority = 'ROLE_ADMIN' LIMIT 1),
-       (SELECT id FROM tb_user WHERE name = 'Elias Warrior') );
+       (SELECT id FROM tb_user WHERE name = 'Elias Warrior'));
 
 -- Patients (ROLE_PATIENT)
 INSERT INTO tb_user_role (role_id, user_id)
@@ -49,7 +55,9 @@ VALUES ((SELECT id FROM tb_role WHERE authority = 'ROLE_PATIENT' LIMIT 1),
 INSERT INTO tb_user_role (role_id, user_id)
 VALUES ((SELECT id FROM tb_role WHERE authority = 'ROLE_DENTIST' LIMIT 1),
        (SELECT id FROM tb_user WHERE name = 'Victor Dent')),
-    ((SELECT id FROM tb_role WHERE authority = 'ROLE_DENTIST' LIMIT 1), (SELECT id FROM tb_user WHERE name = 'Henry Surge'));
+       ((SELECT id FROM tb_role WHERE authority = 'ROLE_DENTIST' LIMIT 1), (SELECT id FROM tb_user WHERE name = 'Henry Surge')),
+       ((SELECT id FROM tb_role WHERE authority = 'ROLE_DENTIST' LIMIT 1), (SELECT id FROM tb_user WHERE name = 'John Doe')),
+        ((SELECT id FROM tb_role WHERE authority = 'ROLE_DENTIST' LIMIT 1), (SELECT id FROM tb_user WHERE name = 'Alex Green'));
 
 -- Insert Schedule dentist id 4
 INSERT INTO tb_schedule (dentist_id, unavailable_time_slot)
@@ -60,6 +68,10 @@ VALUES (4, '2025-12-20 09:00:00'),
 -- Insert Schedule dentist id 5
 INSERT INTO tb_schedule (dentist_id, unavailable_time_slot)
 VALUES (5, '2025-12-21 15:00:00');
+
+INSERT INTO tb_schedule (unavailable_time_slot, dentist_id, absence_start, absence_end) VALUES (NULL, 5, '2027-12-01 00:00:00','2027-12-31 23:59:59');
+INSERT INTO tb_schedule (unavailable_time_slot, dentist_id, absence_start, absence_end) VALUES (NULL, 6, '2027-10-01 00:00:00','2027-10-31 23:59:59');
+INSERT INTO tb_schedule (unavailable_time_slot, dentist_id, absence_start, absence_end) VALUES (NULL, 7, '2027-8-11 00:00:00','2027-8-21 23:59:59');
 
 -- Insert Appointment SCHEDULED
 INSERT INTO tb_appointment (date, dentist_id, patient_id, status, description)

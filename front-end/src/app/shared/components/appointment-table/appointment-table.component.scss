@@ -76,6 +76,22 @@
         opacity: 0.65;
       }
     }
+
+     &--completed {
+      background-color: #65c248;
+      color: #fff;
+
+      &:hover {
+        background-color: #0b7e10;
+      }
+
+      &:disabled {
+        background-color: #6c757d !important;
+        color: #e9ecef;
+        cursor: not-allowed;
+        opacity: 0.65;
+      }
+    }
   }
 }
 
@@ -112,6 +128,25 @@
   .home__td:nth-child(2),
   .home__th:nth-child(4),
   .home__td:nth-child(4),
+  .home__th:nth-child(5),
+  .home__td:nth-child(5) {
+    display: none;
+  }
+}
+
+@media (max-width: 1115px) {
+  .home__btn {
+    display: block;
+    width: 100%;
+    margin: 0.25rem 0;
+  }
+
+  .home__td:last-child {
+    white-space: nowrap;
+  }
+
+  .home__th:nth-child(1),
+  .home__td:nth-child(1),
   .home__th:nth-child(5),
   .home__td:nth-child(5) {
     display: none;

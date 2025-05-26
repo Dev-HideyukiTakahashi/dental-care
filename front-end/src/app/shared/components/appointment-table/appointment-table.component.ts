@@ -20,6 +20,7 @@ export class AppointmentTableComponent {
   @Output() viewDetails = new EventEmitter<number>();
   @Output() editAppointment = new EventEmitter<IAppointment>();
   @Output() cancelAppointment = new EventEmitter<number>();
+  @Output() completeAppointment = new EventEmitter<number>();
 
   AppointmentStatus = AppointmentStatus;
 

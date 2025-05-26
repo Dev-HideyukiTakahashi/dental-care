@@ -7,6 +7,7 @@
   </div>
 
   <div class="dashboard__content">
+    <!-- STATISTICS -->
     <div class="dashboard__metrics">
       <div class="dashboard__metric-card">
         <div class="dashboard__metric-content">
@@ -33,13 +34,82 @@
       </div>
     </div>
 
+    <!-- TODAY APPOINTMENTS -->
+
+    <div class="dashboard__today-appointments">
+      <div class="dashboard__section-header">
+        <h3 class="dashboard__section-title">Consultas do Dia</h3>
+        <p class="dashboard__section-subtitle">
+          {{ today | date : "fullDate" }}
+        </p>
+      </div>
+
+      <div class="dashboard__appointments-grid">
+        <div
+          class="dashboard__appointment-card"
+          *ngFor="let appointment of todayAppointments"
+        >
+          <div class="dashboard__appointment-content">
+            <div class="dashboard__appointment-info">
+              <h4 class="dashboard__appointment-dentist">
+                <mat-icon>person</mat-icon>
+                Dr. {{ appointment.dentist.name }}
+              </h4>
+              <p class="dashboard__appointment-patient">
+                <mat-icon>accessibility</mat-icon>
+                {{ appointment.patient.name }}
+              </p>
+              <p class="dashboard__appointment-time">
+                <mat-icon>access_time</mat-icon>
+                {{ appointment.date | date : "HH:mm" }}
+              </p>
+            </div>
+            <button
+              mat-stroked-button
+              class="dashboard__appointment-button"
+              [class.completed]="appointment.status === 'COMPLETED'"
+              (click)="completeAppointment(appointment.id)"
+              [disabled]="appointment.status === 'COMPLETED'"
+            >
+              <mat-icon *ngIf="appointment.status !== 'COMPLETED'"
+                >check_circle</mat-icon
+              >
+              <mat-icon *ngIf="appointment.status === 'COMPLETED'"
+                >task_alt</mat-icon
+              >
+              {{
+                appointment.status === "COMPLETED" ? "Concluída" : "Concluir"
+              }}
+            </button>
+          </div>
+        </div>
+
+        <div
+          class="dashboard__no-appointments"
+          *ngIf="todayAppointments.length === 0"
+        >
+          <mat-icon>event_available</mat-icon>
+          <p>Nenhuma consulta agendada para hoje</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- DENTIST RATINGS -->
     <div class="dashboard__chart-section">
       <div class="dashboard__chart-header">
         <h3 class="dashboard__chart-title">Avaliação dos Dentistas</h3>
-        <p class="dashboard__chart-subtitle">Escala de 1 a 10 (média por paciente)</p>
+        <p class="dashboard__chart-subtitle">
+          Escala de 1 a 10 (média por paciente)
+        </p>
       </div>
       <div class="dashboard__chart-container">
-        <canvas baseChart [type]="chartType" [data]="chartData" [options]="chartOptions"> </canvas>
+        <canvas
+          baseChart
+          [type]="chartType"
+          [data]="chartData"
+          [options]="chartOptions"
+        >
+        </canvas>
       </div>
     </div>
   </div>

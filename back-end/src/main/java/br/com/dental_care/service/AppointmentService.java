@@ -51,8 +51,11 @@ public class AppointmentService {
     public AppointmentDTO createAppointment(AppointmentDTO dto) {
 
         Dentist dentist = validateDentist(dto.getDentistMinDTO().getId());
-        Patient patient = validatePatient(dto.getPatientMinDTO().getId());
-        authService.validateSelfOrAdmin(patient.getId());
+
+        Long patientId = (dto.getPatientMinDTO() != null) ? dto.getPatientMinDTO().getId()
+                : userService.authenticated().getId();
+        Patient patient = validatePatient(patientId);
+
         validateWorkingHours(dto.getDate());
 
         if (checkDentistAvailability(dentist, dto.getDate())) {
@@ -181,6 +184,7 @@ public class AppointmentService {
     }
 
     private Patient validatePatient(Long id) {
+
         return patientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found! ID: " + id));
     }
@@ -228,8 +232,10 @@ public class AppointmentService {
     private void deleteSchedule(Appointment appointment) {
         logger.info("Initiating schedule deletion process.");
         List<Schedule> dentistSchedules = appointment.getDentist().getSchedules();
+
         for (Schedule schedule : dentistSchedules) {
-            if (schedule.getUnavailableTimeSlot().isEqual(appointment.getDate())) {
+            if (schedule.getUnavailableTimeSlot() != null
+                    && schedule.getUnavailableTimeSlot().isEqual(appointment.getDate())) {
                 scheduleRepository.deleteById(schedule.getId());
                 logger.info("Schedule deleted, id: {}", schedule.getId());
                 break;

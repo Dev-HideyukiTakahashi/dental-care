@@ -1,22 +1,27 @@
 package br.com.dental_care.service;
 
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import br.com.dental_care.dto.RatingDTO;
 import br.com.dental_care.exception.InvalidRatingDataException;
 import br.com.dental_care.exception.ResourceNotFoundException;
 import br.com.dental_care.mapper.RatingMapper;
-import br.com.dental_care.model.*;
+import br.com.dental_care.model.Appointment;
+import br.com.dental_care.model.Dentist;
+import br.com.dental_care.model.Patient;
+import br.com.dental_care.model.Rating;
+import br.com.dental_care.model.User;
 import br.com.dental_care.model.enums.AppointmentStatus;
 import br.com.dental_care.repository.AppointmentRepository;
 import br.com.dental_care.repository.DentistRepository;
 import br.com.dental_care.repository.PatientRepository;
 import br.com.dental_care.repository.RatingRepository;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +33,6 @@ public class RatingService {
     private final DentistRepository dentistRepository;
     private final RatingRepository ratingRepository;
     private final UserService userService;
-
 
     @Transactional
     public RatingDTO rateDentist(RatingDTO dto) {
@@ -57,12 +61,10 @@ public class RatingService {
 
     private Appointment validateAppointment(Long appointmentId) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new
-                        ResourceNotFoundException("Appointment not found! ID: " + appointmentId));
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found! ID: " + appointmentId));
 
         if (appointment.getStatus() != AppointmentStatus.COMPLETED)
-            throw new InvalidRatingDataException
-                    ("Appointment status must be 'COMPLETED' to proceed with the rating.");
+            throw new InvalidRatingDataException("Appointment status must be 'COMPLETED' to proceed with the rating.");
 
         return appointment;
     }
@@ -83,7 +85,7 @@ public class RatingService {
 
         User user = userService.authenticated();
 
-        if(!user.getId().equals(patientId))
+        if (!user.getId().equals(patientId))
             throw new InvalidRatingDataException("You can only submit a rating for your own appointment.");
 
         return patientRepository.getReferenceById(patientId);

@@ -2,7 +2,7 @@
   <div class="home__header">
     <div class="home__header-left">
       <h1 class="home__title">Consultas Agendadas</h1>
-      <p class="home__subtitle">Lista das últimas consultas odontológicas</p>
+      <p class="home__subtitle">Lista de todas consultas odontológicas</p>
     </div>
 
     <!-- APPOINTMENTS FILTERED BY DATE -->
@@ -21,6 +21,7 @@
     (viewDetails)="openAppointmentDetails($event)"
     (editAppointment)="openEditModal($event)"
     (cancelAppointment)="onCancelAppointment($event)"
+    (completeAppointment)="onCompleteAppointment($event)"
   ></app-appointment-table>
 
   <!-- PAGINATION -->

@@ -1,7 +1,6 @@
 package br.com.dental_care.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -14,6 +13,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -86,31 +86,13 @@ public class ScheduleServiceTest {
         when(scheduleRepository.save(any(Schedule.class))).thenReturn(schedule);
 
         // Act
-        AbsenceDTO result = scheduleService.createDentistAbsence(1L, absenceRequestDTO);
+        AbsenceDTO result = scheduleService.createDentistAbsence(absenceRequestDTO);
 
         // Assert
         assertNotNull(result);
         assertEquals(absenceRequestDTO.getAbsenceStart(), result.getAbsenceStart());
         assertEquals(absenceRequestDTO.getAbsenceEnd(), result.getAbsenceEnd());
         verify(scheduleRepository, times(1)).save(any(Schedule.class));
-    }
-
-    @Test
-    void createDentistAbsence_Should_ThrowException_When_DentistIsNotOwner() {
-
-        user.setId(invalidId);
-
-        when(dentistRepository.findById(validId)).thenReturn(Optional.of(dentist));
-        when(userService.authenticated()).thenReturn(user);
-
-        Exception exception = assertThrows(ScheduleConflictException.class, () -> {
-            scheduleService.createDentistAbsence(validId, absenceRequestDTO);
-        });
-
-        assertNotEquals(user.getId(), dentist.getId());
-        assertEquals("You are not allowed to create an absence for another dentist.", exception.getMessage());
-
-        verify(scheduleRepository, never()).save(any(Schedule.class));
     }
 
     @Test
@@ -125,7 +107,7 @@ public class ScheduleServiceTest {
         when(userService.authenticated()).thenReturn(user);
 
         Exception exception = assertThrows(InvalidDateRangeException.class, () -> {
-            scheduleService.createDentistAbsence(validId, absenceRequestDTO);
+            scheduleService.createDentistAbsence(absenceRequestDTO);
         });
 
         assertEquals("The end date and time cannot be before the start date and time.", exception.getMessage());
@@ -141,10 +123,10 @@ public class ScheduleServiceTest {
         when(userService.authenticated()).thenReturn(user);
 
         Exception exception = assertThrows(ScheduleConflictException.class, () -> {
-            scheduleService.createDentistAbsence(validId, absenceRequestDTO);
+            scheduleService.createDentistAbsence(absenceRequestDTO);
         });
 
-        assertEquals("Dentist already absent in this period.", exception.getMessage());
+        assertEquals("The dentist already has an active or scheduled leave period.", exception.getMessage());
         verify(scheduleRepository, never()).save(any(Schedule.class));
     }
 
@@ -163,7 +145,7 @@ public class ScheduleServiceTest {
         when(userService.authenticated()).thenReturn(user);
 
         Exception exception = assertThrows(ScheduleConflictException.class, () -> {
-            scheduleService.createDentistAbsence(validId, absenceRequestDTO);
+            scheduleService.createDentistAbsence(absenceRequestDTO);
         });
 
         assertEquals("The dentist cannot be on leave during this period, as there is already an appointment scheduled.",
@@ -172,80 +154,103 @@ public class ScheduleServiceTest {
     }
 
     @Test
-    void createDentistAbsence_Should_ThrowException_When_DentistNotFound() {
-
-        when(dentistRepository.findById(invalidId)).thenReturn(Optional.empty());
-
-        Exception exception = assertThrows(ResourceNotFoundException.class, () -> {
-            scheduleService.createDentistAbsence(invalidId, absenceRequestDTO);
-        });
-
-        assertEquals("Dentist not found! ID: " + invalidId, exception.getMessage());
-        verify(scheduleRepository, never()).save(any(Schedule.class));
-    }
-
-    @Test
     void removeDentistAbsence_Should_DeleteAbsence_When_ValidIdProvided() {
 
         schedule.setUnavailableTimeSlot(null);
         schedule.setAbsenceEnd(LocalDateTime.now().plusDays(5));
+        dentist.getSchedules().addAll(List.of(schedule));
 
-        when(scheduleRepository.findById(validId)).thenReturn(Optional.of(schedule));
+        when(userService.authenticated()).thenReturn(user);
+        when(dentistRepository.findById(user.getId())).thenReturn(Optional.of(dentist));
         doNothing().when(scheduleRepository).deleteById(validId);
 
-        scheduleService.removeDentistAbsence(validId);
+        scheduleService.removeDentistAbsence();
 
         assertNull(schedule.getUnavailableTimeSlot());
-        verify(scheduleRepository, times(1)).findById(validId);
+        verify(dentistRepository, times(1)).findById(user.getId());
         verify(scheduleRepository, times(1)).deleteById(validId);
     }
 
     @Test
     void removeDentistAbsence_Should_ThrowException_When_ScheduleNotFound() {
 
-        when(scheduleRepository.findById(invalidId)).thenReturn(Optional.empty());
+        when(userService.authenticated()).thenReturn(user);
+        when(dentistRepository.findById(user.getId())).thenReturn(Optional.of(dentist));
 
         Exception exception = assertThrows(ResourceNotFoundException.class, () -> {
-            scheduleService.removeDentistAbsence(invalidId);
+            scheduleService.removeDentistAbsence();
         });
 
-        assertEquals("Schedule not found! ID: " + invalidId, exception.getMessage());
-        verify(scheduleRepository, times(1)).findById(invalidId);
-        verify(scheduleRepository, never()).deleteById(invalidId);
-    }
-
-    @Test
-    void removeDentistAbsence_Should_ThrowException_When_ScheduleIsNotAbsence() {
-
-        schedule.setUnavailableTimeSlot(LocalDateTime.parse("2027-12-20T10:00:00"));
-
-        when(scheduleRepository.findById(validId)).thenReturn(Optional.of(schedule));
-
-        Exception exception = assertThrows(ScheduleConflictException.class, () -> {
-            scheduleService.removeDentistAbsence(validId);
-        });
-
-        assertEquals("Dentist is not absent during this period.", exception.getMessage());
-        assertNotNull(schedule.getUnavailableTimeSlot());
-        verify(scheduleRepository, times(1)).findById(validId);
-        verify(scheduleRepository, never()).deleteById(validId);
+        assertEquals("No active absence period found for deletion.", exception.getMessage());
+        verify(dentistRepository, times(1)).findById(user.getId());
     }
 
     @Test
     void removeDentistAbsence_Should_ThrowException_When_AbsenceEndIsInPast() {
 
         schedule.setAbsenceEnd(LocalDateTime.now().minusDays(5));
-        schedule.setUnavailableTimeSlot(null);
+        dentist.getSchedules().add(schedule);
 
-        when(scheduleRepository.findById(validId)).thenReturn(Optional.of(schedule));
+        when(userService.authenticated()).thenReturn(user);
+        when(dentistRepository.findById(user.getId())).thenReturn(Optional.of(dentist));
 
-        Exception exception = assertThrows(InvalidDateRangeException.class, () -> {
-            scheduleService.removeDentistAbsence(validId);
+        Exception exception = assertThrows(ScheduleConflictException.class, () -> {
+            scheduleService.removeDentistAbsence();
         });
 
         assertEquals("Cannot remove an absence period that has already ended.", exception.getMessage());
         assertTrue(schedule.getAbsenceEnd().isBefore(LocalDateTime.now()));
-        verify(scheduleRepository, times(1)).findById(validId);
+        verify(dentistRepository, times(1)).findById(validId);
         verify(scheduleRepository, never()).deleteById(validId);
+    }
+
+    @Test
+    void findSelfAbsence_Should_ReturnAbsenceDTO_When_DentistHasActiveAbsence() {
+
+        Schedule activeAbsence = ScheduleFactory.createValidSchedule();
+
+        activeAbsence.setUnavailableTimeSlot(null);
+        activeAbsence.setAbsenceStart(LocalDateTime.now().minusDays(1));
+        activeAbsence.setAbsenceEnd(LocalDateTime.now().plusDays(5));
+        dentist.getSchedules().add(activeAbsence);
+
+        when(userService.authenticated()).thenReturn(user);
+        when(dentistRepository.findById(user.getId())).thenReturn(Optional.of(dentist));
+
+        AbsenceDTO result = scheduleService.findSelfAbsence();
+
+        assertNotNull(result);
+        assertEquals(activeAbsence.getAbsenceStart(), result.getAbsenceStart());
+        assertEquals(activeAbsence.getAbsenceEnd(), result.getAbsenceEnd());
+
+        verify(dentistRepository, times(1)).findById(validId);
+
+    }
+
+    @Test
+    void findSelfAbsence_Should_ReturnNull_When_DentistHasNoAbsence() {
+
+        dentist.getSchedules().clear();
+
+        when(userService.authenticated()).thenReturn(user);
+        when(dentistRepository.findById(user.getId())).thenReturn(Optional.of(dentist));
+
+        AbsenceDTO result = scheduleService.findSelfAbsence();
+
+        assertNull(result);
+    }
+
+    @Test
+    void findSelfAbsence_Should_ThrowResourceNotFoundException_When_DentistNotFound() {
+
+        user.setId(invalidId);
+
+        when(userService.authenticated()).thenReturn(user);
+        when(dentistRepository.findById(user.getId())).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> {
+            scheduleService.findSelfAbsence();
+        });
+        verify(dentistRepository, times(1)).findById(invalidId);
     }
 }

@@ -1,0 +1,133 @@
+.ratings-container {
+  padding: 2rem;
+  background-color: #dee2e6;
+}
+
+.ratings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #adb5bd;
+
+  .header-left {
+    .title {
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: #343a40;
+      margin: 0;
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      color: #343a40;
+      margin: 0.5rem 0 0;
+    }
+  }
+}
+
+.section-title {
+  margin: 2rem 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #adb5bd;
+
+  h3 {
+    color: #343a40;
+    margin: 0;
+    font-size: 1.25rem;
+  }
+}
+
+.ratings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.rating-card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border: 1px solid #dee2e6;
+
+  .card-header {
+    padding: 1rem;
+    background-color: #343A40;
+    border-bottom: 1px solid #dee2e6;
+
+    h3 {
+      margin: 0;
+      font-size: 1.1rem;
+      color: #fff;
+    }
+
+    .date {
+      font-size: 0.875rem;
+      color: #dee2e6;
+    }
+  }
+
+  .card-body {
+    padding: 1rem;
+
+    p {
+      margin: 0.5rem 0;
+      color: #495057;
+    }
+
+    .rating-form, .rating-display {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px dashed #dee2e6;
+    }
+
+    .stars {
+      display: flex;
+      margin-bottom: 1rem;
+
+      span {
+        cursor: pointer;
+        color: #adb5bd;
+
+        &.active {
+          color: #ffc107;
+        }
+
+        mat-icon {
+          font-size: 1.5rem;
+          width: auto;
+          height: auto;
+        }
+      }
+    }
+
+    .comment-field {
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+
+    .comment {
+      font-style: italic;
+      margin-top: 0.5rem;
+    }
+
+    .rating-date {
+      font-size: 0.75rem;
+      color: #6c757d;
+      margin-top: 0.5rem;
+    }
+  }
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .ratings-container {
+    padding: 1rem;
+  }
+
+  .ratings-grid {
+    grid-template-columns: 1fr;
+  }
+}

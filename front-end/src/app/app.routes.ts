@@ -5,7 +5,6 @@ import { RegisterComponent } from './features/auth/register/register.component';
 import { ResetPasswordComponent } from './features/auth/reset-password/reset-password.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { DentistListComponent } from './features/dentist-list/dentist-list.component';
-import { DentistPasswordUpdateComponent } from './features/dentist-password-update/dentist-password-update.component';
 import { HomeComponent } from './features/home/home.component';
 import { MainComponent } from './features/main/main.component';
 import { PatientListComponent } from './features/patient-list/patient-list.component';
@@ -38,6 +37,30 @@ export const routes: Routes = [
         component: PatientListComponent,
         canActivate: [authGuard],
         data: { roles: ['admin'] },
+      },
+      {
+        path: 'schedule',
+        component: AbsenceScheduleComponent,
+        canActivate: [authGuard],
+        data: { roles: ['admin', 'dentist'] },
+      },
+      {
+        path: 'edit-patient',
+        component: PatientEditComponent,
+        canActivate: [authGuard],
+        data: { roles: ['patient'] },
+      },
+      {
+        path: 'rating',
+        component: RatingsComponent,
+        canActivate: [authGuard],
+        data: { roles: ['patient'] },
+      },
+      {
+        path: 'appointment',
+        component: AppointmentComponent,
+        canActivate: [authGuard],
+        data: { roles: ['patient', 'admin'] },
       },
       {
         path: 'dentist/update-password',

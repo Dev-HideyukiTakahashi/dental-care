@@ -66,13 +66,15 @@ export class HomeComponent {
     if (!date) return;
 
     const dateStr = date.toISOString().split('T')[0];
-    this.appointmentService.findByDate(this.pageInfo.page.number, 10, dateStr).subscribe({
-      next: (response) => {
-        this.pageInfo = response;
-        this.appointments$ = of(response.content);
-      },
-      error: (err) => console.error(err),
-    });
+    this.appointmentService
+      .findByDate(this.pageInfo.page.number, 10, dateStr)
+      .subscribe({
+        next: (response) => {
+          this.pageInfo = response;
+          this.appointments$ = of(response.content);
+        },
+        error: (err) => console.error(err),
+      });
   }
 
   openAppointmentDetails(appointmentId: number) {
@@ -107,10 +109,12 @@ export class HomeComponent {
     const body: IUpdateAppointment = {
       date: updateData.date,
     };
-    this.appointmentService.updateAppointment(this.editedAppointment.id!, body).subscribe({
-      next: () => this.handleEditSuccess(),
-      error: (err) => (this.editMessage = getAppointmentErrorMessage(err)),
-    });
+    this.appointmentService
+      .updateAppointment(this.editedAppointment.id!, body)
+      .subscribe({
+        next: () => this.handleEditSuccess(),
+        error: (err) => (this.editMessage = getAppointmentErrorMessage(err)),
+      });
   }
 
   private handleEditSuccess(): void {
@@ -131,6 +135,21 @@ export class HomeComponent {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.appointmentService.cancelAppointment(appointmentId).subscribe({
+          next: () => this.loadAppointments(0),
+          error: (err) => console.log(err),
+        });
+      }
+    });
+  }
+
+  onCompleteAppointment(appointmentId: number) {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: 'Tem certeza que deseja concluir a consulta?',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.appointmentService.completeAppointment(appointmentId).subscribe({
           next: () => this.loadAppointments(0),
           error: (err) => console.log(err),
         });

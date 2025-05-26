@@ -1,0 +1,97 @@
+<div class="ratings-container">
+  <!-- HEADER -->
+  <div class="ratings-header">
+    <div class="header-left">
+      <h2 class="title">Avaliações</h2>
+      <p class="subtitle">Avalie suas consultas com os dentistas</p>
+    </div>
+  </div>
+
+  <!-- NOT RATED APPOINTMENTS -->
+  <div class="section-title" *ngIf="notRatedAppointments.length > 0">
+    <h3>Consultas Pendentes de Avaliação</h3>
+  </div>
+
+  <div class="ratings-grid">
+    <div class="rating-card" *ngFor="let appointment of notRatedAppointments">
+      <div class="card-header">
+        <h3>Consulta com Dr. {{ appointment.dentist.name }}</h3>
+        <span class="date">{{
+          appointment.date | date : "dd/MM/yyyy HH:mm"
+        }}</span>
+      </div>
+      <div class="card-body">
+        <p><strong>Procedimento:</strong> {{ appointment.description }}</p>
+
+        <div class="rating-form" *ngIf="!appointment.rating">
+          <div class="stars">
+            <span
+              *ngFor="let star of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
+              (click)="setRating(appointment, star)"
+              [class.active]="(tempRatings[appointment.id]?.score ?? 0) >= star"
+            >
+              <mat-icon>star</mat-icon>
+            </span>
+          </div>
+
+          <mat-form-field class="comment-field">
+            <mat-label>Comentário (opcional)</mat-label>
+            <textarea
+              matInput
+              [ngModel]="tempRatings[appointment.id]?.comment || ''"
+              (ngModelChange)="updateComment(appointment, $event)"
+            ></textarea>
+          </mat-form-field>
+
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="submitRating(appointment)"
+            [disabled]="!tempRatings[appointment.id]?.score"
+          >
+            Enviar Avaliação
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RATED APPOINTMENTS -->
+  <div class="section-title" *ngIf="ratedAppointments.length > 0">
+    <h3>Consultas Avaliadas</h3>
+  </div>
+
+  <div class="ratings-grid">
+    <div class="rating-card" *ngFor="let appointment of ratedAppointments">
+      <div class="card-header">
+        <h3>Consulta com Dr. {{ appointment.dentist.name }}</h3>
+        <span class="date"
+          >Realizada: {{ appointment.date | date : "dd/MM/yyyy HH:mm" }}</span
+        >
+      </div>
+      <div class="card-body">
+        <div>
+          <div class="stars">
+            <span
+              *ngFor="
+                let star of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+                let i = index
+              "
+              [class.active]="
+                appointment.rating && appointment.rating.score >= star
+              "
+            >
+              <mat-icon>star</mat-icon>
+            </span>
+          </div>
+          <p class="comment" *ngIf="appointment.rating?.comment">
+            {{ appointment.rating?.comment }}
+          </p>
+          <p class="rating-date">
+            Avaliado em: {{ appointment.rating?.date | date : "dd/MM/yyyy" }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
