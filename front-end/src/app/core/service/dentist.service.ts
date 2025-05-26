@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { IDentistChangePassword } from '../../model/dentist-change-password.modal';
 import { IDentistMin } from '../../model/dentist-min.model';
 import { IDentist } from '../../model/dentist.model';
@@ -11,7 +12,7 @@ import { Page } from '../../model/page.model';
 })
 export class DentistService {
   private http = inject(HttpClient);
-  private API = 'http://localhost:8080/api/v1';
+  private API = environment.api;
 
   getDentistsWithRatings(): Observable<Page<IDentistMin>> {
     return this.http.get<Page<IDentistMin>>(`${this.API}/dentists?sort=score,desc`);

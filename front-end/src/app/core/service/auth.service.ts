@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { LoginData } from '../../model/auth/login.model';
 import { IRecoverToken } from '../../model/auth/recover-token.model';
 import { IRegisterPatient } from '../../model/auth/register-patient.model';
@@ -13,9 +14,9 @@ import { UserRole } from '../../model/enum/user-role.enum';
   providedIn: 'root',
 })
 export class AuthService {
-  private API = 'http://localhost:8080';
-  private clientId = 'myclientid';
-  private clientSecret = 'myclientsecret';
+  private API = environment.authApi;
+  private clientId = environment.clientId;
+  private clientSecret = environment.clientSecret;
 
   private http = inject(HttpClient);
   private router = inject(Router);

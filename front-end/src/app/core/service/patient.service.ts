@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { Page } from '../../model/page.model';
 import { IPatientMin } from '../../model/patient-min.model';
 import { IPatient } from '../../model/patient-model';
@@ -10,12 +11,10 @@ import { IPatient } from '../../model/patient-model';
 })
 export class PatientService {
   private readonly http = inject(HttpClient);
-  private readonly API = 'http://localhost:8080/api/v1';
+  private API = environment.api;
 
   findAll(page: number, size: number): Observable<Page<IPatientMin>> {
-    return this.http.get<Page<IPatientMin>>(
-      `${this.API}/patients?page=${page}&size=${size}`
-    );
+    return this.http.get<Page<IPatientMin>>(`${this.API}/patients?page=${page}&size=${size}`);
   }
 
   findById(id: number): Observable<IPatient> {
@@ -27,10 +26,7 @@ export class PatientService {
   }
 
   updatePatient(patient: IPatient): Observable<IPatient> {
-    return this.http.put<IPatient>(
-      `${this.API}/patients/${patient.id}`,
-      patient
-    );
+    return this.http.put<IPatient>(`${this.API}/patients/${patient.id}`, patient);
   }
 
   createPatient(patient: IPatient): Observable<IPatient> {

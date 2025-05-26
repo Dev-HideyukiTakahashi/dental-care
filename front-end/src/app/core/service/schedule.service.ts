@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { IAbsence } from '../../model/absence.model';
 
 @Injectable({
@@ -8,7 +9,7 @@ import { IAbsence } from '../../model/absence.model';
 })
 export class ScheduleService {
   private http = inject(HttpClient);
-  private API = 'http://localhost:8080/api/v1';
+  private API = environment.api;
 
   findSelfAbsence(): Observable<IAbsence> {
     return this.http.get<IAbsence>(`${this.API}/schedules/self`);

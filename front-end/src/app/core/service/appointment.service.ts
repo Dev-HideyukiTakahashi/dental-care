@@ -1,10 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import {
-  IAppointment,
-  IAppointmentCreate,
-} from '../../model/appointment.model';
+import { environment } from '../../../environments/environment.development';
+import { IAppointment, IAppointmentCreate } from '../../model/appointment.model';
 import { Page } from '../../model/page.model';
 import { IUpdateAppointment } from '../../model/update-appointment-model';
 
@@ -14,21 +12,17 @@ import { IUpdateAppointment } from '../../model/update-appointment-model';
 export class AppointmentService {
   private http = inject(HttpClient);
 
-  private API = 'http://localhost:8080/api/v1';
+  private API = environment.api;
 
   findAll(page: number, size: number): Observable<Page<IAppointment>> {
     return this.http.get<Page<IAppointment>>(
-      `${this.API}/appointments?page=${page}&size=${size}&sort=date,desc`
+      `${this.API}/appointments?page=${page}&size=${size}&sort=date,desc`,
     );
   }
 
-  findByDate(
-    page: number,
-    size: number,
-    date: string
-  ): Observable<Page<IAppointment>> {
+  findByDate(page: number, size: number, date: string): Observable<Page<IAppointment>> {
     return this.http.get<Page<IAppointment>>(
-      `${this.API}/appointments/date?date=${date}&page=${page}&size=${size}&sort=date,desc`
+      `${this.API}/appointments/date?date=${date}&page=${page}&size=${size}&sort=date,desc`,
     );
   }
 
@@ -36,10 +30,7 @@ export class AppointmentService {
     return this.http.get<IAppointment>(`${this.API}/appointments/${id}`);
   }
 
-  updateAppointment(
-    id: number,
-    body: IUpdateAppointment
-  ): Observable<IAppointment> {
+  updateAppointment(id: number, body: IUpdateAppointment): Observable<IAppointment> {
     return this.http.put<IAppointment>(`${this.API}/appointments/${id}`, body);
   }
 
@@ -48,16 +39,10 @@ export class AppointmentService {
   }
 
   cancelAppointment(id: number): Observable<IAppointment> {
-    return this.http.put<IAppointment>(
-      `${this.API}/appointments/${id}/cancel`,
-      null
-    );
+    return this.http.put<IAppointment>(`${this.API}/appointments/${id}/cancel`, null);
   }
 
   completeAppointment(id: number): Observable<IAppointment> {
-    return this.http.put<IAppointment>(
-      `${this.API}/appointments/${id}/complete`,
-      null
-    );
+    return this.http.put<IAppointment>(`${this.API}/appointments/${id}/complete`, null);
   }
 }
