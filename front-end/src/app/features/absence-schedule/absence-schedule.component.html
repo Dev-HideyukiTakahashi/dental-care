@@ -1,26 +1,23 @@
-<div class="container">
+<div class="absence-container">
+  <!-- Header -->
+  <div class="password-header">
+    <div class="header-left">
+      <h2 class="title">Agendar afastamento</h2>
+      <p class="subtitle">Informe o período desejado para registrar o afastamento</p>
+    </div>
+  </div>
+  <hr />
+
   <div class="absence">
     <h1 class="absence__title">Minha Agenda de Afastamento</h1>
 
     <!-- Forms -->
-    <form
-      class="absence__form"
-      [formGroup]="leaveForm"
-      (ngSubmit)="scheduleLeave()"
-    >
+    <form class="absence__form" [formGroup]="leaveForm" (ngSubmit)="scheduleLeave()">
       <div class="absence__date-fields">
         <mat-form-field class="absence__date-field">
           <mat-label>Data de Início</mat-label>
-          <input
-            matInput
-            [matDatepicker]="startPicker"
-            formControlName="startDate"
-            required
-          />
-          <mat-datepicker-toggle
-            matSuffix
-            [for]="startPicker"
-          ></mat-datepicker-toggle>
+          <input matInput [matDatepicker]="startPicker" formControlName="startDate" required />
+          <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
           <mat-datepicker #startPicker></mat-datepicker>
           <mat-error *ngIf="leaveForm.get('startDate')?.hasError('required')">
             Data inicial é obrigatória
@@ -29,16 +26,8 @@
 
         <mat-form-field class="absence__date-field">
           <mat-label>Data de Término</mat-label>
-          <input
-            matInput
-            [matDatepicker]="endPicker"
-            formControlName="endDate"
-            required
-          />
-          <mat-datepicker-toggle
-            matSuffix
-            [for]="endPicker"
-          ></mat-datepicker-toggle>
+          <input matInput [matDatepicker]="endPicker" formControlName="endDate" required />
+          <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
           <mat-datepicker #endPicker></mat-datepicker>
           <mat-error *ngIf="leaveForm.get('endDate')?.hasError('required')">
             Data final é obrigatória
@@ -88,8 +77,8 @@
       </p>
       <p class="absence__status-text" *ngIf="isOnLeave">
         <mat-icon class="absence__status-icon">event_busy</mat-icon>
-        Afastado de {{ currentLeave?.absenceStart | date : "dd/MM/yyyy" }} até
-        {{ currentLeave?.absenceEnd | date : "dd/MM/yyyy" }}
+        Afastado de {{ currentLeave?.absenceStart | date : 'dd/MM/yyyy' }} até
+        {{ currentLeave?.absenceEnd | date : 'dd/MM/yyyy' }}
       </p>
     </div>
     <!-- Error message -->

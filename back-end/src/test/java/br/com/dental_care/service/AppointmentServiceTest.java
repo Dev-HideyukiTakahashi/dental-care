@@ -99,7 +99,6 @@ class AppointmentServiceTest {
 
         when(dentistRepository.findById(validId)).thenReturn(Optional.of(dentist));
         when(patientRepository.findById(validId)).thenReturn(Optional.of(patient));
-        doNothing().when(authService).validateSelfOrAdmin(validId);
         when(appointmentRepository.save(any())).thenReturn(appointment);
         when(scheduleRepository.save(any())).thenReturn(new Schedule());
         doNothing().when(emailService).sendAppointmentConfirmationEmail(any(), any());
@@ -122,7 +121,6 @@ class AppointmentServiceTest {
 
         when(dentistRepository.findById(validId)).thenReturn(Optional.of(dentist));
         when(patientRepository.findById(validId)).thenReturn(Optional.of(patient));
-        doNothing().when(authService).validateSelfOrAdmin(validId);
         when(appointmentRepository.save(any())).thenReturn(appointment);
         when(scheduleRepository.save(any())).thenReturn(new Schedule());
         doThrow(new MailException("Appointment saved, but confirmation email could not be sent.") {
@@ -180,7 +178,6 @@ class AppointmentServiceTest {
 
         when(dentistRepository.findById(validId)).thenReturn(Optional.of(dentist));
         when(patientRepository.findById(validId)).thenReturn(Optional.of(patient));
-        doNothing().when(authService).validateSelfOrAdmin(validId);
 
         ScheduleConflictException exception = assertThrows(
                 ScheduleConflictException.class,
@@ -201,7 +198,6 @@ class AppointmentServiceTest {
 
         when(dentistRepository.findById(validId)).thenReturn(Optional.of(dentist));
         when(patientRepository.findById(validId)).thenReturn(Optional.of(patient));
-        doNothing().when(authService).validateSelfOrAdmin(validId);
 
         ScheduleConflictException exception = assertThrows(
                 ScheduleConflictException.class,
@@ -222,7 +218,6 @@ class AppointmentServiceTest {
 
         when(dentistRepository.findById(validId)).thenReturn(Optional.of(dentist));
         when(patientRepository.findById(validId)).thenReturn(Optional.of(patient));
-        doNothing().when(authService).validateSelfOrAdmin(validId);
 
         ScheduleConflictException exception = assertThrows(
                 ScheduleConflictException.class,

@@ -1,3 +1,32 @@
+.absence-container {
+  padding: 2rem;
+  background-color: #dee2e6;
+  min-height: 100vh;
+}
+
+.absence-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #adb5bd;
+
+  .header-left {
+    .title {
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: #343a40;
+      margin: 0;
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      color: #343a40;
+      margin: 0.5rem 0 0;
+    }
+  }
+}
 
 .absence {
   width: 100%;
@@ -10,7 +39,7 @@
 
   &__title {
     font-size: 1.8rem;
-    color: #343A40;
+    color: #343a40;
     text-align: center;
     margin-bottom: 1.8rem;
     font-weight: 600;
@@ -110,7 +139,6 @@
   align-items: center;
   gap: 0.5rem;
 }
-
 
 @media (max-width: 480px) {
   .absence {

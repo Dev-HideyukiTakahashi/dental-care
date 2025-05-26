@@ -2,8 +2,6 @@
 
 Este sistema de agendamento odontológico facilita a marcação de consultas, o gerenciamento de agendas de dentistas e a interação entre pacientes e profissionais. Pacientes podem agendar, cancelar e avaliar consultas, enquanto dentistas gerenciam suas agendas. Administradores controlam usuários e acessam relatórios.
 
-## EM CONSTRUÇÃO
-
 ## Documentação no notion:
 
 - https://grave-hyena-443.notion.site/App-de-Agendamento-Odontol-gico-Java-Angular-1a93a302750380c4a8d3fef126ca0540?pvs=73
@@ -15,6 +13,25 @@ Este sistema de agendamento odontológico facilita a marcação de consultas, o 
 - https://grave-hyena-443.notion.site/Backlog-1ac3a30275038027a179fec482aff6f6
 
 ---
+
+## Fotos:
+
+<details>
+  <summary>Clique para visualizar as imagens do sistema</summary>
+
+![](/recursos/1.png)
+![](/recursos/2.png)
+![](/recursos/3.png)
+![](/recursos/4.png)
+![](/recursos/5.png)
+![](/recursos/6.png)
+![](/recursos/7.png)
+![](/recursos/8.png)
+![](/recursos/9.png)
+![](/recursos/10.png)
+![](/recursos/11.png)
+
+</details>
 
 ## Funcionalidades
 
@@ -49,7 +66,6 @@ Este sistema de agendamento odontológico facilita a marcação de consultas, o 
 
 - **Angular** para o desenvolvimento do frontend.
 - **Bootstrap 5** para estilização.
-- **Jasmine** para testes unitários.
 
 ### Infraestrutura:
 
@@ -92,14 +108,7 @@ git clone https://github.com/Dev-HideyukiTakahashi/dental-care.git
    EMAIL_PASSWORD=sua-senha-de-app
    ```
 
-5. Limpeza e construção do projeto
-   Antes de rodar a aplicação, execute o comando abaixo para garantir que todas as dependências e o projeto estejam limpos e atualizados:
-
-   ```bash
-   mvn clean
-   ```
-
-6. Rode o projeto pelo terminal:
+5. Rode o projeto pelo terminal:
 
    ```bash
    mvn spring-boot:run
@@ -128,6 +137,10 @@ git clone https://github.com/Dev-HideyukiTakahashi/dental-care.git
 ## Endpoints da API
 
 - A documentação completa da API está disponível em: `http://localhost:8080/swagger-ui/index.html`
+
+## Collection do Postman
+
+- Disponibilizei a collection do Postman na pasta recursos para auxiliar quem for começar o sistema do zero.
 
 ## Licença
 

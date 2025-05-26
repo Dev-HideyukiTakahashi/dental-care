@@ -7,7 +7,13 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { AppointmentService } from '../../core/service/appointment.service';
 import { AuthService } from '../../core/service/auth.service';
 import { DentistService } from '../../core/service/dentist.service';
@@ -19,16 +25,25 @@ import { IPatientMin } from '../../model/patient-min.model';
 
 @Component({
   selector: 'app-appointment',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatSelectModule,
+  ],
   templateUrl: './appointment.component.html',
   styleUrl: './appointment.component.scss',
 })
 export class AppointmentComponent implements OnInit {
   private readonly dentistService: DentistService = inject(DentistService);
   private readonly patientService: PatientService = inject(PatientService);
-  private readonly appointmentService: AppointmentService =
-    inject(AppointmentService);
+  private readonly appointmentService: AppointmentService = inject(AppointmentService);
   private readonly authService: AuthService = inject(AuthService);
+  private readonly route = inject(Router);
 
   appointmentForm: FormGroup;
   dentists: IDentistMin[] = [];
@@ -38,17 +53,19 @@ export class AppointmentComponent implements OnInit {
   selectedDentistScore: number | string = 'Não avaliado';
   errorMessage: string | null = null;
   isAdmin: boolean = false;
+  selectedDate: Date | null = null;
+  selectedTime: string = '';
+  timeOptions: string[] = [];
 
-  constructor(
-    private readonly fb: FormBuilder,
-    private readonly snackBar: MatSnackBar
-  ) {
+  constructor(private readonly fb: FormBuilder, private readonly snackBar: MatSnackBar) {
     this.appointmentForm = this.fb.group({
       dentist: ['', Validators.required],
-      date: ['', Validators.required],
+      date: [null, Validators.required],
+      time: ['', Validators.required],
       description: ['', Validators.required],
       patient: [''],
     });
+    this.generateTimeOptions();
   }
 
   ngOnInit(): void {
@@ -60,6 +77,31 @@ export class AppointmentComponent implements OnInit {
     } else {
       this.appointmentForm.removeControl('patient');
     }
+  }
+  generateTimeOptions(): void {
+    for (let hour = 8; hour <= 19; hour++) {
+      const minutes = hour === 19 ? [0] : [0, 30];
+      minutes.forEach((minute) => {
+        this.timeOptions.push(
+          `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`,
+        );
+      });
+    }
+  }
+
+  updateDateTime(): void {
+    if (this.selectedDate && this.appointmentForm.get('time')?.value) {
+      const [hours, minutes] = this.appointmentForm.get('time')?.value.split(':');
+      const newDate = new Date(this.selectedDate);
+      newDate.setHours(parseInt(hours), parseInt(minutes));
+
+      this.appointmentForm.get('date')?.setValue(newDate.toISOString());
+    }
+  }
+
+  onTimeSelect(): void {
+    this.selectedTime = this.appointmentForm.get('time')?.value;
+    this.updateDateTime();
   }
 
   loadDentists(): void {
@@ -122,6 +164,7 @@ export class AppointmentComponent implements OnInit {
         this.appointmentForm.reset();
         this.dentistLoading = false;
         this.patientLoading = false;
+        this.route.navigate(['/']);
       },
       error: (error) => {
         this.handleError(error.error.error);
@@ -154,13 +197,9 @@ export class AppointmentComponent implements OnInit {
       this.errorMessage = 'Já existe uma consulta para esse horário';
     }
     if (error === 'The time falls within another appointment slot.') {
-      this.errorMessage =
-        'O horário selecionado conflita com outro agendamento existente.';
+      this.errorMessage = 'O horário selecionado conflita com outro agendamento existente.';
     }
-    if (
-      error ===
-      'problemDetail.org.springframework.web.bind.MethodArgumentNotValidException'
-    ) {
+    if (error === 'problemDetail.org.springframework.web.bind.MethodArgumentNotValidException') {
       this.errorMessage = 'Data ou horário inválido.';
     }
   }

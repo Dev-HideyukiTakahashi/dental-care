@@ -228,27 +228,6 @@ public class AppointmentControllerTest extends BaseIntegrationTest {
   }
 
   @Test
-  void createAppointment_Should_return403_When_patientAttemptsToScheduleForAnotherPatient() {
-
-    PatientMinDTO anotherPatient = patient.toBuilder().id(3L).build();
-
-    AppointmentDTO conflictingAppointmentDTO = existsAppointmentDTO
-        .toBuilder()
-        .patientMinDTO(anotherPatient)
-        .build();
-
-    given()
-        .header("Authorization", "Bearer " + patientToken)
-        .contentType(ContentType.JSON)
-        .body(conflictingAppointmentDTO)
-        .when()
-        .post("/api/v1/appointments")
-        .then()
-        .statusCode(403)
-        .body("error", equalTo("Access denied: You do not have permission to perform this action"));
-  }
-
-  @Test
   void findById_Should_return200_When_adminLoggedAndAppointmentExists() {
 
     given()

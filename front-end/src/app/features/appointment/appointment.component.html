@@ -9,11 +9,7 @@
 
   <!-- EDIT FORM -->
   <div class="patient-edit-card">
-    <form
-      class="edit-form"
-      [formGroup]="appointmentForm"
-      (ngSubmit)="onSubmit()"
-    >
+    <form class="edit-form" [formGroup]="appointmentForm" (ngSubmit)="onSubmit()">
       @if(isAdmin){
       <!-- Patient -->
       <div class="form-group">
@@ -23,8 +19,7 @@
           formControlName="patient"
           required
           [class.invalid]="
-            appointmentForm.get('patient')?.invalid &&
-            appointmentForm.get('patient')?.touched
+            appointmentForm.get('patient')?.invalid && appointmentForm.get('patient')?.touched
           "
         >
           <option value="" disabled selected>Selecione um paciente</option>
@@ -53,8 +48,7 @@
           required
           (change)="onDentistSelect()"
           [class.invalid]="
-            appointmentForm.get('dentist')?.invalid &&
-            appointmentForm.get('dentist')?.touched
+            appointmentForm.get('dentist')?.invalid && appointmentForm.get('dentist')?.touched
           "
         >
           <option value="" disabled selected>Selecione um dentista</option>
@@ -86,18 +80,17 @@
       </div>
       <!-- Date -->
       <div class="form-group">
-        <label for="date">Data e Hora</label>
-        <input
-          type="datetime-local"
-          id="date"
-          formControlName="date"
-          required
-          step="1800"
-          [class.invalid]="
-            appointmentForm.get('date')?.invalid &&
-            appointmentForm.get('date')?.touched
-          "
-        />
+        <label>Data</label>
+        <mat-form-field>
+          <input
+            matInput
+            [matDatepicker]="picker"
+            placeholder="dd/mm/aaaa"
+            (dateChange)="selectedDate = $event.value; updateDateTime()"
+          />
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
         <span
           class="error-message"
           *ngIf="
@@ -105,7 +98,32 @@
             appointmentForm.get('date')?.touched
           "
         >
-          Data e hora são obrigatórios
+          Data é obrigatória
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label for="time">Horário</label>
+        <mat-form-field>
+          <mat-select
+            id="time"
+            formControlName="time"
+            (selectionChange)="onTimeSelect()"
+            placeholder="Selecione um horário"
+          >
+            <mat-option *ngFor="let time of timeOptions" [value]="time">
+              {{ time }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <span
+          class="error-message"
+          *ngIf="
+            appointmentForm.get('time')?.hasError('required') &&
+            appointmentForm.get('time')?.touched
+          "
+        >
+          Horário é obrigatório
         </span>
       </div>
 
