@@ -95,7 +95,11 @@ export class AppointmentComponent implements OnInit {
       const newDate = new Date(this.selectedDate);
       newDate.setHours(parseInt(hours), parseInt(minutes));
 
-      this.appointmentForm.get('date')?.setValue(newDate.toISOString());
+      const formattedDate = `${newDate.getFullYear()}-${(newDate.getMonth() + 1)
+        .toString()
+        .padStart(2, '0')}-${newDate.getDate().toString().padStart(2, '0')}T${hours}:${minutes}:00`;
+
+      this.appointmentForm.get('date')?.setValue(formattedDate);
     }
   }
 
