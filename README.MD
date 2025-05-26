@@ -33,6 +33,14 @@ Este sistema de agendamento odontológico facilita a marcação de consultas, o 
 
 </details>
 
+---
+
+## Video:
+
+📺 Assista à demonstração no YouTube: [Clique aqui](https://www.youtube.com/watch?v=YlYQ0kWRyF8)
+
+---
+
 ## Funcionalidades
 
 - **Cadastro e Login**: Pacientes podem se registrar, acessar suas contas e recuperar a senha via email. Administradores registram dentistas, que podem alterar sua senha.
