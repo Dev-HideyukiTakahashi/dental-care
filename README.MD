@@ -18,18 +18,21 @@ Este sistema de agendamento odontológico facilita a marcação de consultas, o 
 
 <details>
   <summary>Clique para visualizar as imagens do sistema</summary>
+<br/>
 
-![](/recursos/1.png)
-![](/recursos/2.png)
-![](/recursos/3.png)
-![](/recursos/4.png)
-![](/recursos/5.png)
-![](/recursos/6.png)
-![](/recursos/7.png)
-![](/recursos/8.png)
-![](/recursos/9.png)
-![](/recursos/10.png)
-![](/recursos/11.png)
+- Deploy com sucesso, frontend na vercel e backend no render
+  ![](/recursos/deploy.png)
+  ![](/recursos/1.png)
+  ![](/recursos/2.png)
+  ![](/recursos/3.png)
+  ![](/recursos/4.png)
+  ![](/recursos/5.png)
+  ![](/recursos/6.png)
+  ![](/recursos/7.png)
+  ![](/recursos/8.png)
+  ![](/recursos/9.png)
+  ![](/recursos/10.png)
+  ![](/recursos/11.png)
 
 </details>
 
