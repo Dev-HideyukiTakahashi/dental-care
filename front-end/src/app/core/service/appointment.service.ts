@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '../../../environments/environment';
 import { IAppointment, IAppointmentCreate } from '../../model/appointment.model';
 import { Page } from '../../model/page.model';
 import { IUpdateAppointment } from '../../model/update-appointment-model';
